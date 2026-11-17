@@ -7,6 +7,7 @@ import {
 import type { FarmProfile, FarmCrop, HarvestSummaryResponse } from '../../types/index.ts';
 import { useLanguage } from '../../context/LanguageContext.tsx';
 import './HarvestLovable.css';
+import './HarvestPremium2026.css';
 
 interface Props {
   farms: FarmProfile[];

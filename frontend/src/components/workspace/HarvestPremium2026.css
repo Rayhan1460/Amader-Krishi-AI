@@ -1,0 +1,493 @@
+/* AMADER KRISHI | Harvest & Storage Premium Refresh
+   VISUAL-ONLY layer. Loaded after HarvestLovable.css.
+   All selectors are scoped to Harvest-specific classes; no app-global CSS changes. */
+
+/* The page wrapper itself becomes the soft green canvas, as in Soil & Crop Planning. */
+[data-testid="harvest-management-dashboard"] {
+  padding: clamp(12px, 1.7vw, 26px);
+  border-radius: clamp(18px, 2.2vw, 27px);
+  background: linear-gradient(160deg, #f0f6ee, #eaf2e9 65%, #eef5ec);
+  box-shadow: 0 14px 38px rgba(5, 52, 31, .10);
+}
+
+.harvest-lovable {
+  --hv-ink: #123c2d;
+  --hv-muted: #617e6e;
+  --hv-green: #175d40;
+  --hv-leaf: #e7f1e5;
+  --hv-border: #d7e5d8;
+  --hv-gold: #e6b14c;
+  --hv-white: #ffffff;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--hv-ink);
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+  isolation: isolate;
+}
+.harvest-lovable *, .harvest-lovable *::before, .harvest-lovable *::after { box-sizing: border-box; }
+.harvest-lovable button, .harvest-lovable select, .harvest-lovable input { font: inherit; }
+.harvest-lovable button:focus-visible,
+.harvest-lovable select:focus-visible,
+.harvest-lovable input:focus-visible,
+.harvest-lovable-advanced > summary:focus-visible {
+  outline: 3px solid #e5b95e;
+  outline-offset: 3px;
+}
+
+/* Same aerial photo as Soil & Crop Planning and Farm Services pages. */
+.harvest-lovable-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(235px, 26vw, 312px);
+  margin: 0 0 20px;
+  padding: clamp(24px, 3.2vw, 45px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  border: 1px solid rgba(252, 255, 244, .2);
+  border-radius: clamp(19px, 2.1vw, 27px);
+  box-shadow: 0 18px 36px rgba(9, 52, 35, .15);
+  background:
+    linear-gradient(96deg, rgba(10, 45, 34, .97) 0%, rgba(14, 54, 37, .89) 39%, rgba(15, 62, 39, .50) 75%, rgba(15, 62, 39, .31) 100%),
+    url('/krishi-aerial-fields.webp') center 53% / cover no-repeat,
+    #164432;
+  animation: harvest-premium-rise .55s ease-out both;
+}
+.harvest-lovable-hero::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 83% 13%, rgba(232, 242, 167, .15), transparent 36%);
+}
+.harvest-lovable-hero > div,
+.harvest-lovable-hero > button { position: relative; z-index: 1; }
+.harvest-lovable-hero > div { max-width: 780px; }
+.harvest-lovable-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin: 0 0 15px;
+  padding: 7px 12px;
+  border: 1px solid rgba(252, 241, 184, .30);
+  border-radius: 999px;
+  background: rgba(7, 35, 24, .43);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffdb8a;
+  font: 800 11px/1.3 'Hind Siliguri', system-ui, sans-serif;
+  letter-spacing: .10em;
+}
+.harvest-lovable-hero h1 {
+  margin: 0;
+  color: #fff;
+  max-width: 20ch;
+  font-size: clamp(30px, 3.15vw, 46px);
+  line-height: 1.3;
+  letter-spacing: -.028em;
+  font-weight: 850;
+  text-wrap: balance;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, .13);
+}
+.harvest-lovable-hero p:not(.harvest-lovable-kicker) {
+  margin: 12px 0 0;
+  max-width: 64ch;
+  color: #edf8e8;
+  line-height: 1.75;
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 500;
+}
+.harvest-lovable-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 1px solid #f0d18d;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #f9d886, #eeb452);
+  color: #153d2a;
+  font-size: 14px;
+  font-weight: 850;
+  white-space: normal;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(3, 35, 21, .22);
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.harvest-lovable-add:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px rgba(3, 35, 21, .29);
+  filter: brightness(1.04);
+}
+.harvest-lovable-add:active:not(:disabled) { transform: translateY(0); }
+.harvest-lovable-add:disabled { opacity: .58; cursor: not-allowed; }
+
+/* Step 01 — farm and recorded quantity: clean white cards, clear labels. */
+.harvest-lovable-context {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.05fr);
+  gap: 14px;
+  align-items: stretch;
+  margin: 0 0 17px;
+}
+.harvest-lovable-context > label,
+.harvest-lovable-recorded {
+  min-width: 0;
+  min-height: 123px;
+  padding: 18px 19px;
+  border: 1px solid var(--hv-border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 6px 16px rgba(20, 69, 39, .035);
+  color: #37664d;
+  font-size: 14px;
+  font-weight: 800;
+  gap: 11px;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.harvest-lovable-context > label:focus-within,
+.harvest-lovable-recorded:hover { border-color: #abcdb1; box-shadow: 0 10px 24px rgba(20, 69, 39, .07); }
+.harvest-lovable-context select {
+  min-height: 45px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: #f6faf5;
+  border: 1px solid #cbded0;
+  color: #153f2c;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+.harvest-lovable-context select:hover { border-color: #80b096; background: #fff; }
+.harvest-lovable-recorded {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: 4px 12px;
+  background: #e8f2e7;
+  border-color: #d2e5d0;
+}
+.harvest-lovable-recorded > svg {
+  grid-row: 1 / span 2;
+  align-self: center;
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  color: #216948;
+  border-radius: 13px;
+  background: #d8ebd9;
+}
+.harvest-lovable-recorded > span { color: #46765b; font-size: 13px; font-weight: 800; }
+.harvest-lovable-recorded strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #155b3a;
+  font-size: clamp(19px, 2vw, 25px);
+  line-height: 1.24;
+  font-weight: 850;
+}
+.harvest-lovable-recorded button {
+  grid-column: 2;
+  width: fit-content;
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  text-align: left;
+  color: #17633f;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Step 02 — quantity first, then scenarios. */
+.harvest-lovable-batch {
+  position: relative;
+  margin: 0 0 19px;
+  padding: clamp(18px, 2vw, 26px);
+  overflow: hidden;
+  border: 1px solid #d2e4d3;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(18, 62, 40, .04);
+}
+.harvest-lovable-batch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1c8054 0%, #73bc74 52%, #e7b957 100%);
+}
+.harvest-lovable-batch-top { gap: 16px; margin-bottom: 20px; align-items: center; }
+.harvest-lovable-batch-top > label {
+  font-size: clamp(16px, 1.3vw, 20px);
+  font-weight: 850;
+  color: #194c35;
+  line-height: 1.45;
+}
+.harvest-lovable-number {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #bed7c4;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5faf4;
+  color: #154e32;
+}
+.harvest-lovable-number:focus-within { border-color: #33835e; box-shadow: 0 0 0 3px rgba(44, 125, 79, .12); }
+.harvest-lovable-number input {
+  width: min(155px, 43vw);
+  min-height: 46px;
+  padding: 11px 7px 11px 12px;
+  color: #165438;
+  font-size: 18px;
+  font-weight: 850;
+  text-align: right;
+  background: transparent;
+  border: 0;
+}
+.harvest-lovable-number input::placeholder { color: #84a38e; font-size: 14px; font-weight: 550; }
+.harvest-lovable-number b { padding: 0 14px 0 5px; color: #436c54; font-size: 14px; }
+.harvest-lovable-slider {
+  width: 100%;
+  height: 9px;
+  accent-color: #218257;
+  cursor: pointer;
+}
+.harvest-lovable-slider:disabled { opacity: .32; cursor: not-allowed; }
+.harvest-lovable-hint { margin-top: 11px; color: #637f6d; font-size: 12px; line-height: 1.6; gap: 9px; }
+.harvest-lovable-hint svg { color: #4a936f; flex: none; }
+
+/* Step 03 — high-legibility comparison cards. */
+.harvest-lovable-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(13px, 1.4vw, 20px);
+}
+.harvest-lovable-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 300px;
+  padding: clamp(18px, 1.8vw, 25px);
+  overflow: hidden;
+  border: 1px solid #d7e5d8;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--hv-ink);
+  box-shadow: 0 8px 22px rgba(20, 69, 39, .045);
+  transition: transform .23s ease, border-color .23s ease, box-shadow .23s ease;
+  animation: harvest-premium-rise .55s ease-out both;
+}
+.harvest-lovable-card:nth-child(2) { animation-delay: .07s; }
+.harvest-lovable-card:nth-child(3) { animation-delay: .14s; }
+.harvest-lovable-card::before {
+  content: '';
+  height: 4px;
+  position: absolute;
+  inset: 0 0 auto;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg, #257852, #a7d9b6);
+}
+.harvest-lovable-card:nth-child(2)::before { background: linear-gradient(90deg, #d59a35, #f4db96); }
+.harvest-lovable-card:nth-child(3)::before { background: linear-gradient(90deg, #4b8e89, #acdcd1); }
+.harvest-lovable-card:hover { border-color: #a3ceb0; box-shadow: 0 16px 38px rgba(20, 69, 39, .10); transform: translateY(-4px); }
+.harvest-lovable-card-best { border-color: #d9ae53; box-shadow: 0 0 0 2px rgba(230, 177, 76, .22), 0 14px 35px rgba(20, 69, 39, .08); }
+.harvest-lovable-card-heading { min-height: 50px; gap: 10px; margin-bottom: 14px; }
+.harvest-lovable-card-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #cbe5d2;
+  border-radius: 14px;
+  color: #1d754b;
+  background: #e8f3e9;
+}
+.harvest-lovable-card:nth-child(2) .harvest-lovable-card-icon { color: #996b28; background: #fdf4df; border-color: #f2e2b9; }
+.harvest-lovable-card:nth-child(3) .harvest-lovable-card-icon { color: #20776b; background: #e4f3ef; border-color: #c9e6df; }
+.harvest-lovable-best-label { gap: 6px; color: #7d591b; background: #fff4d8; border-radius: 999px; padding: 6px 8px; font-size: 11px; line-height: 1.25; font-weight: 800; }
+.harvest-lovable-card h2 { color: #173f2e; font-weight: 850; font-size: clamp(17px, 1.45vw, 21px); line-height: 1.4; margin: 0 0 5px; }
+.harvest-lovable-card-desc { margin: 0 0 20px; min-height: 39px; font-size: 13px; line-height: 1.65; color: #65806e; }
+.harvest-lovable-value { margin: 0; color: #165e3e; font-size: clamp(27px, 2.4vw, 34px); line-height: 1.25; font-weight: 850; letter-spacing: -.025em; }
+.harvest-lovable-value-label { color: #6b8976; font-size: 12px; line-height: 1.6; min-height: 38px; margin: 7px 0 16px; }
+.harvest-lovable-track { width: 100%; height: 8px; border-radius: 20px; background: #e8f0e8; overflow: hidden; margin-top: auto; }
+.harvest-lovable-track span { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #247d54, #70b580); transition: width .3s ease; }
+.harvest-lovable-expand {
+  width: 100%;
+  min-height: 47px;
+  margin-top: 18px;
+  padding: 11px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #b9d5c3;
+  border-radius: 12px;
+  background: #eaf4e9;
+  color: #195b3e;
+  font-size: 14px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+.harvest-lovable-expand:hover { background: #d7ebd9; color: #103d29; box-shadow: inset 0 0 0 1px #a7ceb5; }
+.harvest-lovable-expand svg { transition: transform .2s ease; flex: none; }
+.harvest-lovable-expand[aria-expanded='true'] svg { transform: rotate(90deg); }
+.harvest-lovable-inputs {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #dfebdf;
+  display: grid;
+  gap: 12px;
+  animation: harvest-premium-expand .22s ease-out both;
+}
+.harvest-lovable-field > span:first-child { display: block; margin-bottom: 6px; color: #2e6047; font-size: 13px; line-height: 1.5; font-weight: 750; }
+.harvest-lovable-field-row { min-height: 44px; border: 1px solid #cbdfd0; border-radius: 10px; background: #f8fbf8; display: flex; overflow: hidden; }
+.harvest-lovable-field-row:focus-within { border-color: #3b966a; box-shadow: 0 0 0 3px rgba(37, 124, 82, .12); }
+.harvest-lovable-field-row input { min-height: 44px; flex: 1; width: 0; min-width: 0; border: 0; background: transparent; color: #173e2b; padding: 9px 12px; font-size: 15px; font-weight: 750; }
+.harvest-lovable-field-row input::placeholder { color: #86a391; font-weight: 500; }
+.harvest-lovable-field-row small { color: #567861; font-size: 12px; font-weight: 700; white-space: nowrap; padding: 0 12px; display: flex; align-items: center; }
+
+/* Clear conclusion and transparent limitations. */
+.harvest-lovable-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 19px;
+  padding: clamp(17px, 1.7vw, 24px);
+  border: 1px solid #e9d49b;
+  border-left: 5px solid #deac45;
+  border-radius: 16px;
+  background: #fcf7e9;
+}
+.harvest-lovable-verdict > svg { width: 25px; height: 25px; flex: none; color: #a37421; }
+.harvest-lovable-verdict strong { display: block; color: #5a431b; font-size: 16px; line-height: 1.5; font-weight: 850; }
+.harvest-lovable-verdict p { color: #806c47; margin: 5px 0 0; font-size: 13px; line-height: 1.7; }
+.harvest-lovable-disclaimer {
+  margin: 13px 0 0;
+  padding: 14px 17px;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  border-radius: 13px;
+  border: 1px solid #dce7dc;
+  background: #f9fcf8;
+  color: #607a68;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.harvest-lovable-disclaimer svg { color: #2a8b5f; flex: none; margin-top: 3px; }
+.harvest-lovable-footnote { display: flex; gap: 9px; color: #628271; margin: 15px 0 0; font-size: 12px; line-height: 1.7; flex-wrap: wrap; }
+.harvest-lovable-footnote svg { flex: none; }
+
+/* Only Harvest detailed-record accordion: original inner forms/API logic untouched. */
+.harvest-lovable-advanced {
+  overflow: visible;
+  border: 1px solid #cbded1;
+  border-radius: 20px;
+  background: #f8fcf8;
+  box-shadow: 0 12px 25px rgba(4, 42, 26, .075);
+}
+.harvest-lovable-advanced > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 73px;
+  padding: 18px 23px;
+  color: #175c3d;
+  background: #f7fbf7;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.harvest-lovable-advanced > summary:hover { background: #eaf4e9; }
+.harvest-lovable-advanced[open] > summary { border-radius: 20px 20px 0 0; border-bottom: 1px solid #d9e8db; }
+.harvest-lovable-advanced > summary::after { color: #207d54; font-size: 25px; font-weight: 600; }
+.harvest-lovable-advanced-inner {
+  padding: 18px;
+  border-radius: 0 0 20px 20px;
+  background: #082e22; /* Retain readable legacy dark record forms. */
+}
+
+@keyframes harvest-premium-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes harvest-premium-expand {
+  from { opacity: .2; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1150px) {
+  .harvest-lovable-context { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .harvest-lovable-recorded { grid-column: 1 / -1; min-height: 100px; }
+  .harvest-lovable-grid { gap: 13px; }
+  .harvest-lovable-card { padding: 18px; }
+}
+@media (max-width: 850px) {
+  .harvest-lovable-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .harvest-lovable-grid > :last-child { grid-column: 1 / -1; }
+  .harvest-lovable-hero { align-items: center; }
+}
+@media (max-width: 650px) {
+  [data-testid="harvest-management-dashboard"] { padding: 10px; border-radius: 18px; }
+  .harvest-lovable { padding: 0; border-radius: 0; }
+  .harvest-lovable-hero {
+    min-height: 270px;
+    margin-bottom: 13px;
+    padding: 22px;
+    gap: 17px;
+    align-items: flex-end;
+    border-radius: 18px;
+    background-position: center, 62% center, center;
+  }
+  .harvest-lovable-hero h1 { max-width: 15ch; font-size: clamp(27px, 7.1vw, 35px); }
+  .harvest-lovable-kicker { font-size: 10px; margin-bottom: 12px; letter-spacing: .05em; }
+  .harvest-lovable-add { width: 100%; }
+  .harvest-lovable-context { grid-template-columns: 1fr; gap: 11px; }
+  .harvest-lovable-context > label, .harvest-lovable-recorded { min-height: 98px; padding: 15px; }
+  .harvest-lovable-recorded { grid-column: auto; }
+  .harvest-lovable-batch { padding: 17px; }
+  .harvest-lovable-batch-top { align-items: stretch; flex-direction: column; gap: 11px; }
+  .harvest-lovable-batch-top > label { font-size: 17px; }
+  .harvest-lovable-number { width: 100%; justify-content: space-between; }
+  .harvest-lovable-number input { width: 80%; }
+  .harvest-lovable-grid { grid-template-columns: 1fr; gap: 12px; }
+  .harvest-lovable-grid > :last-child { grid-column: auto; }
+  .harvest-lovable-card { min-height: 270px; padding: 19px; }
+  .harvest-lovable-card-desc, .harvest-lovable-value-label { min-height: 0; }
+  .harvest-lovable-verdict { padding: 16px; }
+  .harvest-lovable-advanced > summary { font-size: 14px; padding: 15px; }
+  .harvest-lovable-advanced-inner { padding: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .harvest-lovable *, .harvest-lovable *::before, .harvest-lovable *::after,
+  .harvest-lovable-advanced, .harvest-lovable-advanced * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
