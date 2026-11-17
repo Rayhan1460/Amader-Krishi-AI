@@ -82,7 +82,7 @@ export const WeatherDashboardPanel: FC<WeatherDashboardPanelProps> = ({
               </span>
             </h2>
             <p className="text-xs text-slate-400">
-              ৭ দিনের আবহাওয়ার পূর্বাভাস ও কৃষিকাজের পরামর্শ (Open-Meteo CC BY 4.0)
+              ৭ দিনের আবহাওয়ার পূর্বাভাস ও কৃষিকাজের পরামর্শ
             </p>
           </div>
         </div>
@@ -439,14 +439,14 @@ export const WeatherDashboardPanel: FC<WeatherDashboardPanelProps> = ({
       <div className="text-center text-xs text-slate-400 py-2">
         আবহাওয়া পূর্বাভাস সরবরাহকারী: 
         <a
-          href="https://open-meteo.com/"
+          href={forecastData?.provider_url ?? "https://open-meteo.com/"}
           target="_blank"
           rel="noopener noreferrer"
           className="text-emerald-400 hover:underline mx-1"
         >
-          Open-Meteo API
+          {forecastData?.provider ?? "Open-Meteo API (CC BY 4.0)"}
         </a>
-        (Creative Commons Attribution 4.0 International - CC BY 4.0)। বাংলাদেশের কৃষকদের সহায়তায় ডেটা প্রক্রিয়াজাতকৃত।
+        বাংলাদেশের কৃষকদের সহায়তায় ডেটা প্রক্রিয়াজাতকৃত।
       </div>
     </div>
   );

@@ -241,7 +241,7 @@ export function FarmWeatherRiskView({ initialFarmId, onOpenCalendar, onViewHisto
             </div>
           </div>
           <footer className="farm-weather__source">
-            <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo <ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={forecast?.provider_url ?? "https://open-meteo.com/"} target="_blank" rel="noreferrer">{forecast?.provider ?? "Open-Meteo"} <ArrowUpRight size={13} aria-hidden="true" /></a>
             {updated && Number.isFinite(updated.getTime()) && <span>
               {cached ? t('সংরক্ষিত তথ্য', 'Cached forecast') : t('তথ্য আনা হয়েছে', 'Data fetched')} · {stamp.format(updated)}
             </span>}

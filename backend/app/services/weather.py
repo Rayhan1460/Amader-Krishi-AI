@@ -8,6 +8,7 @@ import asyncio
 import time
 from datetime import datetime, date, timedelta, timezone
 from email.utils import parsedate_to_datetime
+from unicodedata import category, normalize
 from weakref import WeakValueDictionary
 from typing import Optional, List, Dict, Any, Tuple
 from zoneinfo import ZoneInfo
@@ -34,11 +35,30 @@ CACHE_TTL_SECONDS = 1800  # 30 minutes in-memory cache
 OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 HTTP_TIMEOUT_SECONDS = 8.0
 OPEN_METEO_DEFAULT_COOLDOWN_SECONDS = 300
+VISUAL_CROSSING_URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
+VISUAL_CROSSING_NAME = "Visual Crossing Weather"
+VISUAL_CROSSING_SOURCE = "https://www.visualcrossing.com/"
+VISUAL_CROSSING_TIMEOUT_SECONDS = 4.0
+_VISUAL_CROSSING_METRICS = {
+    "temperature_2m_max": "tempmax",
+    "temperature_2m_min": "tempmin",
+    "precipitation_sum": "precip",
+    "precipitation_probability_max": "precipprob",
+    "relative_humidity_2m_mean": "humidity",
+    "wind_speed_10m_max": "windspeed",
+}
+_VISUAL_CROSSING_ICON_CODES = {
+    "clear-day": 0, "clear-night": 0, "partly-cloudy-day": 2, "partly-cloudy-night": 2,
+    "cloudy": 3, "fog": 45, "rain": 61, "showers-day": 80, "showers-night": 80,
+    "snow": 71, "snow-showers-day": 85, "snow-showers-night": 85,
+    "thunder-rain": 95, "thunder-showers-day": 95, "thunder-showers-night": 95,
+}
 
 # In-memory thread-safe forecast cache: {(lat_4dec, lon_4dec): (cached_time_epoch_float, forecast_response_dict)}
 _FORECAST_CACHE: Dict[Tuple[float, float], Tuple[float, Dict[str, Any]]] = {}
 _FORECAST_LOCKS: WeakValueDictionary[Tuple[float, float], asyncio.Lock] = WeakValueDictionary()
 _open_meteo_retry_at = 0.0
+_visual_crossing_retry_at = 0.0
 _RATE_LIMIT_MESSAGE = "আবহাওয়া সেবায় অনুরোধের সীমা পৌঁছেছে। কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
 # Bengali day name mappings
@@ -66,6 +86,33 @@ ENGLISH_DAY_NAMES = {
 # =============================================================================
 # 1. DISTRICT COORDINATE RESOLUTION SERVICE
 # =============================================================================
+def _district_lookup_key(name: str) -> str:
+    # Preserve Bengali combining marks while ignoring spaces, apostrophes, and hyphens.
+    normalized = normalize("NFC", name.casefold())
+    compact = "".join(char for char in normalized if category(char)[0] in "LMN")
+    return compact.removesuffix("district").removesuffix("জেলা")
+
+
+_DISTRICTS_BY_NAME = {
+    _district_lookup_key(name): data
+    for district, data in BANGLADESH_DISTRICT_COORDINATES.items()
+    for name in (district, data["bn"])
+}
+_DISTRICT_ALIASES = {
+    "jhalakathi": "Jhalokati",
+    "jhalokathi": "Jhalokati",
+    "khagrachari": "Khagrachhari",
+    "laxmipur": "Lakshmipur",
+    "netrakona": "Netrokona",
+    "মুন্সিগঞ্জ": "Munshiganj",
+    "রাঙামাটি": "Rangamati",
+}
+_DISTRICTS_BY_NAME.update(
+    {_district_lookup_key(alias): BANGLADESH_DISTRICT_COORDINATES[district]
+     for alias, district in _DISTRICT_ALIASES.items()}
+)
+
+
 def resolve_farm_coordinates(farm: FarmProfile) -> Tuple[float, float, bool, str, str]:
     """
     Resolves the latitude and longitude for a given farm.
@@ -80,15 +127,14 @@ def resolve_farm_coordinates(farm: FarmProfile) -> Tuple[float, float, bool, str
 
     # Lookup district centroid
     dist_clean = (farm.district or "").strip()
-    match = BANGLADESH_DISTRICT_COORDINATES.get(dist_clean)
+    match = _DISTRICTS_BY_NAME.get(_district_lookup_key(dist_clean))
     if not match and dist_clean:
-        # Support Bangla district names as well as legacy English spellings.
-        for d_key, data in BANGLADESH_DISTRICT_COORDINATES.items():
-            english = d_key.casefold()
-            district = dist_clean.casefold()
-            if data["bn"] == dist_clean or district == english or district in english:
-                match = data
-                break
+        # Keep the existing partial English lookup for legacy farm profiles.
+        district = dist_clean.casefold()
+        match = next(
+            (data for key, data in BANGLADESH_DISTRICT_COORDINATES.items() if district in key.casefold()),
+            None,
+        )
 
     if match:
         lat = match["lat"]
@@ -136,8 +182,12 @@ async def fetch_open_meteo_forecast(
                 return payload, True, None
 
         if time.monotonic() < _open_meteo_retry_at:
-            return _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
-        return await _request_open_meteo_forecast(latitude, longitude, cache_key)
+            result = _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
+        else:
+            result = await _request_open_meteo_forecast(latitude, longitude, cache_key)
+        if result[0] is not None or time.monotonic() >= _open_meteo_retry_at:
+            return result
+        return await _request_visual_crossing_forecast(cache_key)
 
 
 def _cached_forecast_or_error(cache_key, message):
@@ -209,6 +259,81 @@ async def _request_open_meteo_forecast(latitude: float, longitude: float, cache_
     except (httpx.RequestError, ValueError) as error:
         logger.warning("Open-Meteo forecast request did not return forecast data: %s", type(error).__name__)
         return _cached_forecast_or_error(cache_key, "আবহাওয়া সার্ভার থেকে তথ্য পাওয়া যায়নি।")
+
+
+async def _request_visual_crossing_forecast(cache_key):
+    global _visual_crossing_retry_at
+    if time.monotonic() < _visual_crossing_retry_at:
+        return _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
+
+    latitude, longitude = cache_key
+    start = date.fromisoformat(get_current_dhaka_date())
+    end = start + timedelta(days=6)
+    params = {
+        "unitGroup": "metric",
+        "include": "days,current",
+        "elements": "datetime,datetimeEpoch,temp,tempmax,tempmin,precip,precipprob,humidity,windspeed,icon",
+        "contentType": "json",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=VISUAL_CROSSING_TIMEOUT_SECONDS) as client:
+            response = await client.get(
+                f"{VISUAL_CROSSING_URL}/{latitude:.4f},{longitude:.4f}/{start}/{end}",
+                params=params,
+                headers={"Accept-Encoding": "gzip"},
+            )
+            response.raise_for_status()
+            data = _adapt_visual_crossing_forecast(response.json(), start, end)
+            _FORECAST_CACHE[cache_key] = (time.time(), data)
+            return data, False, None
+    except httpx.HTTPStatusError as error:
+        status = error.response.status_code
+        if status == 429:
+            delay = _rate_limit_delay(error.response.headers.get("Retry-After"))
+            _visual_crossing_retry_at = max(_visual_crossing_retry_at, time.monotonic() + delay)
+        logger.warning("Visual Crossing forecast request failed with HTTP %s", status)
+    except (httpx.RequestError, ValueError, OverflowError) as error:
+        logger.warning("Visual Crossing forecast unavailable: %s", type(error).__name__)
+    return _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
+
+
+def _adapt_visual_crossing_forecast(payload, start: date, end: date):
+    if not isinstance(payload, dict) or payload.get("timezone") != "Asia/Dhaka":
+        raise ValueError("Expected a forecast in Asia/Dhaka")
+    rows = {
+        row["datetime"]: row
+        for row in (payload.get("days") or [])
+        if isinstance(row, dict) and isinstance(row.get("datetime"), str)
+    }
+    days = [(start + timedelta(days=index)).isoformat() for index in range((end - start).days + 1)]
+    if any(
+        day not in rows or any(
+            not isinstance(rows[day].get(field), (float, int))
+            for field in _VISUAL_CROSSING_METRICS.values()
+        )
+        for day in days
+    ):
+        raise ValueError("Incomplete Visual Crossing daily forecast")
+    daily = {"time": days}
+    for key, field in _VISUAL_CROSSING_METRICS.items():
+        daily[key] = [rows[day][field] for day in days]
+    daily["weather_code"] = [_VISUAL_CROSSING_ICON_CODES.get(rows[day].get("icon"), -1) for day in days]
+
+    current = {}
+    conditions = payload.get("currentConditions")
+    if isinstance(conditions, dict) and isinstance(conditions.get("datetimeEpoch"), (float, int)):
+        current = {
+            "time": datetime.fromtimestamp(conditions["datetimeEpoch"], DHAKA_TZ).isoformat(),
+            "temperature_2m": conditions.get("temp"),
+            "weather_code": _VISUAL_CROSSING_ICON_CODES.get(conditions.get("icon"), -1),
+        }
+    return {
+        "daily": daily,
+        "current": current,
+        "_agrisphere_fetched_at": datetime.now(DHAKA_TZ).isoformat(),
+        "_agrisphere_provider": VISUAL_CROSSING_NAME,
+        "_agrisphere_provider_url": VISUAL_CROSSING_SOURCE,
+    }
 
 
 # =============================================================================
@@ -362,6 +487,8 @@ def normalize_open_meteo_response(
 
     return FarmWeatherForecastResponse(
         status="cached" if is_cached else "ok",
+        provider=raw_data.get("_agrisphere_provider", "Open-Meteo API (CC BY 4.0)"),
+        provider_url=raw_data.get("_agrisphere_provider_url", "https://open-meteo.com"),
         generated_at=fetched_at or now_iso,
         is_cached=is_cached,
         cache_expires_at=cache_expires,
