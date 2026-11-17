@@ -348,7 +348,7 @@ export function WorkspacePage() {
         onKeyDown={(event) => {
           if (event.key === 'Escape' && isMobileDrawerOpen) closeDrawer();
           if (event.key !== 'Tab' || !isMobileDrawerOpen) return;
-          const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), summary, a[href]')]
+          const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), summary, a[href]'))
             .filter((control) => control.getClientRects().length);
           if (controls.length === 0) return;
           const edge = event.shiftKey ? controls[0] : controls.at(-1);
