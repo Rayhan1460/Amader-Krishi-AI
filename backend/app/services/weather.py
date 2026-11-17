@@ -6,7 +6,9 @@ import httpx
 import logging
 import asyncio
 import time
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
+from email.utils import parsedate_to_datetime
+from weakref import WeakValueDictionary
 from typing import Optional, List, Dict, Any, Tuple
 from zoneinfo import ZoneInfo
 from sqlalchemy.orm import Session
@@ -31,9 +33,13 @@ logger = logging.getLogger(__name__)
 CACHE_TTL_SECONDS = 1800  # 30 minutes in-memory cache
 OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 HTTP_TIMEOUT_SECONDS = 8.0
+OPEN_METEO_DEFAULT_COOLDOWN_SECONDS = 300
 
 # In-memory thread-safe forecast cache: {(lat_4dec, lon_4dec): (cached_time_epoch_float, forecast_response_dict)}
 _FORECAST_CACHE: Dict[Tuple[float, float], Tuple[float, Dict[str, Any]]] = {}
+_FORECAST_LOCKS: WeakValueDictionary[Tuple[float, float], asyncio.Lock] = WeakValueDictionary()
+_open_meteo_retry_at = 0.0
+_RATE_LIMIT_MESSAGE = "আবহাওয়া সেবায় অনুরোধের সীমা পৌঁছেছে। কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
 # Bengali day name mappings
 BENGALI_DAY_NAMES = {
@@ -112,15 +118,52 @@ async def fetch_open_meteo_forecast(
     Returns: (raw_data_dict_or_None, is_from_cache, error_message_or_None)
     """
     cache_key = (round(latitude, 4), round(longitude, 4))
-    current_ts = time.time()
+    requested_at = time.time()
+    lock = _FORECAST_LOCKS.get(cache_key)
+    if lock is None:
+        lock = asyncio.Lock()
+        _FORECAST_LOCKS[cache_key] = lock
 
-    # 1. Check cache freshness
-    if not bypass_cache and cache_key in _FORECAST_CACHE:
-        cached_ts, cached_payload = _FORECAST_CACHE[cache_key]
-        if (current_ts - cached_ts) < CACHE_TTL_SECONDS and cached_payload["daily"]["time"][0] == get_current_dhaka_date():
-            return cached_payload, True, None
+    async with lock:
+        cached = _FORECAST_CACHE.get(cache_key)
+        if cached:
+            cached_at, payload = cached
+            fresh = (
+                time.time() - cached_at < CACHE_TTL_SECONDS
+                and payload["daily"]["time"][0] == get_current_dhaka_date()
+            )
+            if fresh and (not bypass_cache or cached_at >= requested_at):
+                return payload, True, None
 
-    # 2. Call external Open-Meteo API
+        if time.monotonic() < _open_meteo_retry_at:
+            return _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
+        return await _request_open_meteo_forecast(latitude, longitude, cache_key)
+
+
+def _cached_forecast_or_error(cache_key, message):
+    cached = _FORECAST_CACHE.get(cache_key)
+    if cached and cached[1]["daily"]["time"][-1] >= get_current_dhaka_date():
+        return cached[1], True, message
+    return None, False, message
+
+
+def _rate_limit_delay(retry_after: str | None) -> float:
+    if retry_after:
+        try:
+            return max(1, int(retry_after))
+        except ValueError:
+            try:
+                retry_date = parsedate_to_datetime(retry_after)
+                if retry_date.tzinfo is None:
+                    retry_date = retry_date.replace(tzinfo=timezone.utc)
+                return max(1, (retry_date - datetime.now(timezone.utc)).total_seconds())
+            except (ValueError, TypeError, OverflowError):
+                pass
+    return OPEN_METEO_DEFAULT_COOLDOWN_SECONDS
+
+
+async def _request_open_meteo_forecast(latitude: float, longitude: float, cache_key):
+    global _open_meteo_retry_at
     params = {
         "latitude": latitude,
         "longitude": longitude,
@@ -151,21 +194,21 @@ async def fetch_open_meteo_forecast(
             _FORECAST_CACHE[cache_key] = (time.time(), data)
             return data, False, None
 
+    except httpx.HTTPStatusError as error:
+        status_code = error.response.status_code
+        if status_code == 429:
+            delay = _rate_limit_delay(error.response.headers.get("Retry-After"))
+            _open_meteo_retry_at = max(_open_meteo_retry_at, time.monotonic() + delay)
+            logger.warning("Open-Meteo returned HTTP 429; pausing requests for %.0f seconds", delay)
+            return _cached_forecast_or_error(cache_key, _RATE_LIMIT_MESSAGE)
+        logger.warning("Open-Meteo forecast request failed with HTTP %s", status_code)
+        return _cached_forecast_or_error(cache_key, "আবহাওয়া সার্ভার থেকে তথ্য পাওয়া যায়নি।")
     except httpx.TimeoutException:
-        logger.warning(f"Open-Meteo request timed out for coordinates ({latitude}, {longitude})")
-        # Return stale cache if available
-        if cache_key in _FORECAST_CACHE:
-            _, stale_data = _FORECAST_CACHE[cache_key]
-            return stale_data, True, "বাহ্যিক আবহাওয়া সার্ভারের বিলম্বের কারণে সংরক্ষিত পূর্বাভাস দেখানো হচ্ছে।"
-        return None, False, "আবহাওয়া সেবা অনুরোধের সময়সীমা অতিক্রম করেছে।"
-
-    except Exception as e:
-        logger.error(f"Open-Meteo API request error: {e}")
-        # Return stale cache if available
-        if cache_key in _FORECAST_CACHE:
-            _, stale_data = _FORECAST_CACHE[cache_key]
-            return stale_data, True, "সংরক্ষিত পূর্বাভাস দেখানো হচ্ছে (লাইভ সার্ভার সাময়িক অনুপলব্ধ)।"
-        return None, False, f"আবহাওয়া সার্ভার থেকে তথ্য পাওয়া যায়নি: {str(e)}"
+        logger.warning("Open-Meteo request timed out for coordinates (%s, %s)", latitude, longitude)
+        return _cached_forecast_or_error(cache_key, "আবহাওয়া সেবা অনুরোধের সময়সীমা অতিক্রম করেছে।")
+    except (httpx.RequestError, ValueError) as error:
+        logger.warning("Open-Meteo forecast request did not return forecast data: %s", type(error).__name__)
+        return _cached_forecast_or_error(cache_key, "আবহাওয়া সার্ভার থেকে তথ্য পাওয়া যায়নি।")
 
 
 # =============================================================================
