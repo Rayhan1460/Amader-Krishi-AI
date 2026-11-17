@@ -78,12 +78,11 @@ function Action({ to, children, variant = 'gold' }: { to: string; children: Reac
 function Carousel({ onVideo, videoOpen }: { onVideo: () => void; videoOpen: boolean }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [focused, setFocused] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [slideLinkFocused, setSlideLinkFocused] = useState(false);
   const [hidden, setHidden] = useState(() => document.hidden);
   const touch = useRef<{ x: number; y: number } | null>(null);
   const current = slides[index];
-  const running = playing && !focused && !hovered && !hidden && !videoOpen;
+  const running = playing && !slideLinkFocused && !hidden && !videoOpen;
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -116,10 +115,8 @@ function Carousel({ onVideo, videoOpen }: { onVideo: () => void; videoOpen: bool
   }
 
   return <section className="ak-hero" style={carouselStyle} aria-label="কৃষির হাইলাইট"
-    onFocusCapture={() => setFocused(true)}
-    onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
-    onPointerEnter={event => { if (event.pointerType === 'mouse') setHovered(true); }}
-    onPointerLeave={() => setHovered(false)}
+    onFocusCapture={event => setSlideLinkFocused(event.target.matches('.ak-hero-actions .ak-button--gold:focus-visible'))}
+    onBlurCapture={() => setSlideLinkFocused(false)}
     onKeyDown={event => {
       if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
         event.preventDefault();
@@ -144,7 +141,7 @@ function Carousel({ onVideo, videoOpen }: { onVideo: () => void; videoOpen: bool
         </div>
       </div>
       <button type="button" className="ak-pause" aria-label={playing ? 'স্লাইড থামান' : 'স্লাইড চালু করুন'}
-        title={playing ? 'স্লাইড থামান' : 'স্লাইড চালু করুন'} onClick={() => { setPlaying(value => !value); setFocused(false); setHovered(false); }}>
+        title={playing ? 'স্লাইড থামান' : 'স্লাইড চালু করুন'} onClick={() => setPlaying(value => !value)}>
         {playing ? <Pause size={21} aria-hidden="true"/> : <Play size={19} aria-hidden="true"/>}
       </button>
     </div>
@@ -177,8 +174,14 @@ export function LandingHome() {
       <div className="ak-header-inner">
         <Brand/>
         <nav className="ak-nav" aria-label="প্রধান লিংক">
-          <Link to="/workspace">কৃষকের জন্য</Link>
-          <Link to="/buyer">ক্রেতার বাজার</Link>
+          <Link className="ak-nav-action ak-nav-action--farmer" to="/workspace">
+            <span className="ak-nav-icon"><Sprout size={18} aria-hidden="true"/></span>
+            <span>কৃষকের জন্য</span><ArrowRight className="ak-nav-arrow" size={16} aria-hidden="true"/>
+          </Link>
+          <Link className="ak-nav-action ak-nav-action--buyer" to="/buyer">
+            <span className="ak-nav-icon"><ShoppingBasket size={18} aria-hidden="true"/></span>
+            <span>ক্রেতার বাজার</span><ArrowRight className="ak-nav-arrow" size={16} aria-hidden="true"/>
+          </Link>
         </nav>
         <Link className="ak-admin" to="/admin"><LockKeyhole size={18} aria-hidden="true"/>অ্যাডমিন লগইন</Link>
       </div>
