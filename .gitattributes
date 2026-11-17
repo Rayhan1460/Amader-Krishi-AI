@@ -1,0 +1,2 @@
+AgriSphere_Trained_Intent_Model_PORTABLE_20261111_172637_799172_UTC.zip filter=lfs diff=lfs merge=lfs -text
+model_assets/intent_classifier/AgriSphere_Trained_Intent_Model/encoder/model.safetensors filter=lfs diff=lfs merge=lfs -text

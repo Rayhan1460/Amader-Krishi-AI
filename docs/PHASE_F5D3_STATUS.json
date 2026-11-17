@@ -1,0 +1,115 @@
+{
+  "phase": "F5D-3",
+  "phase_name": "Tomato & Rice Disease AI Integration with Crop Monitoring",
+  "timestamp": "2026-11-03T17:05:00+06:00",
+  "verdict": "PHASE F5D-3 VERIFIED — READY FOR F5D-4",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "database_integrity": {
+    "main_database": "backend/app/agri.db",
+    "counts_before_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0
+    },
+    "counts_after_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0
+    },
+    "drift_detected": false
+  },
+  "test_isolation": {
+    "e2e_database": "backend/tests/e2e_test.db",
+    "e2e_backend_port": 8001,
+    "e2e_frontend_port": 5174,
+    "unit_test_database": "backend/tests/temp_test_suite.db"
+  },
+  "ai_models_integrated": [
+    {
+      "model_id": "tomato_disease_v3",
+      "classes_count": 8,
+      "classes": [
+        "Tomato___Bacterial_spot",
+        "Tomato___Early_blight",
+        "Tomato___Late_blight",
+        "Tomato___Leaf_Mold",
+        "Tomato___Septoria_leaf_spot",
+        "Tomato___Spider_mites Two-spotted_spider_mite",
+        "Tomato___Target_Spot",
+        "Tomato___healthy"
+      ],
+      "supported_tokens": ["tomato", "tomatoes", "টমেটো", "টমেটোর"],
+      "research_caveat": "Trained on open-access research benchmark datasets (PlantDoc). Laboratory classification is not clinical certification."
+    },
+    {
+      "model_id": "rice_disease",
+      "classes_count": 7,
+      "classes": [
+        "bacterial_leaf_blight",
+        "brown_spot",
+        "healthy",
+        "leaf_blast",
+        "leaf_scald",
+        "narrow_brown_spot",
+        "neck_blast"
+      ],
+      "supported_tokens": ["rice", "paddy", "ধান", "ধানের", "বোরো", "আমন", "আউশ", "boro", "aman", "aus"],
+      "research_caveat": "Deep learning vision model for academic and experimental advisory. Always consult your Upazila Agriculture Officer (SAAO)."
+    }
+  ],
+  "backend_deliverables": {
+    "endpoints": [
+      "GET /api/cultivation/crops/{crop_id}/disease-model (checks crop-to-model compatibility & returns classes + caveats)",
+      "POST /api/cultivation/observations/{observation_id}/link-prediction (links audited prediction record to crop observation)",
+      "DELETE /api/cultivation/observations/{observation_id}/link-prediction (unlinks prediction record cleanly)"
+    ],
+    "matching_logic": "Canonical token parsing rejecting arbitrary substring matches (e.g. wheat, potato, mustard correctly flagged unsupported)",
+    "cross_user_isolation": "Strictly enforced ownership checks on farm, crop, observation, and prediction records",
+    "scientific_integrity": "Linking predictions preserves farmer_reported_condition and never mutates calendar tasks"
+  },
+  "frontend_deliverables": {
+    "component": "frontend/src/components/workspace/CropMonitoringDashboard.tsx",
+    "sub_tab": "AI পাতা রোগ বিশ্লেষণ (data-testid='tab-disease-analysis')",
+    "supported_crop_view": "Model banner, supported classes, research caveat, dropzone, synthetic leaf generator, preview, analyze button",
+    "unsupported_crop_view": "Clear amber warning card explaining lack of vision model for other crops with navigation to regular scouting",
+    "result_card": "Predicted disease in Bangla/English, uncalibrated confidence score badge, full class probability breakdown, linking actions",
+    "linking_features": "Link to existing observation, create new observation with prediction attached, unlink button on observation items"
+  },
+  "verification_results": {
+    "backend_disease_integration_tests": "15/15 PASS",
+    "backend_cultivation_tests": "14/14 PASS",
+    "backend_crop_recommendation_tests": "14/14 PASS",
+    "backend_soil_tests": "16/16 PASS",
+    "backend_model_integrity": "21/21 PASS",
+    "playwright_f5d3_e2e": "31/31 PASS",
+    "frontend_production_build": "PASS (0 errors)",
+    "database_drift": "0 (zero records written to main agri.db)"
+  },
+  "screenshots": [
+    "docs/screenshots/f5d3_disease_result_card.png",
+    "docs/screenshots/f5d3_disease_analysis_desktop_1440.png",
+    "docs/screenshots/f5d3_unsupported_crop_view.png",
+    "docs/screenshots/f5d3_disease_analysis_mobile_375.png"
+  ]
+}
+

@@ -1,0 +1,49 @@
+{
+  "columns": [
+    "Year",
+    "District",
+    "Division",
+    "Season",
+    "Rain",
+    "Sunshine",
+    "Wind",
+    "TempRange",
+    "NDVI_mean_season",
+    "NDVI_max_season",
+    "NDVI_integral",
+    "NDVI_anom",
+    "Pct_irrigated",
+    "NDVI_peak_month",
+    "NDVI_peak_doy",
+    "NDVI_mean_trend2",
+    "Rain_ma3",
+    "Sunshine_ma3",
+    "NDVI_mean_season_ma3",
+    "ndvi_rain_interaction"
+  ],
+  "numeric": [
+    "Year",
+    "Rain",
+    "Sunshine",
+    "Wind",
+    "TempRange",
+    "NDVI_mean_season",
+    "NDVI_max_season",
+    "NDVI_integral",
+    "NDVI_anom",
+    "Pct_irrigated",
+    "NDVI_peak_month",
+    "NDVI_peak_doy",
+    "NDVI_mean_trend2",
+    "Rain_ma3",
+    "Sunshine_ma3",
+    "NDVI_mean_season_ma3",
+    "ndvi_rain_interaction"
+  ],
+  "categorical": [
+    "District",
+    "Division",
+    "Season"
+  ],
+  "target": "Yield_t_ha"
+}

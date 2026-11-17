@@ -1,0 +1,15 @@
+{
+  "held_out_years": [
+    2013,
+    2014
+  ],
+  "n_train": 364,
+  "n_test": 95,
+  "mae": 0.26002852434018975,
+  "baseline_mae": 0.6995651836636538,
+  "r2": 0.8315855738872634,
+  "target_column": "Yield_t_ha",
+  "source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Inputs/PUBLIC_SOURCE_CACHE/cropintel/models/training_panel_richlags.csv",
+  "target_unit": "inspect original source metadata",
+  "caveat": "Retrospective regional yield benchmark. Some in-season weather features may be unavailable at prediction time. NOT farm-level yield."
+}

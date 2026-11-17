@@ -1,0 +1,52 @@
+/* Scoped styling for Crop Advisor only. No global CSS or other page overrides. */
+.crop-advisor-workspace {
+  background-image: radial-gradient(ellipse at 45% 110%, rgba(28, 98, 66, .35), transparent 65%);
+}
+.crop-advisor-candidate {
+  box-shadow: 0 10px 36px rgba(0, 12, 6, .12);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.crop-advisor-candidate:hover {
+  border-color: #547a4c;
+  box-shadow: 0 14px 38px rgba(0, 15, 8, .2);
+  transform: translateY(-2px);
+}
+/* Keep the existing research workflow but unify older white cards with the Lovable-style dark surfaces. */
+.crop-advisor-form [class~="bg-white"] {
+  background-color: #0a3023;
+  border-color: #285541;
+  color: #f3f7f0;
+}
+.crop-advisor-form [class*="bg-cream-50"],
+.crop-advisor-form [class*="bg-sage-50"] {
+  background-color: #133e2c;
+  color: #e5efe5;
+}
+.crop-advisor-form [class*="border-sage-"],
+.crop-advisor-form [class*="border-sage-100"] {
+  border-color: #315e47;
+}
+.crop-advisor-form [class*="text-charcoal-"],
+.crop-advisor-form [class*="text-sage-600"],
+.crop-advisor-form [class*="text-sage-700"],
+.crop-advisor-form [class*="text-sage-800"] {
+  color: #e1eee2;
+}
+.crop-advisor-form select,
+.crop-advisor-form input:not([type="checkbox"]),
+.crop-advisor-form textarea {
+  color-scheme: dark;
+  background-color: #052b1c;
+  color: #f5f8f2;
+  border-color: #39694d;
+}
+.crop-advisor-form :is(select,input,textarea):focus-visible {
+  outline: 2px solid #f0be6a;
+  outline-offset: 1px;
+}
+/* Preserve text contrast in native select menus. */
+.crop-advisor-form option { background-color: #123827; color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .crop-advisor-candidate { transition: none; }
+  .crop-advisor-candidate:hover { transform: none; }
+}

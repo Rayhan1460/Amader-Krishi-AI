@@ -1,0 +1,22 @@
+[
+  {
+    "question": "আমার টমেটো পাতায় দাগ কেন?",
+    "predicted_intent": "plant_disease_pest",
+    "uncalibrated_score": 0.0976
+  },
+  {
+    "question": "Amar jomite pani jome",
+    "predicted_intent": "non_agriculture",
+    "uncalibrated_score": 0.0981
+  },
+  {
+    "question": "Which rice seed variety is suitable?",
+    "predicted_intent": "seeds_varieties",
+    "uncalibrated_score": 0.1102
+  },
+  {
+    "question": "Write a Python program",
+    "predicted_intent": "non_agriculture",
+    "uncalibrated_score": 0.131
+  }
+]

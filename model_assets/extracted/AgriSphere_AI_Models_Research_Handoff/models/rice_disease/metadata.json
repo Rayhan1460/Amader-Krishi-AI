@@ -1,0 +1,21 @@
+{
+  "dataset_source": "Project-AgML Rice Raw (7 classes; excludes ambiguous Rice label)",
+  "image_count": 2717,
+  "train": 1901,
+  "val": 408,
+  "test": 408,
+  "input": "RGB 224x224 float pixel 0..255; preprocessing inside model",
+  "split": "image-stratified; source field/plant IDs unavailable, possible field leakage",
+  "accuracy": 0.5735294117647058,
+  "macro_f1": 0.5476673258039353,
+  "limitations": "Research prototype; external field-level evaluation needed",
+  "class_names": [
+    "Healthy",
+    "Insect",
+    "Leaf Scald",
+    "Rice Blast",
+    "Rice Leaffolder",
+    "Rice Stripes",
+    "Rice Tungro"
+  ]
+}

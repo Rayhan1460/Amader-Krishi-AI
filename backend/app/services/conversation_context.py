@@ -1,0 +1,310 @@
+
+"""Conservative, one-step conversation follow-up support."""
+
+import re
+
+
+HEADINGS = {
+    "rice": "### Rice Crop Pathology Follow-up",
+    "tomato": "### Tomato Health Follow-up",
+    "fish": "### Fish Farming Follow-up",
+    "livestock": "### Livestock & Poultry Follow-up",
+    "irrigation": "### Irrigation & Water Management Follow-up",
+}
+
+REPLIES = {
+    "rice": (
+        "\u0986\u0997\u09c7\u09b0 \u09a7\u09be\u09a8\u09c7\u09b0 "
+        "\u09aa\u09be\u09a4\u09be\u09b0 \u09b8\u09ae\u09b8\u09cd\u09af\u09be "
+        "\u09a8\u09bf\u09df\u09c7 \u09aa\u09be\u09a4\u09be\u09b0 \u099b\u09ac\u09bf, "
+        "\u09a6\u09be\u0997\u09c7\u09b0 \u09b0\u0982 "
+        "\u0993 \u0997\u09be\u099b\u09c7\u09b0 \u09ac\u09df\u09b8 "
+        "\u099c\u09be\u09a8\u09be\u09a8\u0964 "
+        "\u09b0\u09cb\u0997 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4 "
+        "\u09a8\u09be \u0995\u09b0\u09c7 \u09b8\u09cd\u09aa\u09cd\u09b0\u09c7 "
+        "\u0995\u09b0\u09ac\u09c7\u09a8 \u09a8\u09be\u0964"
+    ),
+    "tomato": (
+        "\u0986\u0997\u09c7\u09b0 \u099f\u09ae\u09c7\u099f\u09cb\u09b0 "
+        "\u09aa\u09be\u09a4\u09be\u09b0 \u09b8\u09ae\u09b8\u09cd\u09af\u09be "
+        "\u09a8\u09bf\u09df\u09c7 \u09aa\u09be\u09a4\u09be\u09b0 \u099b\u09ac\u09bf, "
+        "\u09a6\u09be\u0997\u09c7\u09b0 \u09b0\u0982 "
+        "\u0993 \u0997\u09be\u099b\u09c7\u09b0 \u09ac\u09df\u09b8 "
+        "\u099c\u09be\u09a8\u09be\u09a8\u0964 "
+        "\u09b0\u09cb\u0997 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4 "
+        "\u09a8\u09be \u0995\u09b0\u09c7 \u09b8\u09cd\u09aa\u09cd\u09b0\u09c7 "
+        "\u0995\u09b0\u09ac\u09c7\u09a8 \u09a8\u09be\u0964"
+    ),
+    "fish": (
+        "\u0986\u0997\u09c7\u09b0 \u09ae\u09be\u099b \u099a\u09be\u09b7 "
+        "\u09ac\u09bf\u09b7\u09df\u09c7 \u09ae\u09be\u099b\u09c7\u09b0 "
+        "\u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf, "
+        "\u09aa\u09c1\u0995\u09c1\u09b0\u09c7\u09b0 \u09aa\u09be\u09a8\u09bf\u09b0 "
+        "\u09b0\u0982 \u0993 \u09ae\u09be\u099b\u09c7\u09b0 \u0986\u099a\u09b0\u09a3 "
+        "\u099c\u09be\u09a8\u09be\u09a8\u0964 "
+        "\u0995\u09be\u09b0\u09a3 \u09a8\u09be \u099c\u09c7\u09a8\u09c7 "
+        "\u0993\u09b7\u09c1\u09a7 \u09a6\u09c7\u09ac\u09c7\u09a8 \u09a8\u09be\u0964"
+    ),
+    "livestock": (
+        "\u0986\u0997\u09c7\u09b0 \u0997\u09ac\u09be\u09a6\u09bf\u09aa\u09b6\u09c1\u09b0 "
+        "\u09ac\u09bf\u09b7\u09df\u09c7 \u09aa\u09cd\u09b0\u09be\u09a3\u09c0\u09b0 "
+        "\u09ac\u09df\u09b8, \u0993\u099c\u09a8 "
+        "\u0993 \u0996\u09be\u09ac\u09be\u09b0\u09c7\u09b0 "
+        "\u09a4\u09a5\u09cd\u09af \u099c\u09be\u09a8\u09be\u09a8\u0964 "
+        "\u09a4\u09a5\u09cd\u09af \u099b\u09be\u09dc\u09be "
+        "\u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be "
+        "\u0993\u09b7\u09c1\u09a7\u09c7\u09b0 \u09a1\u09cb\u099c "
+        "\u09a8\u09bf\u09b0\u09cd\u09a7\u09be\u09b0\u09a3 "
+        "\u0995\u09b0\u09be \u09af\u09be\u09ac\u09c7 \u09a8\u09be\u0964"
+    ),
+    "irrigation": (
+        "\u0986\u0997\u09c7\u09b0 \u09b8\u09c7\u099a\u09c7\u09b0 "
+        "\u09aa\u09cd\u09b0\u09b6\u09cd\u09a8\u09c7 "
+        "\u09ab\u09b8\u09b2\u09c7\u09b0 \u09ac\u09df\u09b8, "
+        "\u09ae\u09be\u099f\u09bf\u09b0 \u09a7\u09b0\u09a8 "
+        "\u0993 \u09ac\u09c3\u09b7\u09cd\u099f\u09bf\u09b0 "
+        "\u09a4\u09a5\u09cd\u09af \u099c\u09be\u09a8\u09be\u09a8\u0964 "
+        "\u098f\u0996\u09a8\u0987 \u09a8\u09bf\u09b0\u09cd\u09a6\u09bf\u09b7\u09cd\u099f "
+        "\u09b8\u09c7\u099a\u09c7\u09b0 \u09b8\u09ae\u09df "
+        "\u09ac\u09b2\u09be \u09af\u09be\u099a\u09cd\u099b\u09c7 \u09a8\u09be\u0964"
+    ),
+}
+
+ANIMALS = (
+    "\u0997\u09b0\u09c1", "\u0997\u09be\u09ad\u09c0",
+    "\u099b\u09be\u0997\u09b2", "\u09ae\u09c1\u09b0\u0997\u09bf",
+    "\u09b9\u09be\u0981\u09b8",
+    "cow", "cattle", "goat", "chicken", "duck", "poultry",
+)
+
+CROPS = (
+    "\u09a7\u09be\u09a8", "\u099f\u09ae\u09c7\u099f\u09cb",
+    "rice", "tomato",
+)
+
+NEW_TOPICS = (
+    CROPS
+    + ANIMALS
+    + (
+        "\u09ae\u09be\u099b", "fish", "aquaculture",
+        "\u09b8\u09c7\u099a", "irrigation",
+    )
+)
+
+BLOCKED = (
+    "\u09a6\u09be\u09ae", "\u09a6\u09b0",
+    "\u09ac\u09be\u099c\u09be\u09b0", "\u09ae\u09c2\u09b2\u09cd\u09af",
+    "price", "market",
+    "\u09ac\u09a8\u09cd\u09af\u09be", "flood",
+    "\u09b8\u09be\u09b0", "fertilizer",
+    "\u09ae\u09be\u099f\u09bf", "soil",
+    "\u0995\u09ac\u09bf\u09a4\u09be", "\u0997\u09b2\u09cd\u09aa",
+    "\u099b\u09dc\u09be", "\u099b\u09ac\u09bf", "\u0986\u0981\u0995",
+    "\u09b2\u09bf\u0996", "\u09b2\u09c7\u0996",
+    "poem", "story", "draw", "sketch",
+    "\u0985\u09a8\u09c1\u09ac\u09be\u09a6", "translate",
+    "\u0986\u09ac\u09b9\u09be\u0993\u09df\u09be", "weather",
+    "\u09a8\u09c7\u0987", "\u09b9\u09df\u09a8\u09bf",
+    "\u09aa\u09dc\u09c7 \u09a8\u09be",
+    "\u09aa\u09dc\u09c7\u09a8\u09bf",
+    "\u09af\u09a6\u09bf", "\u09b9\u09b2\u09c7",
+)
+
+FOLLOWUP_STARTS = (
+    "\u098f\u0996\u09a8",
+    "\u0986\u09b0",
+    "\u0995\u09a4",
+    "\u098f\u09b0\u09aa\u09b0",
+    "\u09a4\u09be\u09b9\u09b2\u09c7",
+    "\u09aa\u09be\u09a8\u09bf \u09b0\u0982",
+    "\u09aa\u09be\u09a8\u09bf\u09b0 \u09b0\u0982",
+    "what next",
+    "what should",
+    "how much",
+    "how often",
+)
+
+
+def has(text, word):
+    if word.isascii() and word.isalpha():
+        return re.search(
+            r"(?<![a-z])" + re.escape(word) + r"(?![a-z])",
+            text,
+        ) is not None
+    return word in text
+
+
+def contains_any(text, words):
+    return any(has(text, word) for word in words)
+
+
+def previous_topic(previous):
+    if contains_any(previous, BLOCKED):
+        return None
+
+    fish = contains_any(
+        previous,
+        ("\u09ae\u09be\u099b", "fish", "aquaculture"),
+    )
+    animal = contains_any(previous, ANIMALS)
+
+    rice = contains_any(
+        previous, ("\u09a7\u09be\u09a8", "rice")
+    )
+    tomato = contains_any(
+        previous, ("\u099f\u09ae\u09c7\u099f\u09cb", "tomato")
+    )
+    irrigation = contains_any(
+        previous, ("\u09b8\u09c7\u099a", "irrigation")
+    )
+
+    # Ambiguous mixed-topic histories must not be inherited.
+    if fish and (animal or rice or tomato or irrigation):
+        return None
+
+    if animal and (rice or tomato or irrigation):
+        return None
+
+    if rice and tomato:
+        return None
+
+    if irrigation:
+        if tomato:
+            return None
+        return "irrigation"
+
+    if fish:
+        return "fish"
+
+    if animal:
+        return "livestock"
+
+    leaf_problem = contains_any(
+        previous,
+        (
+            "\u09aa\u09be\u09a4\u09be",
+            "\u09a6\u09be\u0997",
+            "\u09b0\u09cb\u0997",
+            "blight",
+            "blast",
+        ),
+    )
+
+    if rice and leaf_problem:
+        return "rice"
+
+    if tomato and leaf_problem:
+        return "tomato"
+
+    return None
+
+
+
+# STEP_91_SUPPORTED_FOLLOWUPS
+# Deliberately narrow: unknown requests fall back to normal chat.
+def is_supported_followup(current, topic):
+    normalized = " ".join(
+        current.strip().lower().rstrip("?!\u0964. ").split()
+    )
+
+    common = {
+        "\u098f\u0996\u09a8 \u0995\u09c0 \u0995\u09b0\u09ac",
+        "\u098f\u0996\u09a8 \u0995\u09bf \u0995\u09b0\u09ac",
+        "\u0986\u09b0 \u0995\u09c0 \u09a4\u09a5\u09cd\u09af \u09a6\u09c7\u09ac",
+        "\u0986\u09b0 \u0995\u09bf \u09a4\u09a5\u09cd\u09af \u09a6\u09c7\u09ac",
+    }
+
+    crop_followups = {
+        "\u0986\u09b0 \u0995\u09c0 \u09b2\u0995\u09cd\u09b7\u09a3 \u09a6\u09c7\u0996\u09ac",
+        "\u0986\u09b0 \u0995\u09bf \u09b2\u0995\u09cd\u09b7\u09a3 \u09a6\u09c7\u0996\u09ac",
+        "\u0986\u09b0 \u0995\u09c0 \u09b2\u0995\u09cd\u09b7\u09a3",
+        "\u0986\u09b0 \u0995\u09bf \u09b2\u0995\u09cd\u09b7\u09a3",
+    }
+
+    supported_by_topic = {
+        "rice": crop_followups,
+        "tomato": crop_followups,
+        "fish": {
+            "\u09aa\u09be\u09a8\u09bf \u09b0\u0982 \u0995\u09c7\u09ae\u09a8",
+            "\u09aa\u09be\u09a8\u09bf\u09b0 \u09b0\u0982 \u0995\u09c7\u09ae\u09a8",
+            "\u09aa\u09be\u09a8\u09bf \u09b0\u0982 \u0995\u09c7\u09ae\u09a8 \u09b9\u0993\u09df\u09be \u0989\u099a\u09bf\u09a4",
+            "\u09aa\u09be\u09a8\u09bf\u09b0 \u09b0\u0982 \u0995\u09c7\u09ae\u09a8 \u09b9\u0993\u09df\u09be \u0989\u099a\u09bf\u09a4",
+        },
+        "livestock": {
+            "\u0995\u09a4\u099f\u09be \u0996\u09be\u09ac\u09be\u09b0 \u09a6\u09c7\u09ac",
+            "\u0995\u09a4\u099f\u09be \u0996\u09be\u09ac\u09be\u09b0 \u09a6\u09bf\u09a4\u09c7 \u09b9\u09ac\u09c7",
+            "\u0995\u09a4 \u0996\u09be\u09ac\u09be\u09b0 \u09a6\u09c7\u09ac",
+        },
+        "irrigation": {
+            "\u0995\u09a4\u09ac\u09be\u09b0 \u09a6\u09bf\u09a4\u09c7 \u09b9\u09ac\u09c7",
+            "\u0995\u09a4\u09ac\u09be\u09b0 \u09aa\u09be\u09a8\u09bf \u09a6\u09c7\u09ac",
+        },
+    }
+
+    return (
+        normalized in common
+        or normalized in supported_by_topic.get(topic, set())
+    )
+
+
+def select_context_followup(messages):
+    """Return (reply, topic) only for a clear one-step follow-up."""
+    if not isinstance(messages, (list, tuple)):
+        return None
+
+    users = [
+        i for i, item in enumerate(messages)
+        if isinstance(item, dict)
+        and item.get("role") == "user"
+    ]
+
+    if len(users) < 2:
+        return None
+
+    previous_index, current_index = users[-2:]
+
+    if current_index != len(messages) - 1:
+        return None
+
+    if current_index - previous_index > 3:
+        return None
+
+    previous = messages[previous_index].get("content")
+    current = messages[current_index].get("content")
+
+    if not isinstance(previous, str):
+        return None
+
+    if not isinstance(current, str):
+        return None
+
+    previous = previous.strip().lower()
+    current = current.strip().lower()
+
+    if not previous or not current:
+        return None
+
+    if len(previous) > 300 or len(current) > 140:
+        return None
+
+    if contains_any(current, BLOCKED + NEW_TOPICS):
+        return None
+
+    topic = previous_topic(previous)
+
+    if topic is None:
+        return None
+
+    # STEP_91_CONTEXT_ALLOWLIST
+    # Reject unrecognized follow-ups rather than guessing.
+    if not is_supported_followup(current, topic):
+        return None
+
+    # Animal feeding must not inherit a crop-disease topic.
+    if contains_any(
+        current, ("\u0996\u09be\u09ac\u09be\u09b0", "feed")
+    ):
+        if topic not in ("livestock", "fish"):
+            return None
+
+    return HEADINGS[topic] + "\n\n" + REPLIES[topic], topic

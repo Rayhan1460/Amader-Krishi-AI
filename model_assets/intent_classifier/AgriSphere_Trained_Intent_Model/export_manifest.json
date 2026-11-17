@@ -1,0 +1,28 @@
+{
+  "project": "AgriSphere-AI",
+  "source_run": "20261111_164920_951335_UTC",
+  "exported_at_utc": "2026-11-11T17:26:37.796063+00:00",
+  "classifier": "LogisticRegression",
+  "encoder": "intfloat/multilingual-e5-small",
+  "encoder_finetuned": false,
+  "labels": [
+    "agri_economics",
+    "crop_cultivation",
+    "fertilizer_nutrients",
+    "fisheries",
+    "harvest_storage",
+    "irrigation_water",
+    "livestock_poultry",
+    "non_agriculture",
+    "plant_disease_pest",
+    "seeds_varieties",
+    "smart_agriculture",
+    "soil_management",
+    "weather_climate"
+  ],
+  "model_sha256": "80d794e854f267f49d42fb5642152ba13810b85837610c531783ce28e334e076",
+  "sklearn_version": "1.6.1",
+  "training_completed": true,
+  "real_world_validated": false,
+  "existing_models_modified": false
+}

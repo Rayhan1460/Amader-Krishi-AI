@@ -1,0 +1,22 @@
+{
+  "source": "https://raw.githubusercontent.com/niteshwayakar/Crop-Recommendation/main/Crop_recommendation.csv",
+  "type": "PUBLIC RESEARCH BENCHMARK; farm suitability not independently validated",
+  "n_rows": 2200,
+  "n_classes": 22,
+  "test_rows": 440,
+  "accuracy": 0.9931818181818182,
+  "macro_f1": 0.9931775541531639,
+  "dummy_macro_f1": 0.003952569169960474,
+  "split": "stratified random 80/20; not geographic/farm/season heldout",
+  "features": [
+    "N",
+    "P",
+    "K",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "label": "label",
+  "model": "RandomForestClassifier"
+}

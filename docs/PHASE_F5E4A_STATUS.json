@@ -1,0 +1,107 @@
+{
+  "phase": "F5E-4A",
+  "name": "Regional Crop Yield AI Integration",
+  "timestamp": "2026-11-03T22:50:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F5E-4A VERIFIED — READY FOR F5E-4B",
+  "metrics": {
+    "playwright_e2e_tests_passed": 23,
+    "playwright_e2e_tests_failed": 0,
+    "targeted_regional_yield_api_tests_passed": 14,
+    "targeted_regional_yield_api_tests_failed": 0,
+    "yield_market_audit_tests_passed": 12,
+    "yield_market_audit_tests_failed": 0,
+    "harvest_api_tests_passed": 19,
+    "harvest_api_tests_failed": 0,
+    "model_integrity_tests_passed": 21,
+    "model_integrity_tests_failed": 0,
+    "total_backend_regression_tests_passed": 66,
+    "frontend_build_status": "SUCCESS",
+    "main_db_drift": 0
+  },
+  "original_model_contract": {
+    "model_id": "regional_crop_yield",
+    "algorithm": "ColumnTransformer + RandomForestRegressor (Scikit-Learn 1.6)",
+    "target_variable": "Yield_t_ha",
+    "target_unit": "tonnes/ha (unverified source unit)",
+    "feature_count": 20,
+    "supported_districts_count": 18,
+    "supported_districts": [
+      "Bogra", "Bogura", "Chandpur", "Chittagong", "Chuadanga",
+      "Comilla", "Cox's Bazar", "Dinajpur", "Feni", "Jessor",
+      "Khagrachhari", "Khulna", "Kushtia", "Noakhali", "Rajshahi",
+      "Rangamati", "Rangpur", "Satkhira"
+    ],
+    "supported_divisions": ["Chittagong", "Khulna", "North region"],
+    "supported_rice_seasons": ["Aman", "Aus", "Boro"],
+    "retraining_executed": false
+  },
+  "deliverables": {
+    "research_panel_component": "frontend/src/components/workspace/tools/RegionalYieldTool.tsx",
+    "harvest_dashboard_integration": "frontend/src/components/workspace/HarvestManagementDashboard.tsx (regional-yield-research-banner)",
+    "backend_validation": "backend/app/api/predictions.py (strict categorical validation for 18 districts, 3 seasons, 3 divisions)",
+    "backend_test_suite": "backend/tests/test_regional_yield_api.py (14 targeted tests)",
+    "playwright_e2e_suite": "frontend/test_phase_f5e4a_regional_yield.mjs (23 automated checks)"
+  },
+  "screenshots": [
+    {
+      "filename": "f5e4a_harvest_ai_separation_banner.png",
+      "description": "Navigation banner on Harvest Management Dashboard explicitly separating actual harvest records from AI research"
+    },
+    {
+      "filename": "f5e4a_regional_yield_desktop_1440.png",
+      "description": "Full desktop view of Regional Yield Research Panel with verified real inference output (2.494 t/ha) and scientific honesty disclaimer"
+    },
+    {
+      "filename": "f5e4a_regional_yield_audit_drawer.png",
+      "description": "Expanded audit drawer presenting all 20 submitted features and their domain units"
+    },
+    {
+      "filename": "f5e4a_regional_yield_mobile_375.png",
+      "description": "Responsive layout on 375px mobile viewport"
+    }
+  ],
+  "scientific_integrity_safeguards": {
+    "no_fabricated_ndvi_or_climate_defaults": true,
+    "missing_input_rejection_enforced": true,
+    "unsupported_district_rejection_enforced": true,
+    "strict_harvest_versus_ai_separation": true,
+    "no_automatic_farm_acreage_extrapolation": true,
+    "explicit_disclaimer_acknowledgment_required": true
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_instances": 19,
+      "crop_schedule_templates": 4,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "soil_tests": 0,
+      "harvest_records": 0
+    }
+  },
+  "seven_original_ai_models_preserved": [
+    "tomato_disease_v3",
+    "rice_disease",
+    "crop_recommendation",
+    "regional_crop_yield",
+    "flood_susceptibility",
+    "tomato_price",
+    "boro_rice_price"
+  ],
+  "remaining_tasks_for_f5e4b": [
+    "Tomato Wholesale Price Model Integration (tomato_price)",
+    "Boro Rice Wholesale Price Model Integration (boro_rice_price)",
+    "Enforce naive last-observed price baseline supremacy over ML model",
+    "Wholesale vs retail price disclaimer and historical series scope disclosure"
+  ]
+}
+

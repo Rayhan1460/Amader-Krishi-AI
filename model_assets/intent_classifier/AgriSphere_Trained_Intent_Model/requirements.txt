@@ -1,0 +1,5 @@
+sentence-transformers>=3,<6
+scikit-learn>=1.4
+joblib
+numpy
+torch

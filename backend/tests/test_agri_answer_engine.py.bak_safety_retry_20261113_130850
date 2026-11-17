@@ -1,0 +1,73 @@
+
+from app.services.agri_answer_engine import draft_agricultural_answer
+
+
+def ask(text, category="plant_disease_pest"):
+    return draft_agricultural_answer(
+        [{"role": "user", "content": text}],
+        category,
+    )
+
+
+def test_rice_answer():
+    answer = ask(
+        "\u09a7\u09be\u09a8\u09c7\u09b0 "
+        "\u09aa\u09be\u09a4\u09be\u09df \u09a6\u09be\u0997"
+    )
+    assert "\u09a7\u09be\u09a8" in answer
+    assert "\u099f\u09ae\u09c7\u099f\u09cb" not in answer
+
+
+def test_tomato_answer():
+    answer = ask(
+        "\u099f\u09ae\u09c7\u099f\u09cb\u09b0 "
+        "\u09aa\u09be\u09a4\u09be\u09df \u09a6\u09be\u0997"
+    )
+    assert "\u099f\u09ae\u09c7\u099f\u09cb" in answer
+
+
+def test_unknown_crop_asks_clarification():
+    answer = ask(
+        "\u09aa\u09be\u09a4\u09be\u09df \u09a6\u09be\u0997"
+    )
+    assert "\u0995\u09cb\u09a8" in answer
+
+
+def test_followup_uses_previous_crop():
+    messages = [
+        {
+            "role": "user",
+            "content": "\u09a7\u09be\u09a8\u09c7\u09b0 "
+                       "\u09aa\u09be\u09a4\u09be\u09df "
+                       "\u09a6\u09be\u0997",
+        },
+        {"role": "assistant", "content": "Previous reply"},
+        {"role": "user", "content": "What should I do now?"},
+    ]
+    answer = draft_agricultural_answer(
+        messages, "plant_disease_pest"
+    )
+    assert "\u09a7\u09be\u09a8" in answer
+
+
+def test_non_agriculture_not_handled():
+    assert ask("Hello", "non_agriculture") is None
+
+
+def test_unrelated_question_not_handled():
+    assert ask("What is the current time?") is None
+
+
+def test_both_crops_asks_clarification():
+    answer = ask(
+        "\u09a7\u09be\u09a8 \u0993 "
+        "\u099f\u09ae\u09c7\u099f\u09cb "
+        "\u09aa\u09be\u09a4\u09be"
+    )
+    assert "\u0995\u09cb\u09a8" in answer
+
+
+def test_empty_history_not_handled():
+    assert draft_agricultural_answer(
+        [], "plant_disease_pest"
+    ) is None

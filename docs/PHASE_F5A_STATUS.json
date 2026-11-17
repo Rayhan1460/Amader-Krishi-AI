@@ -1,0 +1,121 @@
+{
+  "timestamp": "2026-11-03T02:42:00+06:00",
+  "brand": "আমাদের কৃষি",
+  "platform": "আমাদের কৃষি AI",
+  "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।",
+  "milestone": "Phase F5A — Farm Digital Twin & Farm 360° Dashboard",
+  "final_verdict": "PHASE F5A VERIFIED — READY FOR F5B",
+  "digital_twin_architecture": {
+    "concept": "Synthesized 360-degree digital farm profile from database records and Open-Meteo forecasts",
+    "is_live_physical_simulation": false,
+    "honesty_disclaimer_present": true,
+    "disclaimer_bn": "এই ডিজিটাল খামার প্রোফাইলটি আপনার সংরক্ষিত খামার ও ফসলের রেকর্ড, পরিক্রমা এবং ওপেন-মেটিও আবহাওয়ার তথ্যের ভিত্তিতে সংকলিত। এটি কোনো কৃত্রিম উপগ্রহ, আইওটি সেন্সর বা লাইভ শারীরিক সিমুলেশন নয়।",
+    "disclaimer_en": "This digital farm twin is synthesized strictly from your recorded farm, crop, and calendar data plus Open-Meteo weather intelligence. It does not represent live physical IoT sensors or satellite imagery.",
+    "endpoint": "GET /farms/{farm_id}/overview",
+    "security": "Strict user ownership verification (403 Forbidden on cross-user access, 404 Not Found, 401 Unauthorized)",
+    "core_identity_cards": [
+      "ভৌগোলিক অবস্থান ও স্থানাঙ্ক (Location & Geo Coordinates)",
+      "জমির পরিমাপ ও আয়তন (Land Area & Standard Scale)",
+      "মাটি ও পরিবেশ প্রোফাইল (Soil & Environmental Characteristics)",
+      "ডিজিটাল টুইন সারাংশ (Twin Synthesis & Activity Status)"
+    ],
+    "sections": [
+      "Honest Digital Twin Disclosure Banner (No Physical IoT Claim)",
+      "4-Card Specification Grid",
+      "Active Crops & Phenology Tracking (crop_name_bn, variety, season_bn, sowing & expected harvest dates)",
+      "Schedule Execution Progress (% completed, progress bar, upcoming & overdue tasks)",
+      "Hyper-Local Weather Intelligence & Risk Advisories (BMD / BAMIS links)",
+      "Tailored AI Shortcuts (prefilled shortcuts for 7 research models)"
+    ]
+  },
+  "tailored_ai_shortcuts": [
+    {
+      "model_id": "crop_recommendation",
+      "category": "recommendation",
+      "prefilled_fields": ["division", "district", "soil_type", "farm_name"]
+    },
+    {
+      "model_id": "rice_disease",
+      "category": "disease",
+      "prefilled_fields": ["crop", "farm_name", "district"]
+    },
+    {
+      "model_id": "tomato_disease_v3",
+      "category": "disease",
+      "prefilled_fields": ["crop", "farm_name", "district"]
+    },
+    {
+      "model_id": "regional_crop_yield",
+      "category": "yield",
+      "prefilled_fields": ["District", "Division", "farm_area", "area_unit"]
+    },
+    {
+      "model_id": "boro_rice_price",
+      "category": "price",
+      "prefilled_fields": ["commodity", "market_type", "district"]
+    },
+    {
+      "model_id": "flood_susceptibility",
+      "category": "risk",
+      "prefilled_fields": ["district", "division", "farm_name"]
+    }
+  ],
+  "database_preservation_status": {
+    "status": "PRESERVED_INTACT",
+    "backup_file": "backend/app/agri.db.bak_pre_f5a",
+    "live_record_counts": {
+      "users": 337,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_instances": 19
+    }
+  },
+  "test_suites_summary": {
+    "backend_pytest": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0,
+      "execution_time_seconds": 44.71,
+      "isolated_test_db": "backend/tests/temp_test_suite.db",
+      "farm_twin_api_tests": 7
+    },
+    "playwright_f5a_farm_twin": {
+      "total_checks": 27,
+      "passed": 27,
+      "failed": 0,
+      "screenshots_captured": [
+        "docs/screenshots/f5a_farm_twin_dashboard_1440.png",
+        "docs/screenshots/f5a_farm_twin_crops_and_progress.png",
+        "docs/screenshots/f5a_farm_twin_weather_and_ai_shortcuts.png",
+        "docs/screenshots/f5a_farm_twin_honesty_disclaimer.png",
+        "docs/screenshots/f5a_farm_twin_mobile_375.png"
+      ]
+    },
+    "regression_f4c_weather": {
+      "total_checks": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "regression_f4b_schedule": {
+      "total_checks": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "frontend_build": {
+      "status": "PASS",
+      "bundler": "Vite v8.3.5 / TypeScript 5.8",
+      "build_duration_seconds": 4.30
+    }
+  },
+  "seven_research_models_status": {
+    "tomato_disease_v3": "VERIFIED_PRESERVED",
+    "rice_disease": "VERIFIED_PRESERVED",
+    "crop_recommendation": "VERIFIED_PRESERVED",
+    "regional_crop_yield": "VERIFIED_PRESERVED",
+    "flood_susceptibility": "VERIFIED_PRESERVED",
+    "tomato_price": "VERIFIED_PRESERVED",
+    "boro_rice_price": "VERIFIED_PRESERVED"
+  }
+}
+

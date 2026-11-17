@@ -1,0 +1,66 @@
+import base64
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+
+from ..models.manifest import get_model_info
+
+router = APIRouter()
+
+class PredictionRequest(BaseModel):
+    model_id: str = Field(..., description="One of the seven model identifiers defined in the manifest")
+    # For image models
+    image_base64: Optional[str] = Field(None, description="Base64‑encoded PNG/JPEG image (required for image models)")
+    # For tabular models – any additional fields will be captured as a dict
+    payload: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Feature name → value mapping for tabular models")
+
+@router.post("/", response_model=Dict[str, Any])
+def predict(request: PredictionRequest):
+    """Run inference for the requested model.
+
+    - Image models expect ``image_base64``.
+    - Tabular models expect ``payload`` with the exact feature names defined in the manifest.
+    """
+    try:
+        model_info = get_model_info(request.model_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Model not found")
+
+    # Build payload dict expected by the model loader
+    if model_info.type == "image":
+        if not request.image_base64:
+            raise HTTPException(status_code=422, detail="image_base64 is required for image models")
+        payload = {"image_base64": request.image_base64}
+    else:
+        payload = request.payload
+
+    # Load model (cached)
+    model = model_info.load()
+    spec = model_info.input_spec
+    try:
+        if spec.get("image_size"):
+            img_b64 = payload.get("image_base64")
+            if not img_b64:
+                raise ValueError("Missing image_base64 for image model")
+            import base64, numpy as np, tensorflow as tf
+            from io import BytesIO
+            from PIL import Image
+            img_data = base64.b64decode(img_b64)
+            img = Image.open(BytesIO(img_data)).convert("RGB")
+            img = img.resize((spec["image_size"][0], spec["image_size"][1]))
+            img_array = np.array(img) / 255.0
+            input_tensor = tf.expand_dims(img_array, axis=0)
+            preds = model(input_tensor, training=False)
+        else:
+            features = [payload.get(f) for f in spec.get("features", [])]
+            if None in features:
+                raise ValueError("Missing required feature values")
+            import numpy as np
+            arr = np.array([features], dtype=np.float32)
+            preds = model.predict(arr)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    if isinstance(preds, (np.ndarray, tf.Tensor)):
+        preds = preds.tolist()
+    return {"model_id": request.model_id, "predictions": preds}

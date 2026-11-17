@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-11-03T02:08:00+06:00",
+  "brand": "আমাদের কৃষি",
+  "platform": "আমাদের কৃষি AI",
+  "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।",
+  "milestone": "Phase F4C — Live Weather Intelligence, Calendar Advisories & Smart Reminders",
+  "final_verdict": "PHASE F4C VERIFIED — READY FOR F5",
+  "weather_provider": {
+    "name": "Open-Meteo Weather Forecast API",
+    "url": "https://open-meteo.com",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "rate_limits": "10,000 daily requests, non-commercial free tier",
+    "caching": {
+      "strategy": "In-memory epoch float cache with thread-safe lock",
+      "ttl_seconds": 1800
+    },
+    "district_centroids_count": 64,
+    "fallback_hierarchy": [
+      "Farm custom latitude/longitude",
+      "District centroid (64 districts)",
+      "Division centroid (8 divisions)",
+      "Dhaka national capital centroid"
+    ]
+  },
+  "agronomic_advisory_rules": [
+    {
+      "rule_id": "rule_1_heavy_rain_fertilizer",
+      "target_categories": ["nutrient_management", "fertilizer_nutrient"],
+      "trigger": "Precipitation >= 12mm or probability >= 70%",
+      "citation": "BARC FRG-2018 / BAMIS Water & Nutrient Handbook"
+    },
+    {
+      "rule_id": "rule_2_rain_wind_pest_spraying",
+      "target_categories": ["crop_observation", "pest_disease_scouting"],
+      "trigger": "Precipitation >= 8mm or wind speed >= 25 km/h",
+      "citation": "BRRI Modern Rice Cultivation Chapter 6"
+    },
+    {
+      "rule_id": "rule_3_rain_irrigation_review",
+      "target_categories": ["irrigation"],
+      "trigger": "Precipitation >= 15mm or probability >= 75%",
+      "citation": "BAMIS AWD Rain Integration Protocol"
+    },
+    {
+      "rule_id": "rule_4_storm_harvest_risk",
+      "target_categories": ["harvest_planning", "harvest"],
+      "trigger": "Precipitation >= 10mm or wind speed >= 30 km/h",
+      "citation": "DAE Post-Harvest Loss Prevention Guidelines"
+    },
+    {
+      "rule_id": "rule_5_cold_wave_seedbed",
+      "target_categories": ["sowing", "transplanting", "land_preparation"],
+      "trigger": "Min temp <= 11°C or dense fog (WMO 45, 48)",
+      "citation": "BRRI Modern Rice Cultivation Chapter 3: Cold Wave Management"
+    }
+  ],
+  "farmer_sovereignty": {
+    "auto_rescheduling": false,
+    "confirmation_required": true,
+    "reschedule_modal": "Modal 7: Weather-Aware Task Rescheduling",
+    "supported_shortcuts": ["+১ দিন", "+২ দিন", "+৩ দিন", "Custom Date"]
+  },
+  "in_app_reminders": {
+    "model": "ReminderNotification",
+    "deduplication_key": "(user_id, task_id, type, due_date)",
+    "categories": ["due_today", "overdue", "weather_risk"],
+    "filter_tabs": ["সব", "আজকের", "বকেয়া", "আবহাওয়া"]
+  },
+  "official_disaster_references": {
+    "BMD": "https://bmd.gov.bd/web/",
+    "BAMIS_DAE": "https://www.bamis.gov.bd/en/",
+    "FFWC": "https://ffwc.gov.bd/"
+  },
+  "static_flood_model_integrity": {
+    "model_name": "flood_susceptibility",
+    "classification": "Static terrain susceptibility based on slope, elevation, and soil",
+    "disclosure_present": true,
+    "contextual_navigation_enabled": true
+  },
+  "database_preservation_status": {
+    "status": "PRESERVED_INTACT",
+    "backup_file": "backend/app/agri.db.bak_pre_f4c",
+    "live_record_counts": {
+      "users": 290,
+      "farm_profiles": 75,
+      "farm_crops": 42,
+      "calendar_tasks": 144,
+      "reminder_notifications": 1
+    }
+  },
+  "test_suites_summary": {
+    "backend_pytest": {
+      "total": 93,
+      "passed": 93,
+      "failed": 0,
+      "execution_time_seconds": 29.05,
+      "isolated_test_db": "backend/tests/temp_test_suite.db"
+    },
+    "playwright_f4c_weather": {
+      "total_checks": 36,
+      "passed_checks": 36,
+      "failed_checks": 0,
+      "screenshots_captured": 6
+    },
+    "playwright_f4b_regression": {
+      "total_checks": 36,
+      "passed_checks": 36,
+      "failed_checks": 0
+    },
+    "playwright_f4a_regression": {
+      "total_checks": 30,
+      "passed_checks": 30,
+      "failed_checks": 0
+    },
+    "frontend_build": {
+      "typescript_errors": 0,
+      "build_status": "PASS",
+      "build_time_seconds": 4.42,
+      "bundle_size_kb": 728.74
+    }
+  },
+  "screenshots": [
+    "docs/screenshots/f4c_weather_dashboard_1440.png",
+    "docs/screenshots/f4c_official_disaster_warnings_1440.png",
+    "docs/screenshots/f4c_notification_bell_drawer_1440.png",
+    "docs/screenshots/f4c_7day_forecast_1440.png",
+    "docs/screenshots/f4c_weather_reschedule_modal_1440.png",
+    "docs/screenshots/f4c_weather_mobile_375.png"
+  ]
+}
+

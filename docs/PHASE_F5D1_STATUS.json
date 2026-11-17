@@ -1,0 +1,107 @@
+{
+  "phase": "F5D-1",
+  "phase_name": "Cultivation Records & Crop Observation Backend",
+  "timestamp": "2026-11-03T15:40:00+06:00",
+  "verdict": "PHASE F5D-1 VERIFIED — READY FOR F5D-2",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "database_integrity": {
+    "main_database": "backend/app/agri.db",
+    "backup_file": "backend/app/agri_backup_f5d1_pre.db",
+    "counts_before_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5
+    },
+    "counts_after_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0
+    },
+    "drift_detected": false
+  },
+  "backend_deliverables": {
+    "models_and_schemas": {
+      "activity_model": "CultivationActivity (backend/app/db/__init__.py)",
+      "activity_schemas": "CultivationActivityBase, CultivationActivityCreate, CultivationActivityUpdate, CultivationActivityResponse (backend/app/models/cultivation.py)",
+      "observation_model": "CropObservation (backend/app/db/__init__.py)",
+      "observation_schemas": "CropObservationBase, CropObservationCreate, CropObservationUpdate, CropObservationResponse (backend/app/models/cultivation.py)"
+    },
+    "api_endpoints": {
+      "router_file": "backend/app/api/cultivation.py",
+      "prefix": "/api/cultivation",
+      "activity_endpoints": [
+        "POST /api/cultivation/activities",
+        "GET /api/cultivation/activities",
+        "GET /api/cultivation/activities/{id}",
+        "PUT /api/cultivation/activities/{id}",
+        "DELETE /api/cultivation/activities/{id}"
+      ],
+      "observation_endpoints": [
+        "POST /api/cultivation/observations",
+        "GET /api/cultivation/observations",
+        "GET /api/cultivation/observations/{id}",
+        "PUT /api/cultivation/observations/{id}",
+        "DELETE /api/cultivation/observations/{id}"
+      ]
+    },
+    "security_and_integrity": {
+      "user_isolation": "Strictly verified - users cannot access or mutate cross-user records",
+      "demo_mode_isolation": "Enforced via require_non_demo dependency",
+      "farm_ownership_validation": "Enforced - farm must belong to authenticated user",
+      "crop_ownership_validation": "Enforced - farm crop must belong to specified farm and user",
+      "task_association": "Enforced - calendar task if provided must belong to user, farm, and crop",
+      "task_completion_policy": "Strictly verified - calendar task status is NOT auto-completed when activity is logged",
+      "disease_diagnosis_policy": "Strictly preserved - observations are purely farmer-recorded notes; no automated diagnoses or chemical dose generation"
+    }
+  },
+  "test_results": {
+    "targeted_cultivation_tests": {
+      "file": "backend/tests/test_cultivation_api.py",
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    "full_backend_regression": {
+      "total": 144,
+      "passed": 144,
+      "failed": 0,
+      "execution_time_seconds": 39.24
+    },
+    "frontend_build": {
+      "command": "npm --prefix frontend run build",
+      "status": "PASS",
+      "dist_generated": true
+    },
+    "ai_models_integrity": {
+      "manifest_file": "model_assets/extracted/AgriSphere_AI_Models_Research_Handoff/manifest.json",
+      "models_count": 7,
+      "verified_checksums": 7,
+      "test_result": "21/21 PASS"
+    }
+  },
+  "deferred_to_f5d2": [
+    "Frontend Cultivation & Observation logging interface",
+    "Farm Digital Twin integration for cultivation activities and observations",
+    "Visual indicators and timeline events on workspace",
+    "E2E Playwright tests for frontend cultivation workflows"
+  ]
+}
+

@@ -1,0 +1,240 @@
+.farm-hub:has(> .farm-budget) {
+  --fh-base: #f1f5ed;
+  align-content: start;
+  container-type: inline-size;
+}
+.farm-budget {
+  --fb-ink: #183a2d;
+  --fb-green: #205842;
+  --fb-muted: #4d6458;
+  --fb-bg: #f1f5ed;
+  --fb-line: #d6e3d5;
+  --fb-mint: #e7f1e0;
+  --fb-lime: #def1a6;
+  display: grid;
+  gap: clamp(13px, 2vw, 21px);
+  min-width: 0;
+  color: var(--fb-ink);
+  scroll-margin-top: 12px;
+}
+.farm-hub .farm-budget :is(h1,h2,h3,h4,p,ol,ul,fieldset) { margin: 0; }
+.farm-hub .farm-budget :is(ul,ol,fieldset) { padding: 0; }
+.farm-budget :is(h1,h2,h3,h4,strong,p,span,small) { overflow-wrap: anywhere; }
+.farm-budget h1 { font-size: clamp(2rem, 3.7vw, 3.4rem); line-height: 1.18; font-weight: 800; }
+.farm-budget h2 { font-size: clamp(1.35rem, 2.4vw, 2rem); line-height: 1.28; font-weight: 800; }
+.farm-budget h3 { font-size: clamp(1.12rem, 1.65vw, 1.4rem); line-height: 1.3; font-weight: 750; }
+.farm-budget h4 { font-size: 1.04rem; font-weight: 750; }
+.farm-budget p { color: var(--fb-muted); line-height: 1.52; }
+.farm-budget svg { flex: none; }
+.farm-budget :is([data-fb-heading],#fb-choose):focus { outline: none; }
+.farm-hub .farm-budget button {
+  display: inline-flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px;
+  max-width: 100%; padding: 8px 13px; border: 1px solid #cbdccc; border-radius: 10px;
+  color: var(--fb-green); background: #fff; line-height: 1.32; text-align: center;
+  font-size: .92rem; font-weight: 750; cursor: pointer; white-space: normal;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+.farm-hub .farm-budget button:hover:not(:disabled) { background: #edf5e8; border-color: #a8c2a9; }
+.farm-hub .farm-budget button:active:not(:disabled) { transform: translateY(1px); }
+.farm-hub .farm-budget button:disabled { opacity: .65; cursor: default; }
+.farm-hub .farm-budget button.fb-primary { color: #fff; background: var(--fb-green); border-color: var(--fb-green); }
+.farm-hub .farm-budget button.fb-primary:hover:not(:disabled) { color: #fff; background: #286b50; }
+.farm-hub .farm-budget button.fb-lime { color: #16372a; background: var(--fb-lime); border-color: var(--fb-lime); }
+.farm-hub .farm-budget button.fb-lime:hover:not(:disabled) { background: #edf9c9; }
+.farm-hub .farm-budget button.fb-soft { background: #edf5e8; }
+.farm-hub .farm-budget button.fb-text { background: transparent; border-color: transparent; padding-inline: 3px; justify-content: flex-start; }
+.farm-budget :is(input,select,button,summary):focus-visible { outline: 2px solid #487b59; outline-offset: 3px; }
+.fb-hero {
+  display: grid; justify-items: start; align-content: center; gap: 8px; padding: clamp(22px, 5cqi, 52px); border-radius: 22px;
+  min-height: clamp(203px, 23cqi, 307px); box-shadow: 0 14px 32px #173c2e16; color: #fff;
+  background: #183d30 linear-gradient(90deg, #102e26f7 1%, #173e30dc 44%, #153c2f48 100%);
+  background-image: linear-gradient(92deg,#102e26f7 1%,#163b2fdb 42%,#173a284e 100%),url('/krishi-aerial-fields.webp');
+  background-position: center 53%; background-size: cover;
+  animation: fb-reveal 260ms ease-out both;
+}
+.fb-hero > span { display: inline-flex; gap: 8px; align-items: center; color: #e6f3bd; font-weight: 700; font-size: .85rem; }
+.fb-hero p { color: #e9f4e6; font-size: clamp(.95rem, 1.55vw, 1.12rem); max-width: 50ch; }
+.fb-hero .fb-lime { margin-top: 7px; }
+.fb-section-title,.fb-heading,.fb-row,.fb-expense-hint { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.fb-section-title { margin-bottom: 9px; }
+.fb-heading p { margin-top: 5px; }
+.fb-tag {
+  display: inline-flex; align-items: center; align-self: start; gap: 6px; width: fit-content;
+  border-radius: 999px; padding: 4px 9px; background: var(--fb-mint); color: #2b5641; font-weight: 700; font-size: .8rem;
+}
+.fb-choices { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.farm-hub .farm-budget .fb-choice {
+  display: grid; align-content: start; justify-content: stretch; justify-items: start; gap: 7px;
+  padding: clamp(13px, 2cqi, 23px); min-width: 0; text-align: left; border: 1px solid var(--fb-line);
+  border-radius: 15px; box-shadow: 0 6px 18px #19392b0d; background: #fff; color: var(--fb-ink);
+}
+.farm-hub .farm-budget .fb-choice:hover { transform: translateY(-2px); background: #f9fcf6; box-shadow: 0 10px 22px #19392b14; }
+.fb-choice > strong { font-size: clamp(1.08rem, 1.7vw, 1.32rem); font-weight: 800; }
+.fb-choice > span:not(.fb-icon) { color: var(--fb-muted); font-size: .88rem; font-weight: 450; }
+.fb-choice > b { display: flex; align-items: center; gap: 5px; font-size: .88rem; color: var(--fb-green); }
+.fb-icon {
+  display: inline-grid; place-items: center; width: 39px; height: 39px; border-radius: 10px;
+  background: var(--fb-mint); color: var(--fb-green); flex: none;
+}
+.fb-choice-work .fb-icon { background: #e8f0ed; color: #285950; }
+.fb-choice-compare .fb-icon { background: #f8eee0; color: #725025; }
+.fb-pick-help { margin-bottom: 8px !important; color: var(--fb-green); }
+.fb-resume-card {
+  display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid var(--fb-line); border-radius: 13px; padding: 11px 13px;
+}
+.fb-resume-card p,.fb-field small,.fb-empty,.fb-records small { color: var(--fb-muted); font-size: .84rem; }
+.fb-help { font-size: .9rem; color: var(--fb-green); }
+.fb-help :is(summary,p) { padding: 5px; }
+.fb-help svg { display: inline-block; vertical-align: middle; }
+.fb-screen,.fb-stack { display: grid; align-content: start; gap: 13px; min-width: 0; }
+.fb-grid {
+  display: grid; grid-template-columns: minmax(0,1.55fr) minmax(0,1fr); gap: 14px;
+  align-items: start; min-width: 0; border: 0;
+}
+.fb-card {
+  border: 1px solid var(--fb-line); background: #fff; padding: clamp(13px,2.1cqi,23px); border-radius: 15px;
+  display: grid; gap: 10px; min-width: 0; align-content: start; box-shadow: 0 5px 16px #153c2511;
+}
+.fb-card > header p { margin-top: 4px; }
+.fb-card p { font-size: .91rem; }
+.fb-card.fb-dark { color: #fbfff2; background: #1b4739; border-color: #1b4739; }
+.fb-dark p,.fb-dark .fb-row span { color: #e3efe0; }
+.fb-total { display: inline-block; font-size: clamp(1.7rem, 3.15vw, 2.5rem); line-height: 1.2; color: var(--fb-green); font-weight: 800; }
+.fb-dark .fb-total { color: var(--fb-lime); }
+.fb-row { padding: 6px 0; border-bottom: 1px solid #e6eee5; font-size: .9rem; }
+.fb-row > span { color: var(--fb-muted); }
+.fb-row:last-child { border-bottom: 0; }
+.fb-dark .fb-row { border-color: #ffffff3b; }
+.fb-fields {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 12px; align-items: start;
+}
+.fb-field { display: grid; gap: 4px; min-width: 0; color: var(--fb-ink); font-size: .93rem; font-weight: 700; }
+.fb-field :is(input,select,.fb-input) {
+  width: 100%; min-width: 0; min-height: 46px; color: var(--fb-ink); padding: 8px 10px;
+  border: 1px solid #cbdccc; border-radius: 8px; background: #fafcf8;
+  font: inherit; font-size: max(1rem, 16px); font-weight: 500;
+}
+.fb-field .fb-input { display: flex; align-items: center; gap: 6px; }
+.fb-field .fb-input input { flex: 1 1 90px; width: 1px; min-height: 26px; padding: 1px; border: 0; background: transparent; }
+.fb-field .fb-input span { font-size: .78rem; white-space: nowrap; padding-inline-start: 3px; color: var(--fb-muted); }
+.fb-field small { font-weight: 450; }
+.fb-hint,.fb-error,.fb-success,.fb-empty {
+  padding: 9px 12px; border-radius: 9px; background: #ebf3e7; border: 1px solid #dce9d7; font-size: .91rem;
+}
+.farm-budget .fb-hint { display: flex; align-items: flex-start; gap: 8px; color: #325441; }
+.fb-hint svg { margin-top: 2px; }
+.farm-budget .fb-error { background: #f9ebe8; color: #7b362b; border-color: #edcfc8; }
+.farm-budget .fb-success { background: #e4f3e0; color: #22513a; }
+.fb-feedback:empty { display: none; }
+.fb-progress ol {
+  display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; list-style: none;
+  padding: 6px !important; border: 1px solid var(--fb-line); background: #fff; border-radius: 12px;
+}
+.fb-progress li {
+  display: flex; align-items: center; gap: 7px; border-radius: 7px; color: var(--fb-muted);
+  padding: 7px; font-size: .88rem; min-width: 0; overflow-wrap: anywhere;
+}
+.fb-progress li b {
+  display: grid; place-items: center; width: 25px; height: 25px; flex: none; border-radius: 7px; background: #edf3eb; color: #4a6252;
+}
+.fb-progress li[aria-current=step] { background: var(--fb-mint); color: var(--fb-green); font-weight: 750; }
+.fb-progress li[aria-current=step] b { color: #fff; background: var(--fb-green); }
+.fb-progress li[data-done=true] b { background: #e2f1dd; color: var(--fb-green); }
+.fb-progress-mobile,.fb-expense-hint { display: none; }
+.fb-actions {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;
+  min-width: 0; border-top: 1px solid var(--fb-line); padding-block: 12px 4px; background: var(--fb-bg);
+}
+.fb-actions-right,.fb-buttons,.fb-chips,.fb-toggle,.fb-icon-actions {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0;
+}
+.fb-actions-right { justify-content: flex-end; }
+.fb-toggle { background: #edf3ea; border-radius: 10px; padding: 4px; width: fit-content; }
+.farm-hub .farm-budget .fb-toggle button { background: transparent; border-color: transparent; }
+.farm-hub .farm-budget .fb-toggle button[aria-pressed=true] { background: #fff; box-shadow: 0 1px 4px #223f2d18; }
+.farm-hub .farm-budget .fb-add { justify-self: start; background: #edf5e8; border-style: dashed; }
+.farm-hub .farm-budget .fb-chips button { padding: 6px 9px; font-size: .82rem; background: #f5f8f2; }
+.fb-editor { border: 1px solid var(--fb-line); border-radius: 11px; background: #f3f7ee; padding: 12px; display: grid; gap: 9px; min-width: 0; }
+.fb-expenses,.fb-records { list-style: none; }
+.fb-expenses li,.fb-records li {
+  display: grid; grid-template-columns: auto minmax(0,1fr) auto auto; align-items: center; gap: 7px;
+  min-width: 0; padding-block: 8px; border-bottom: 1px solid #e7efe6;
+}
+.fb-expenses li:last-child,.fb-records li:last-child { border: 0; }
+.fb-expenses li > div small,.fb-records small { display: block; color: var(--fb-muted); }
+.farm-hub .farm-budget .fb-icon-actions button { min-width: 44px; padding: 6px; }
+.fb-result {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;
+  min-width: 0; padding: clamp(15px,3.9cqi,34px); border-radius: 18px; color: #fff;
+  background: linear-gradient(116deg,#163b30,#285e49);
+}
+.fb-result[data-negative=true] { background: linear-gradient(113deg,#45382b,#694f39); }
+.fb-result h2 { margin-top: 4px !important; }
+.fb-result span,.fb-result strong { color: var(--fb-lime); }
+.fb-result p { color: #e5f1e4; font-size: .89rem; }
+.fb-result > div:nth-child(2) strong { font-size: clamp(1.7rem, 4.5vw, 3.3rem); line-height: 1.25; }
+.fb-result > div:nth-child(2) { border-inline-start: 1px solid #ffffff55; padding-inline-start: 17px; text-align: end; }
+.fb-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+.fb-stat {
+  display: grid; gap: 4px; align-content: start; border: 1px solid var(--fb-line);
+  background: #fff; border-radius: 13px; padding: clamp(9px,1.7cqi,17px); min-width: 0;
+}
+.fb-stat-key { background: #e5f0e0; }
+.fb-stat span,.fb-stat small { font-size: .83rem; color: var(--fb-muted); }
+.fb-stat strong { font-size: clamp(1.03rem,2.35vw,1.82rem); line-height: 1.25; color: var(--fb-green); }
+.fb-costbar { height: 11px; border-radius: 12px; background: #d7ae75; overflow: hidden; }
+.fb-costbar span { display: block; height: 100%; background: #6d9968; animation: fb-fill 460ms ease-out both; transform-origin: left; }
+.fb-records li { grid-template-columns: minmax(0,1.65fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto; }
+.fb-filters { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.fb-card details summary { cursor: pointer; font-weight: 750; color: var(--fb-green); padding-block: 8px; }
+.fb-card details .fb-fields,.fb-scenario { margin-block: 8px; }
+.fb-scenario { padding: 10px; border: 1px solid var(--fb-line); border-radius: 9px; background: #f5f9f1; }
+.fb-appear { animation: fb-reveal 220ms ease-out both; }
+@keyframes fb-reveal { from { opacity: .55; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fb-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@container (max-width: 660px) {
+  .fb-grid { grid-template-columns: minmax(0,1fr); gap: 9px; }
+  .fb-expense-hint { display: flex; background: var(--fb-mint); border-radius: 9px; padding: 7px 10px; }
+  .fb-records li { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .fb-records li > .fb-icon-actions { grid-column: 1/-1; }
+}
+@container (max-width: 500px) {
+  .fb-hero {
+    padding: 19px 14px; border-radius: 15px;
+    background-image: linear-gradient(94deg,#102e26f5 4%,#153b2ecc 68%,#153b2e96),url('/krishi-aerial-fields.webp');
+  }
+  .fb-choices { grid-template-columns: minmax(0,1fr); gap: 7px; }
+  .farm-hub .farm-budget .fb-choice {
+    grid-template-columns: auto minmax(0,1fr) 18px; gap: 3px 9px; padding: 9px;
+  }
+  .fb-choice .fb-icon { grid-row: span 2; width: 34px; height: 34px; place-self: center; }
+  .fb-choice > strong,.fb-choice > span:not(.fb-icon) { grid-column: 2; }
+  .fb-choice > b { grid-column: 3; grid-row: 1/span 2; place-self: center; font-size: 0; }
+  .fb-resume-card { gap: 7px; padding: 8px; }
+  .fb-resume-card .fb-icon { width: 29px; height: 29px; }
+  .fb-progress ol { display: none; }
+  .fb-progress-mobile { display: grid; gap: 4px; font-size: .87rem; font-weight: 700; color: var(--fb-green); }
+  .fb-progress-mobile progress { width: 100%; height: 6px; border: none; border-radius: 9px; color: #438357; accent-color: #438357; }
+  .fb-actions { position: sticky; bottom: 0; z-index: 2; padding-block: 7px; box-shadow: 0 -7px 12px #eff5eced; }
+  .fb-actions-right { flex: 1 1 145px; }
+  .fb-actions-right:empty { display: none; }
+  .fb-result > div:nth-child(2) { border: 0; padding: 0; text-align: start; }
+  .fb-expenses li { grid-template-columns: auto minmax(0,1fr) auto; }
+  .fb-expenses .fb-icon-actions { grid-column: 2/-1; justify-content: flex-end; }
+  .fb-filters { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .fb-filters > :first-child { grid-column: 1/-1; }
+}
+@container (max-width: 325px) {
+  .fb-fields { grid-template-columns: minmax(0,1fr); }
+  .fb-result > div { width: 100%; }
+  .fb-stat { padding: 6px; }
+  .fb-stat strong { font-size: .96rem; }
+  .fb-stat small { font-size: .72rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .farm-budget *, .farm-budget *::before, .farm-budget *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (max-width: 1023px) {
+  .farm-budget .fb-actions { bottom: 4rem; }
+}

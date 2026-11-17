@@ -1,0 +1,147 @@
+{
+  "phase": "F5C-1",
+  "phase_name": "Crop Recommendation Model Input Audit & Safe Backend Integration",
+  "timestamp": "2026-11-03T13:20:00+06:00",
+  "verdict": "PHASE F5C-1 VERIFIED — READY FOR F5C-2",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "original_model_details": {
+    "model_id": "crop_recommendation",
+    "task": "Crop Recommendation",
+    "model_type": "RandomForestClassifier (220 estimators)",
+    "artifact_path": "model_assets/extracted/AgriSphere_AI_Models_Research_Handoff/models/crop_recommendation/model.joblib",
+    "training_metadata_path": "model_assets/extracted/AgriSphere_AI_Models_Research_Handoff/models/crop_recommendation/metadata.json",
+    "target_classes_count": 22,
+    "classes": [
+      "apple", "banana", "blackgram", "chickpea", "coconut", "coffee", "cotton",
+      "grapes", "jute", "kidneybeans", "lentil", "maize", "mango", "mothbeans",
+      "mungbean", "muskmelon", "orange", "papaya", "pigeonpeas", "pomegranate",
+      "rice", "watermelon"
+    ],
+    "official_caveat": "Public 22-crop benchmark with macro F1 0.993; NOT validated advice for Bangladesh farmland."
+  },
+  "seven_feature_contract": {
+    "feature_names_in_order": ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"],
+    "total_features": 7,
+    "feature_spec": {
+      "N": {
+        "training_min": 0.0,
+        "training_max": 140.0,
+        "training_mean": 50.55,
+        "training_unit": null,
+        "compatibility_status": "INCOMPATIBLE_UNIT_UNVERIFIED",
+        "allow_auto_prefill": false,
+        "reason": "Training data source lacks documented physical units. Bangladeshi laboratory reports (typically total N % or ppm) cannot be directly mapped without agricultural calibration."
+      },
+      "P": {
+        "training_min": 5.0,
+        "training_max": 145.0,
+        "training_mean": 53.36,
+        "training_unit": null,
+        "compatibility_status": "INCOMPATIBLE_UNIT_UNVERIFIED",
+        "allow_auto_prefill": false,
+        "reason": "Benchmark P uses unverified ratio/index. Bangladeshi labs report available P in microg/g (ppm) or mg/kg via Bray/Olsen extraction. Uncalibrated feeding produces inaccurate predictions."
+      },
+      "K": {
+        "training_min": 5.0,
+        "training_max": 205.0,
+        "training_mean": 48.15,
+        "training_unit": null,
+        "compatibility_status": "INCOMPATIBLE_UNIT_UNVERIFIED",
+        "allow_auto_prefill": false,
+        "reason": "Benchmark K values range 5-205 (unverified unit). Bangladeshi SRDI labs report exchangeable K in meq/100g soil (normal range 0.15-0.35). Passing meq/100g directly without calibration will falsely trigger extreme potassium deficiency."
+      },
+      "ph": {
+        "training_min": 3.50,
+        "training_max": 9.94,
+        "training_mean": 6.47,
+        "training_unit": "ph_scale",
+        "compatibility_status": "COMPATIBLE_SCALE",
+        "allow_auto_prefill": false,
+        "reason": "Soil pH is measured on standard electrochemical 0-14 scale and is physically compatible, but requires manual farmer confirmation alongside other parameters."
+      },
+      "temperature": {
+        "training_min": 8.83,
+        "training_max": 43.68,
+        "training_mean": 25.62,
+        "training_unit": "celsius",
+        "compatibility_status": "TEMPORALLY_INCOMPATIBLE_FORECAST",
+        "allow_auto_prefill": false,
+        "reason": "Model expects seasonal growth cycle average temperature (°C). Real-time or daily weather forecast temperature cannot represent full growing season climate."
+      },
+      "humidity": {
+        "training_min": 14.26,
+        "training_max": 99.98,
+        "training_mean": 71.48,
+        "training_unit": "percent",
+        "compatibility_status": "TEMPORALLY_INCOMPATIBLE_FORECAST",
+        "allow_auto_prefill": false,
+        "reason": "Model expects seasonal average relative humidity (%). Real-time weather forecast humidity fluctuates hourly and cannot serve as a reliable seasonal proxy."
+      },
+      "rainfall": {
+        "training_min": 20.21,
+        "training_max": 298.56,
+        "training_mean": 103.46,
+        "training_unit": "mm",
+        "compatibility_status": "TEMPORALLY_INCOMPATIBLE_PERIOD_UNKNOWN",
+        "allow_auto_prefill": false,
+        "reason": "Benchmark rainfall accumulation period (monthly vs full seasonal cycle) is unverified in source data. Daily weather forecast rainfall (often 0-20mm) severely violates model training distribution (20-298mm)."
+      }
+    }
+  },
+  "readiness_policy": {
+    "overall_compatibility": "INCOMPATIBLE_REQUIRES_MANUAL_INPUT",
+    "automatic_prefill_permitted": false,
+    "requires_user_confirmation": true,
+    "input_source_mode": "manual_research"
+  },
+  "services_and_endpoints_implemented": {
+    "schemas_file": "backend/app/models/crop_readiness.py",
+    "service_file": "backend/app/services/crop_readiness.py",
+    "endpoints": [
+      "GET /farms/{farm_id}/crop-readiness",
+      "GET /farms/{farm_id}/soil-tests/{test_id}/crop-readiness",
+      "GET /soil/tests/{test_id}/crop-readiness",
+      "POST /predict/crop_recommendation/farm-adapter",
+      "POST /farms/{farm_id}/crop-recommendation"
+    ]
+  },
+  "security_validation": {
+    "farm_ownership_enforced": true,
+    "soil_test_ownership_enforced": true,
+    "cross_user_access_rejected": true,
+    "demo_inference_limits_enforced": true,
+    "missing_feature_defaults_rejected": true,
+    "disclaimer_confirmation_required": true
+  },
+  "test_results": {
+    "targeted_f5c1_tests": "14/14 PASS",
+    "full_backend_test_suite": "130/130 PASS",
+    "frontend_production_build": "PASS (8.23s, 0 errors)",
+    "database_drift": "ZERO (backend/app/agri.db untouched)"
+  },
+  "database_baseline_preserved": {
+    "users": 339,
+    "farm_profiles": 103,
+    "farm_crops": 56,
+    "calendar_tasks": 197,
+    "crop_schedule_templates": 4,
+    "crop_schedule_instances": 19,
+    "predictions": 77,
+    "chat_sessions": 66,
+    "reminder_notifications": 5
+  },
+  "seven_models_preserved": [
+    "tomato_disease_v3",
+    "rice_disease",
+    "crop_recommendation",
+    "regional_crop_yield",
+    "flood_susceptibility",
+    "tomato_price",
+    "boro_rice_price"
+  ]
+}
+

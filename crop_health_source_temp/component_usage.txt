@@ -1,0 +1,75 @@
+﻿
+  src\components\workspace\ModelToolsView.tsx:2:import { Eye, Layers, Waves, TrendingUp, Sparkles, Sprout } from 'lucide-react';
+  src\components\workspace\ModelToolsView.tsx:3:import { useLanguage } from '../../context/LanguageContext.tsx';
+> src\components\workspace\ModelToolsView.tsx:4:import { TomatoDiseaseTool } from './tools/TomatoDiseaseTool.tsx';
+> src\components\workspace\ModelToolsView.tsx:5:import { RiceDiseaseTool } from './tools/RiceDiseaseTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:6:import { CropRecommendationTool } from './tools/CropRecommendationTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:7:import { RegionalYieldTool } from './tools/RegionalYieldTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:8:import { FloodSusceptibilityTool } from './tools/FloodSusceptibilityTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:11:import type { WorkspaceTab } from './WorkspaceSidebar.tsx';
+  src\components\workspace\ModelToolsView.tsx:12:
+> src\components\workspace\ModelToolsView.tsx:13:interface ModelToolsViewProps {
+  src\components\workspace\ModelToolsView.tsx:14:  initialModelId?: string;
+  src\components\workspace\ModelToolsView.tsx:15:  initialFarmId?: number | null;
+  src\components\workspace\ModelToolsView.tsx:16:  onViewHistory?: (recordId: number) => void;
+  src\components\workspace\ModelToolsView.tsx:18:}
+  src\components\workspace\ModelToolsView.tsx:19:
+> src\components\workspace\ModelToolsView.tsx:20:export function ModelToolsView({
+  src\components\workspace\ModelToolsView.tsx:21:  initialModelId = 'tomato_disease_v3',
+  src\components\workspace\ModelToolsView.tsx:22:  initialFarmId,
+  src\components\workspace\ModelToolsView.tsx:23:  onViewHistory,
+  src\components\workspace\ModelToolsView.tsx:24:  onNavigateToTab,
+> src\components\workspace\ModelToolsView.tsx:25:}: ModelToolsViewProps) {
+  src\components\workspace\ModelToolsView.tsx:26:  const { t } = useLanguage();
+  src\components\workspace\ModelToolsView.tsx:27:  const [activeModel, setActiveModel] = useState<string>(initialModelId);
+  src\components\workspace\ModelToolsView.tsx:28:
+  src\components\workspace\ModelToolsView.tsx:133:      <div className="animate-fade-in-up">
+  src\components\workspace\ModelToolsView.tsx:134:        {activeModel === 'tomato_disease_v3' && (
+> src\components\workspace\ModelToolsView.tsx:135:          <TomatoDiseaseTool onViewHistory={onViewHistory} />
+  src\components\workspace\ModelToolsView.tsx:136:        )}
+  src\components\workspace\ModelToolsView.tsx:137:        {activeModel === 'rice_disease' && (
+> src\components\workspace\ModelToolsView.tsx:138:          <RiceDiseaseTool onViewHistory={onViewHistory} />
+  src\components\workspace\ModelToolsView.tsx:139:        )}
+  src\components\workspace\ModelToolsView.tsx:140:        {activeModel === 'crop_recommendation' && (
+  src\components\workspace\ModelToolsView.tsx:141:          <CropRecommendationTool
+  src\components\workspace\WorkspaceDashboardView.tsx:77:    },
+  src\components\workspace\WorkspaceDashboardView.tsx:78:    {
+> src\components\workspace\WorkspaceDashboardView.tsx:79:      id: 'crop_health',
+  src\components\workspace\WorkspaceDashboardView.tsx:80:      title: t('ফসলের স্বাস্থ্য ও রোগ', 'Crop Health & Diseases'),
+  src\components\workspace\WorkspaceDashboardView.tsx:81:      subtitle: t('Vision CNN Pathology', 'Dual Vision Models'),
+  src\components\workspace\WorkspaceDashboardView.tsx:82:      desc: t(
+  src\components\workspace\tools\RiceDiseaseTool.tsx:6:import { PredictionResultCard } from '../PredictionResultCard.tsx';
+  src\components\workspace\tools\RiceDiseaseTool.tsx:7:
+> src\components\workspace\tools\RiceDiseaseTool.tsx:8:interface RiceDiseaseToolProps {
+  src\components\workspace\tools\RiceDiseaseTool.tsx:9:  onViewHistory?: (recordId: number) => void;
+  src\components\workspace\tools\RiceDiseaseTool.tsx:10:}
+  src\components\workspace\tools\RiceDiseaseTool.tsx:11:
+> src\components\workspace\tools\RiceDiseaseTool.tsx:12:export function RiceDiseaseTool({ onViewHistory }: RiceDiseaseToolProps) {
+  src\components\workspace\tools\RiceDiseaseTool.tsx:13:  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  src\components\workspace\tools\RiceDiseaseTool.tsx:14:  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  src\components\workspace\tools\RiceDiseaseTool.tsx:15:  const [isSubmitting, setIsSubmitting] = useState(false);
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:6:import { PredictionResultCard } from '../PredictionResultCard.tsx';
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:7:
+> src\components\workspace\tools\TomatoDiseaseTool.tsx:8:interface TomatoDiseaseToolProps {
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:9:  onViewHistory?: (recordId: number) => void;
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:10:}
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:11:
+> src\components\workspace\tools\TomatoDiseaseTool.tsx:12:export function TomatoDiseaseTool({ onViewHistory }: TomatoDiseaseToolProps) {
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:13:  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:14:  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  src\components\workspace\tools\TomatoDiseaseTool.tsx:15:  const [isSubmitting, setIsSubmitting] = useState(false);
+  src\pages\WorkspacePage.tsx:25:import { FarmIntelligenceDashboard } from '../components/workspace/FarmIntelligenceDashboard.tsx';
+  src\pages\WorkspacePage.tsx:26:import { ChatView } from '../components/workspace/ChatView.tsx';
+> src\pages\WorkspacePage.tsx:27:import { ModelToolsView } from '../components/workspace/ModelToolsView.tsx';
+  src\pages\WorkspacePage.tsx:28:import { PredictionHistoryView } from '../components/workspace/PredictionHistoryView.tsx';
+  src\pages\WorkspacePage.tsx:29:import { PremiumFarmDashboard } from '../components/workspace/dashboard/PremiumFarmDashboard.tsx';
+  src\pages\WorkspacePage.tsx:30:import { BrandLogo } from '../components/common/BrandLogo.tsx';
+  src\pages\WorkspacePage.tsx:447:        {activeTab === 'tools' && (
+  src\pages\WorkspacePage.tsx:448:          <div className="p-3 sm:p-6 lg:p-8 flex-1">
+> src\pages\WorkspacePage.tsx:449:            <ModelToolsView
+  src\pages\WorkspacePage.tsx:450:              initialModelId={selectedModelId}
+  src\pages\WorkspacePage.tsx:451:              initialFarmId={selectedFarmIdForCrop}
+  src\pages\WorkspacePage.tsx:452:              onViewHistory={handleViewHistory}
+
+
+

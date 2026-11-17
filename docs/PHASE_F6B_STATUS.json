@@ -1,0 +1,142 @@
+{
+  "phase": "F6B",
+  "name": "Premium Unified Farmer Decision Dashboard",
+  "timestamp": "2026-11-04T12:47:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F6B VERIFIED — READY FOR F6C",
+  "audit_scope": [
+    "Unified Farmer Decision Dashboard (FarmIntelligenceDashboard.tsx)",
+    "Workspace Navigation & Sidebar Integration ('smart_center' Tab)",
+    "Frontend Service API Integration (farmIntelligenceApi.getIntelligence)",
+    "TypeScript Model Contracts (FarmUnifiedIntelligenceResponse & Nested Types)",
+    "Farm Selector & Stale Cache Clearance on Farm Switch",
+    "Multi-Domain Display (Crops, Tasks, Soil, Cultivation, Observations, Harvest, Weather, AI)",
+    "Scientific Honesty: Zero Synthetic Health Scores, Honest Missing Data States",
+    "Separation of Farmer Visual Scouting vs Automated AI Diagnosis",
+    "Bangla/English Localization & Asia/Dhaka Timezone Formatting",
+    "Responsive Layout Validation (1440px Desktop & 375px Mobile Viewports)",
+    "Zero Main Database Mutation (Read-Only Safety Enforcement)"
+  ],
+  "metrics": {
+    "playwright_e2e_tests_collected": 32,
+    "playwright_e2e_tests_passed": 32,
+    "playwright_e2e_tests_failed": 0,
+    "farm_intelligence_backend_regression_passed": 10,
+    "farm_twin_backend_regression_passed": 7,
+    "model_integrity_tests_collected": 21,
+    "model_integrity_tests_passed": 21,
+    "original_ml_models_preserved": 7,
+    "frontend_typescript_compilation": "SUCCESS (0 errors)",
+    "frontend_production_build": "SUCCESS (vite v8.3.5 built in 5.80s)",
+    "main_db_drift": 0
+  },
+  "sections_implemented": {
+    "top_header": {
+      "components": ["FarmSelector", "FarmIdentityCard", "DataFreshnessBadge", "ProvenanceAuditModalTrigger"],
+      "provenance_pill": "১০টি ডোমেইন সমন্বিত • বিজ্ঞানসম্মত ও প্রামাণ্য বিশ্লেষণ"
+    },
+    "section_1_crops": {
+      "title": "নিবন্ধিত ফসল ও বর্তমান অবস্থা (Registered Crops & Current Stages)",
+      "empty_state": "এখনো কোনো ফসল নিবন্ধিত করা হয়নি",
+      "actions": ["Manage Crops (Farm Digital Twin)", "Scout Crop (Crop Monitoring)", "Record Harvest (Harvest Management)"]
+    },
+    "section_2_tasks": {
+      "title": "কৃষি ক্যালেন্ডার ও করণীয় কাজ (Agri Calendar & Actionable Tasks)",
+      "features": ["Overdue Tasks (Rose Accent)", "Today & Upcoming 7 Days Tasks (Amber/Emerald)", "Asia/Dhaka Date Handling", "Non-Destructive Guarantee"]
+    },
+    "section_3_soil_and_observations": {
+      "soil_health": {
+        "nutrients_grid": ["pH", "N", "P", "K", "Organic Matter", "Moisture"],
+        "missing_data_honesty": "Displays 'পরিমাপ হয়নি' / '—' without zero coercion",
+        "provenance_badge": "Laboratory Verified vs Farmer Reported"
+      },
+      "observations": {
+        "title": "মাঠ পর্যায়ের চাক্ষুষ পর্যবেক্ষণ (Field Visual Observations)",
+        "diagnostic_separation": "কৃষকের মাঠ পর্যায়ের পর্যবেক্ষণ নিজস্ব চাক্ষুষ প্রতিবেদন; এটি কোনো স্বয়ংক্রিয় এআই রোগ নির্ণয় নয়।"
+      }
+    },
+    "section_4_activities_and_harvest": {
+      "cultivation": {
+        "title": "সাম্প্রতিক চাষাবাদ কার্যক্রম (Recent Cultivation Activities)",
+        "items": ["Land Prep", "Sowing", "Irrigation", "Fertilization", "Weeding", "Pest Management"]
+      },
+      "harvest": {
+        "title": "ফসল সংগ্রহ ও প্রকৃত ফলন হিসাব (Harvest Records & Actual Yield)",
+        "maund_conversion": "৪০ কেজি = ১ মন (Bangladeshi Standard Maund Conversion)",
+        "yield_status": "Defensible calculation status (calculated vs not_available/partial)"
+      }
+    },
+    "section_5_weather_and_ai": {
+      "weather": {
+        "status_check": "Live Open-Meteo Feed vs Graceful Offline Fallback",
+        "parameters": ["Temperature", "Rainfall Probability", "Humidity", "Wind Speed", "Advisories"]
+      },
+      "ai_limitations": {
+        "title": "AI গবেষণা মডেল ও সীমাবদ্ধতা (AI Models & Scientific Limitations)",
+        "disclaimers": [
+          "Regional Crop Yield is a macro research tool and does not guarantee individual farm production",
+          "Archived wholesale market prices are research benchmarks, not live quotes",
+          "Flood risk is static hydrological susceptibility, not a live emergency warning",
+          "Zero synthetic overall farm-health scores created"
+        ]
+      }
+    },
+    "section_6_provenance_audit": {
+      "title": "উপাত্তের প্রামাণিকতা ও অডিট রেজিস্টার (Data Provenance & Audit Trail)",
+      "domains_audited": 10,
+      "origin_types": ["farmer_reported", "official_calendar", "live_weather_feed", "ai_generated"]
+    }
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts_before": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    },
+    "record_counts_after": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    }
+  },
+  "artifacts_generated": [
+    "docs/screenshots/f6b_smart_center_desktop_1440.png",
+    "docs/screenshots/f6b_smart_center_mobile_375.png"
+  ],
+  "files_created_or_modified": [
+    "frontend/src/types/index.ts",
+    "frontend/src/services/api.ts",
+    "frontend/src/components/workspace/FarmIntelligenceDashboard.tsx",
+    "frontend/src/components/workspace/WorkspaceSidebar.tsx",
+    "frontend/src/pages/WorkspacePage.tsx",
+    "backend/tests/test_farm_intelligence_api.py",
+    "frontend/test_phase_f6b_farmer_dashboard.mjs",
+    "docs/PHASE_F6B_STATUS.json",
+    "docs/PHASE_F6B_FARMER_DASHBOARD_REPORT.md"
+  ]
+}
+

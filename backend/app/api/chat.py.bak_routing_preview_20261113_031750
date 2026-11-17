@@ -1,0 +1,178 @@
+# Chat API router for AgriSphere AI with strict cross-user access isolation and modular LLM provider integration
+
+from datetime import datetime, timezone
+from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from ..db import get_db, ChatSession, User
+from .auth import get_current_user
+from ..core.chat_provider import get_active_chat_provider, RuleBasedChatProvider
+
+router = APIRouter()
+
+
+class CreateSessionRequest(BaseModel):
+    title: Optional[str] = Field("Agricultural Consultation", description="Chat session title")
+
+
+class PostMessageRequest(BaseModel):
+    content: str = Field(..., min_length=1, max_length=4000, description="User prompt or question")
+
+
+class MessageResponse(BaseModel):
+    role: str
+    content: str
+    timestamp: str
+    provider: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+
+class SessionResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    created_at: Any
+    messages: List[Dict[str, Any]]
+
+
+def generate_agricultural_response(user_query: str) -> tuple[str, str]:
+    """Backward compatibility helper delegating to the RuleBasedChatProvider heuristics."""
+    provider = RuleBasedChatProvider()
+    reply, _ = provider._analyze_query(user_query, user_id=None, db=None)
+    return reply, provider.provider_id
+
+
+@router.get("/provider", summary="Get configured AI Chat Provider details")
+def get_chat_provider():
+    """Returns metadata about the active AI Chat provider and configuration status."""
+    provider = get_active_chat_provider()
+    return provider.get_status()
+
+
+@router.post("/sessions", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
+def create_chat_session(
+    payload: Optional[CreateSessionRequest] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Create a new chat session owned by the authenticated user."""
+    title = payload.title if payload and payload.title else "Agricultural Consultation"
+    initial_messages = [
+        {
+            "role": "assistant",
+            "content": f"Hello {current_user.username}! Welcome to AgriSphere AI. I am your agricultural intelligence assistant. Ask me about crop health, diseases, soil nutrients, or market dynamics.",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    ]
+
+    session = ChatSession(
+        user_id=current_user.id,
+        title=title,
+        messages=initial_messages,
+    )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.get("/sessions", response_model=List[SessionResponse])
+def list_chat_sessions(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List all chat sessions belonging strictly to the authenticated user."""
+    return (
+        db.query(ChatSession)
+        .filter(ChatSession.user_id == current_user.id)
+        .order_by(ChatSession.id.desc())
+        .all()
+    )
+
+
+@router.get("/sessions/{session_id}", response_model=SessionResponse)
+def get_chat_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve chat session verifying caller ownership."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you do not have permission to access another user's chat session",
+        )
+    return session
+
+
+@router.post("/sessions/{session_id}/messages", response_model=SessionResponse)
+async def post_chat_message(
+    session_id: int,
+    payload: PostMessageRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Post message verifying caller ownership of the session and generate AI response."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you cannot send messages to another user's chat session",
+        )
+
+    messages = list(session.messages or [])
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    messages.append({
+        "role": "user",
+        "content": payload.content,
+        "timestamp": now_iso,
+    })
+
+    # Dispatch to active chat provider with conversation context
+    provider = get_active_chat_provider()
+    reply_content, provider_id, metadata = await provider.generate_response(
+        messages=messages,
+        user_id=current_user.id,
+        db=db,
+    )
+
+    messages.append({
+        "role": "assistant",
+        "content": reply_content,
+        "provider": provider_id,
+        "metadata": metadata,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+
+    session.messages = messages
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chat_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Delete chat session with ownership check."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you cannot delete another user's chat session",
+        )
+    db.delete(session)
+    db.commit()
+    return None

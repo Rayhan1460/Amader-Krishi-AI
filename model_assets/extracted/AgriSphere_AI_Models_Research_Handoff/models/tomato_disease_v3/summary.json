@@ -1,0 +1,15 @@
+{
+  "selected_epoch": 5,
+  "validation_gate_passed": true,
+  "candidate_path": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/tomato_disease_mobilenetv2/V3_Class_Balanced/20261029_150124_UTC/v3_gate_passed_candidate.keras",
+  "pd_macro_f1": 0.4398497446116494,
+  "pv_macro_f1": 0.8996428571428572,
+  "blended_pd_macro_f1": 0.36201063079359225,
+  "blended_pv_macro_f1": 0.8994551282051282,
+  "n_plantdoc_train": 362,
+  "n_plantvillage_train": 880,
+  "n_plantdoc_val": 102,
+  "n_plantvillage_val": 96,
+  "download_failures": 0,
+  "warning": "VALIDATION-ONLY research candidate. NOT a deployable disease diagnosis. Previous validation informed multiple experiments. Requires NEW independent labelled field images."
+}

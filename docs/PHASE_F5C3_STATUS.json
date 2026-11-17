@@ -1,0 +1,90 @@
+{
+  "phase": "F5C-3",
+  "name": "CROP RECOMMENDATION FINAL INTEGRATION & REGRESSION",
+  "status": "VERIFIED",
+  "verdict": "PHASE F5C COMPLETE — READY FOR F5D",
+  "timestamp": "2026-11-03T15:22:00+06:00",
+  "brand": "আমাদের কৃষি AI",
+  "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।",
+  "verification_summary": {
+    "backend_pytest_passed": 130,
+    "backend_pytest_total": 130,
+    "crop_integration_tests_passed": 14,
+    "crop_integration_tests_total": 14,
+    "playwright_f5c3_checks_passed": 24,
+    "playwright_f5c3_checks_total": 24,
+    "playwright_f5c2_regression_passed": 30,
+    "playwright_f5c2_regression_total": 30,
+    "frontend_production_build": "PASS",
+    "main_database_drift": 0,
+    "original_ai_models_preserved": 7
+  },
+  "database_audit": {
+    "db_path": "backend/app/agri.db",
+    "table_counts": {
+      "calendar_tasks": 197,
+      "chat_sessions": 66,
+      "crop_schedule_instances": 19,
+      "crop_schedule_templates": 4,
+      "farm_crops": 56,
+      "farm_profiles": 103,
+      "predictions": 77,
+      "reminder_notifications": 5,
+      "users": 339
+    },
+    "drift_detected": false
+  },
+  "scientific_and_model_integrity": {
+    "original_model_id": "crop_recommendation",
+    "classes_predicted": 22,
+    "crop_class_labeling_verified": true,
+    "uncalibrated_probabilities_explicitly_disclosed": true,
+    "auto_prefill_disabled": true,
+    "npk_unit_mismatch_warning": true,
+    "weather_temporal_mismatch_warning": true,
+    "explicit_research_disclaimer_checkbox": true,
+    "no_stale_inputs_on_farm_switch": true,
+    "cross_user_isolation": true,
+    "history_persistence_verified": true
+  },
+  "verified_api_paths": [
+    {
+      "method": "GET",
+      "path": "/soil/model-input-spec",
+      "handler": "get_model_input_spec"
+    },
+    {
+      "method": "GET",
+      "path": "/farms/{farm_id}/crop-readiness",
+      "handler": "get_farm_crop_readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/farms/{farm_id}/soil-tests/{test_id}/crop-readiness",
+      "handler": "get_farm_soil_test_crop_readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/soil/tests/{test_id}/crop-readiness",
+      "handler": "get_soil_test_crop_readiness_direct"
+    },
+    {
+      "method": "POST",
+      "path": "/predict/crop_recommendation/farm-adapter",
+      "handler": "predict_crop_recommendation_farm_adapter"
+    },
+    {
+      "method": "POST",
+      "path": "/farms/{farm_id}/crop-recommendation",
+      "handler": "create_farm_crop_recommendation"
+    }
+  ],
+  "screenshots": [
+    "docs/screenshots/f5c3_final_integration_mobile_375.png",
+    "docs/screenshots/f5c2_crop_recommendation_desktop_1440.png",
+    "docs/screenshots/f5c2_crop_readiness_panel.png",
+    "docs/screenshots/f5c2_prediction_result_real_model.png",
+    "docs/screenshots/f5c2_crop_recommendation_mobile_375.png"
+  ]
+}
+

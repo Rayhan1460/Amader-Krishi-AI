@@ -1,0 +1,168 @@
+import {
+  Calendar,
+  Sparkles,
+  Sprout,
+  Droplets,
+  Layers,
+  ShieldAlert,
+  ArrowRight,
+  Info,
+} from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.tsx';
+
+interface WorkspaceCalendarViewProps {
+  onBackToDashboard?: () => void;
+}
+
+export function WorkspaceCalendarView({ onBackToDashboard }: WorkspaceCalendarViewProps) {
+  const { t } = useLanguage();
+
+  const plannedMilestones = [
+    {
+      title: t('১. খামার প্রোফাইল ও স্থানীয় অঞ্চল নির্ধারণ', '1. Farm Profile & Location Mapping'),
+      desc: t(
+        'বাংলাদেশের জেলা ও উপজেলা ভিত্তিক মাটির ধরন, আবহাওয়া অঞ্চল ও জমির আয়তন অনুযায়ী কাস্টমাইজড প্রোফাইল।',
+        'Customized farm profiles based on district, upazila, soil type, and land acreage across Bangladesh.'
+      ),
+      icon: Sprout,
+      status: t('পরিকল্পিত • ফেজ F4', 'Planned • Phase F4'),
+    },
+    {
+      title: t('২. বোরো, আমন ও রবি মৌসুমের পূর্ণাঙ্গ সূচি', '2. Seasonal Timelines (Boro, Aman, Robi, Kharif)'),
+      desc: t(
+        'বীজ তলা তৈরি, বীজ বপন, চারা রোপণ ও ফসল কাটার সঠিক বৈজ্ঞানিক ক্যালেন্ডার।',
+        'Scientifically verified seedbed preparation, sowing, transplanting, and harvesting calendars.'
+      ),
+      icon: Calendar,
+      status: t('পরিকল্পিত • ফেজ F4', 'Planned • Phase F4'),
+    },
+    {
+      title: t('৩. সেচ ও পানি নিষ্কাশন ব্যবস্থাপনা', '3. Irrigation & Water Management Alerts'),
+      desc: t(
+        'বৃষ্টিপাতের পূর্বাভাস ও মাটির আর্দ্রতা বিশ্লেষণ করে সেচের দিনক্ষণ ও পানির পরিমাণ নির্ধারণ।',
+        'Smart irrigation scheduling based on rainfall trends, soil moisture levels, and crop water demand.'
+      ),
+      icon: Droplets,
+      status: t('পরিকল্পিত • ফেজ F4', 'Planned • Phase F4'),
+    },
+    {
+      title: t('৪. সুষম সার প্রয়োগ ও পুষ্টি ট্র্যাকিং', '4. Balanced Fertilization Task Tracking'),
+      desc: t(
+        'ইউরিয়া, টিএসপি, ডিএপি ও এমওপি সারের কিস্তিভিত্তিক সঠিক মাত্রা প্রয়োগের রিমাইন্ডার ও সম্পন্নকরণ হিসেব।',
+        'Scheduled dose reminders for Urea, TSP, DAP, and MoP fertilizers with task completion logging.'
+      ),
+      icon: Layers,
+      status: t('পরিকল্পিত • ফেজ F4', 'Planned • Phase F4'),
+    },
+    {
+      title: t('৫. রোগবালাই প্রতিরোধ ও কীটনাশক সতর্কতা', '5. Integrated Pest Management & Care Milestones'),
+      desc: t(
+        'আবহাওয়ার ঝুঁকি ও মৌসুমভিত্তিক পোকা-মাকড় আক্রমণের পূর্বাভাসে সময়মতো সতর্কবার্তা।',
+        'Early advisory alerts for pest and disease outbreaks during critical crop growth stages.'
+      ),
+      icon: ShieldAlert,
+      status: t('পরিকল্পিত • ফেজ F4', 'Planned • Phase F4'),
+    },
+  ];
+
+  return (
+    <div className="space-y-6 sm:space-y-8 animate-fade-in-up">
+      
+      {/* Top Banner */}
+      <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-forest-950 via-forest-900 to-[#071810] border border-gold-500/40 text-cream-50 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gold-400/10 blur-3xl rounded-full pointer-events-none" />
+
+        <div className="relative z-10 max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-400/20 border border-gold-400/30 text-gold-300 text-xs font-mono font-bold mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+            <span>{t('স্মার্ট কৃষি ক্যালেন্ডার • প্রস্তুতি পর্যায় (Phase F4 Roadmap)', 'Smart Agricultural Calendar • Preparation Phase')}</span>
+          </div>
+
+          <h1 className="font-bengali font-black text-2xl sm:text-4xl text-cream-50 mb-3">
+            {t('স্মার্ট কৃষি ক্যালেন্ডার (Smart Agricultural Calendar)', 'Smart Agricultural Calendar')}
+          </h1>
+
+          <p className="font-bengali text-sm sm:text-base text-sage-200 leading-relaxed mb-6">
+            {t(
+              'বাংলাদেশের কৃষকদের জন্য ফসলের মৌসুম, বীজ বপন, সেচ, সার প্রয়োগ ও ফসল কাটার সম্পূর্ণ সমন্বিত কৃষি ক্যালেন্ডার ব্যবস্থা পরবর্তী উন্নয়ন পর্বে (Phase F4) যুক্ত হবে।',
+              'A fully integrated crop calendar system for Bangladeshi farmers—covering crop seasons, sowing, irrigation, fertilization, and harvesting—will launch in Phase F4.'
+            )}
+          </p>
+
+          <div className="p-4 rounded-2xl bg-forest-950/80 border border-forest-700/80 flex items-start gap-3 text-xs font-bengali text-sage-300">
+            <Info className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-cream-100 block mb-0.5">
+                {t('বৈজ্ঞানিক সততা ও তথ্যের স্বচ্ছতা:', 'Scientific Integrity & Data Transparency:')}
+              </span>
+              <span>
+                {t(
+                  'আমরা কোনো মনগড়া বা আনুমানিক সময়সূচি প্রদর্শন করি না। Phase F4-এ সরকারি কৃষি তথ্য সার্ভিস (AIS) ও বাংলাদেশ ধান গবেষণা ইনস্টিটিউট (BRRI) এর নির্দেশিকা অনুযায়ী বাস্তবায়ন করা হবে।',
+                  'We do not present fabricated schedules. In Phase F4, calendars will be populated with validated benchmarks from the Agricultural Information Service (AIS) and BRRI.'
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Planned Feature Blueprint Grid */}
+      <div>
+        <h2 className="font-bengali font-bold text-lg sm:text-xl text-cream-100 mb-2">
+          {t('ক্যালেন্ডার মডিউলের নির্ধারিত বৈশিষ্ট্যসমূহ', 'Planned Calendar Architecture & Modules')}
+        </h2>
+        <p className="font-bengali text-xs text-sage-400 mb-6">
+          {t(
+            'Phase F4 বাস্তবায়নের পর এই মডিউলে যা যা অন্তর্ভুক্ত থাকবে:',
+            'The following capabilities will be functional in Phase F4:'
+          )}
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          {plannedMilestones.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="rounded-2xl p-5 bg-forest-900/80 border border-forest-800 text-cream-100 shadow-md hover:border-gold-400/40 transition-colors"
+              >
+                <div className="flex items-start gap-3.5 mb-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-forest-800 border border-forest-700 flex items-center justify-center text-gold-400 shrink-0">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-forest-950 text-gold-300 border border-forest-700 inline-block mb-1">
+                      {item.status}
+                    </span>
+                    <h3 className="font-bengali font-bold text-sm sm:text-base text-cream-100">
+                      {item.title}
+                    </h3>
+                  </div>
+                </div>
+                <p className="font-bengali text-xs text-sage-300 leading-relaxed ml-13">
+                  {item.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Return button */}
+      {onBackToDashboard && (
+        <div className="pt-2 text-center">
+          <button
+            type="button"
+            onClick={onBackToDashboard}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-750 text-gold-300 text-xs font-bengali font-semibold border border-forest-700 transition-colors cursor-pointer shadow-sm"
+          >
+            <span>{t('ড্যাশবোর্ডে ফিরে যান', 'Return to Dashboard')}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+    </div>
+  );
+}
+

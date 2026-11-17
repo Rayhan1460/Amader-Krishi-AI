@@ -1,0 +1,87 @@
+{
+  "phase": "F5D-4",
+  "name": "Final Crop Health Integration Audit & Regression",
+  "timestamp": "2026-11-03T17:35:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F5D COMPLETE — READY FOR F5E",
+  "metrics": {
+    "backend_tests_discovered": 161,
+    "backend_tests_collected": 161,
+    "backend_tests_passed": 161,
+    "backend_tests_failed": 0,
+    "backend_tests_skipped": 0,
+    "model_integrity_tests": 21,
+    "model_integrity_passed": 21,
+    "disease_integration_tests": 17,
+    "disease_integration_passed": 17,
+    "playwright_e2e_tests": 29,
+    "playwright_e2e_passed": 29,
+    "frontend_build_status": "SUCCESS",
+    "main_db_drift": 0
+  },
+  "canonical_class_mappings": {
+    "rice_disease": {
+      "model_type": "Keras 3 / TensorFlow 2.21",
+      "output_shape": [null, 7],
+      "classes": [
+        {"index": 0, "name": "Healthy", "bangla": "সুস্থ ধান গাছ"},
+        {"index": 1, "name": "Insect", "bangla": "পোকামাকড়ের আক্রমণ"},
+        {"index": 2, "name": "Leaf Scald", "bangla": "পাতার স্ক্যাল্ড (দাগ রোগ)"},
+        {"index": 3, "name": "Rice Blast", "bangla": "ধানের ব্লাস্ট রোগ"},
+        {"index": 4, "name": "Rice Leaffolder", "bangla": "ধানের পাতা মোড়ানো পোকা"},
+        {"index": 5, "name": "Rice Stripes", "bangla": "ধানের ডোরা রোগ (স্ট্রাইপ)"},
+        {"index": 6, "name": "Rice Tungro", "bangla": "ধানের টুংরো রোগ"}
+      ],
+      "discrepancy_resolved": "Previous F5D-3 completion report text mistakenly listed generic plant diseases; canonical training evidence and model artifact confirm the 7 indices above."
+    },
+    "tomato_disease_v3": {
+      "model_type": "Keras 3 / TensorFlow 2.21",
+      "output_shape": [null, 8],
+      "classes": [
+        {"index": 0, "name": "Tomato___Bacterial_spot", "bangla": "ব্যাকটেরিয়াল স্পট (দাগ রোগ)"},
+        {"index": 1, "name": "Tomato___Early_blight", "bangla": "আর্লি ব্লাইট (আগাম ধসা রোগ)"},
+        {"index": 2, "name": "Tomato___Late_blight", "bangla": "লেট ব্লাইট (নাবী ধসা রোগ)"},
+        {"index": 3, "name": "Tomato___Leaf_Mold", "bangla": "লিফ মোল্ড (পাতার ছত্রাক রোগ)"},
+        {"index": 4, "name": "Tomato___Septoria_leaf_spot", "bangla": "সেপ্টোরিয়া লিফ স্পট (পাতার দাগ)"},
+        {"index": 5, "name": "Tomato___Spider_mites Two-spotted_spider_mite", "bangla": "মাকড় আক্রমণ (টু-স্পটেড স্পাইডার মাইট)"},
+        {"index": 6, "name": "Tomato___Tomato_Yellow_Leaf_Curl_Virus", "bangla": "হলুদ পাতা কোঁকড়ানো ভাইরাস (TYLCV)"},
+        {"index": 7, "name": "Tomato___healthy", "bangla": "সুস্থ টমেটো গাছ"}
+      ],
+      "discrepancy_resolved": "Class index 6 confirmed as Tomato Yellow Leaf Curl Virus (TYLCV) per summary.json and plantvillage_class_report.csv (not Target Spot)."
+    }
+  },
+  "synthetic_transparency": {
+    "button_label": "ডেমো / কৃত্রিম নমুনা পাতা লোড করুন (Load Demo / Synthetic Research Sample)",
+    "preview_badge": "কৃত্রিম ল্যাব নমুনা — মাঠের বাস্তব ফলাফল নয় (Synthetic Lab Sample — Not a Field Diagnosis)",
+    "result_warning": "কৃত্রিম ল্যাব নমুনা — মাঠের বাস্তব ফলাফল নয়",
+    "blob_name": "synthetic_research_sample.png"
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_instances": 19,
+      "crop_schedule_templates": 4,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "soil_tests": 0
+    }
+  },
+  "seven_original_ai_models_preserved": [
+    "tomato_disease_v3",
+    "rice_disease",
+    "crop_recommendation",
+    "regional_crop_yield",
+    "flood_susceptibility",
+    "tomato_price",
+    "boro_rice_price"
+  ]
+}
+

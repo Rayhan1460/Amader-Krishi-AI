@@ -1,0 +1,313 @@
+# Chat API router for AgriSphere AI with strict cross-user access isolation and modular LLM provider integration
+
+from datetime import datetime, timezone
+import os
+from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from ..db import get_db, ChatSession, User
+from .auth import get_current_user
+from ..core.chat_provider import get_active_chat_provider, RuleBasedChatProvider
+
+router = APIRouter()
+
+
+class CreateSessionRequest(BaseModel):
+    title: Optional[str] = Field("Agricultural Consultation", description="Chat session title")
+
+
+class PostMessageRequest(BaseModel):
+    content: str = Field(..., min_length=1, max_length=4000, description="User prompt or question")
+
+
+class MessageResponse(BaseModel):
+    role: str
+    content: str
+    timestamp: str
+    provider: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+
+class SessionResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    created_at: Any
+    messages: List[Dict[str, Any]]
+
+
+def generate_agricultural_response(user_query: str) -> tuple[str, str]:
+    """Backward compatibility helper delegating to the RuleBasedChatProvider heuristics."""
+    provider = RuleBasedChatProvider()
+    reply, _ = provider._analyze_query(user_query, user_id=None, db=None)
+    return reply, provider.provider_id
+
+
+@router.get("/provider", summary="Get configured AI Chat Provider details")
+def get_chat_provider():
+    """Returns metadata about the active AI Chat provider and configuration status."""
+    provider = get_active_chat_provider()
+    return provider.get_status()
+
+
+@router.post("/sessions", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
+def create_chat_session(
+    payload: Optional[CreateSessionRequest] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Create a new chat session owned by the authenticated user."""
+    title = payload.title if payload and payload.title else "Agricultural Consultation"
+    initial_messages = [
+        {
+            "role": "assistant",
+            "content": f"Hello {current_user.username}! Welcome to AgriSphere AI. I am your agricultural intelligence assistant. Ask me about crop health, diseases, soil nutrients, or market dynamics.",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    ]
+
+    session = ChatSession(
+        user_id=current_user.id,
+        title=title,
+        messages=initial_messages,
+    )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.get("/sessions", response_model=List[SessionResponse])
+def list_chat_sessions(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List all chat sessions belonging strictly to the authenticated user."""
+    return (
+        db.query(ChatSession)
+        .filter(ChatSession.user_id == current_user.id)
+        .order_by(ChatSession.id.desc())
+        .all()
+    )
+
+
+@router.get("/sessions/{session_id}", response_model=SessionResponse)
+def get_chat_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Retrieve chat session verifying caller ownership."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you do not have permission to access another user's chat session",
+        )
+    return session
+
+
+@router.post("/sessions/{session_id}/messages", response_model=SessionResponse)
+async def post_chat_message(
+    session_id: int,
+    payload: PostMessageRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Post message verifying caller ownership of the session and generate AI response."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you cannot send messages to another user's chat session",
+        )
+
+    messages = list(session.messages or [])
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    messages.append({
+        "role": "user",
+        "content": payload.content,
+        "timestamp": now_iso,
+    })
+
+    # Dispatch to active chat provider with conversation context
+    provider = get_active_chat_provider()
+    reply_content, provider_id, metadata = await provider.generate_response(
+        messages=messages,
+        user_id=current_user.id,
+        db=db,
+    )
+
+
+    # Optional metadata-only routing preview.
+    # Disabled unless explicitly enabled via environment variable.
+    if os.getenv(
+        "AGRISPHERE_ROUTING_PREVIEW_ENABLED", ""
+    ).strip().lower() in {"1", "true", "yes"}:
+
+        metadata = dict(metadata) if isinstance(metadata, dict) else {}
+
+        try:
+            from starlette.concurrency import run_in_threadpool
+            from ..services import intent_classifier
+            from ..services.chat_routing_adapter import preview_chat_routing
+
+            decision = await run_in_threadpool(
+                preview_chat_routing,
+                payload.content,
+                classifier=intent_classifier.classify,
+                gemini_configured=(
+                    provider_id == "gemini"
+                    and bool(
+                        provider.get_status().get(
+                            "is_external_llm_configured", False
+                        )
+                    )
+                ),
+                routing_enabled=True,
+            )
+
+            metadata["routing_preview"] = {
+                "candidate_category": decision.candidate_category,
+                "candidate_domain": decision.candidate_domain,
+                "action_status": decision.action_status,
+                "reason": decision.reason,
+                "auto_action_permitted": decision.auto_action_permitted,
+            }
+
+        except Exception:
+            # Preview errors must never break the existing chat reply.
+            metadata["routing_preview"] = {
+                "candidate_category": None,
+                "candidate_domain": "unresolved",
+                "action_status": "fallback",
+                "reason": "Routing preview unavailable.",
+                "auto_action_permitted": False,
+            }
+
+
+    # Optional Bengali agricultural answer preview.
+    # Metadata only: never replace the provider's actual reply.
+    if (
+        os.getenv(
+            "AGRISPHERE_AGRI_ANSWER_PREVIEW_ENABLED", ""
+        ).strip().lower() in {"1", "true", "yes"}
+        and isinstance(metadata, dict)
+        and isinstance(metadata.get("routing_preview"), dict)
+    ):
+        route_preview = metadata["routing_preview"]
+
+        if (
+            route_preview.get("candidate_category")
+            == "plant_disease_pest"
+            and route_preview.get("candidate_domain")
+            == "agriculture"
+        ):
+            try:
+                from ..services.agri_answer_engine import (
+                    draft_agricultural_answer,
+                )
+
+                draft = draft_agricultural_answer(
+                    messages,
+                    "plant_disease_pest",
+                )
+
+                if isinstance(draft, str) and draft.strip():
+                    metadata["agri_answer_preview"] = {
+                        "draft": draft,
+                        "source": "conservative_template_v1",
+                        "verified_diagnosis": False,
+                        "auto_applied": False,
+                    }
+
+            except Exception:
+                # Preview errors cannot interrupt the existing chat.
+                pass
+
+
+    # Optional conservative Bengali reply replacement.
+    # OFF by default and limited to the local rule-based provider.
+    if (
+        os.getenv(
+            "AGRISPHERE_SAFE_AGRI_REPLY_ENABLED", ""
+        ).strip().lower() in {"1", "true", "yes"}
+        and provider_id == "rule_based_agronomic_heuristics"
+        and isinstance(metadata, dict)
+        and isinstance(metadata.get("routing_preview"), dict)
+    ):
+        route = metadata["routing_preview"]
+
+        if (
+            route.get("candidate_category") == "plant_disease_pest"
+            and route.get("candidate_domain") == "agriculture"
+        ):
+            try:
+                from ..services.safe_agri_reply import (
+                    select_safe_agri_reply,
+                )
+
+                safe_reply = select_safe_agri_reply(
+                    messages,
+                    "plant_disease_pest",
+                    enabled=True,
+                )
+
+                if isinstance(safe_reply, str) and safe_reply.strip():
+                    original_provider_id = provider_id
+
+                    reply_content = safe_reply
+                    provider_id = "agri_leaf_spot_template_v1"
+
+                    metadata = dict(metadata)
+                    metadata["safe_reply"] = {
+                        "applied": True,
+                        "source": "conservative_bengali_leaf_spot_v1",
+                        "original_provider": original_provider_id,
+                        "verified_diagnosis": False,
+                        "ml_tool_executed": False,
+                    }
+
+            except Exception:
+                # Never interrupt the existing provider response.
+                pass
+
+    messages.append({
+        "role": "assistant",
+        "content": reply_content,
+        "provider": provider_id,
+        "metadata": metadata,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+
+    session.messages = messages
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chat_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Delete chat session with ownership check."""
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found")
+    if session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: you cannot delete another user's chat session",
+        )
+    db.delete(session)
+    db.commit()
+    return None

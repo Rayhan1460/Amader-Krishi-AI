@@ -1,0 +1,8 @@
+# Pyrefly Configuration for আমাদের কৃষি AI
+python-interpreter-path = "backend/.venv2/Scripts/python.exe"
+
+search-path = [
+    "backend",
+    "backend/app"
+]
+

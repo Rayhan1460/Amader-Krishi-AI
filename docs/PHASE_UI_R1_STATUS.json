@@ -1,0 +1,85 @@
+{
+  "phase": "UI-R1",
+  "status": "COMPLETED",
+  "brand": "আমাদের কৃষি",
+  "platform": "আমাদের কৃষি AI",
+  "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।",
+  "timestamp": "2026-11-04T14:55:00+06:00",
+  "reference_source": "https://snapshot-buddy-pro.lovable.app",
+  "local_reference_assets": [
+    "amader_krishi_design_reference/01_chat_home_reference.png",
+    "amader_krishi_design_reference/02_chat_mobile_reference.png",
+    "amader_krishi_design_reference/amader_krishi_OFFICIAL_LOGO.png"
+  ],
+  "verification_summary": {
+    "playwright_checks_total": 25,
+    "playwright_checks_passed": 25,
+    "playwright_checks_failed": 0,
+    "browser_console_errors": 0,
+    "frontend_build_status": "PASS",
+    "frontend_build_time_sec": 3.77,
+    "original_models_preserved": "7/7",
+    "backend_status": "RUNNING (Port 8000)",
+    "frontend_status": "RUNNING (Port 5173)"
+  },
+  "verified_features": {
+    "design_system": {
+      "file": "frontend/src/styles/krishiProTheme.css",
+      "tokens": {
+        "bg_primary": "#0c130e",
+        "sidebar_bg": "#111610",
+        "gold_accent": "#e9ad46",
+        "card_bg": "#152019",
+        "border_glass": "rgba(233, 173, 70, 0.18)"
+      },
+      "animations": ["krishi-rise", "krishi-leaf-sway", "krishi-shimmer"]
+    },
+    "sidebar": {
+      "file": "frontend/src/components/workspace/WorkspaceSidebar.tsx",
+      "width_desktop": "272px (fixed)",
+      "brand_header": "আমাদের কৃষি & আমাদের কৃষি AI with official logo",
+      "new_chat_button": "Gold-outlined #sidebar-new-chat-btn",
+      "sections": [
+        "NAVIGATION",
+        "INTELLIGENCE MODULES",
+        "360° MORE MODULES",
+        "RECENTS"
+      ],
+      "toggles": {
+        "language_toggle": "English | বাংলা segmented toggle",
+        "mode_toggle": "Farmer | Expert toggle",
+        "location_pill": "Bogra, Rajshahi, BD"
+      }
+    },
+    "chat_homepage": {
+      "file": "frontend/src/components/workspace/ChatHomepageView.tsx",
+      "eyebrow": "FROM SOIL TO MARKET — ONE AI SYSTEM",
+      "title": "আসসালামু আলাইকুম! 🌱 / Assalamu Alaikum 👋",
+      "background": "Atmospheric SVG perspective agricultural landscape with golden sunset glow",
+      "suggestion_cards_count": 4,
+      "prompt_pills_count": 4,
+      "floating_input_bar": {
+        "mic_button": true,
+        "leaf_scanner_trigger": true,
+        "send_button": "Circular gold icon button"
+      }
+    },
+    "real_chat_integration": {
+      "session_creation": "chatApi.createSession()",
+      "message_posting": "chatApi.postMessage()",
+      "streaming_response": true,
+      "tab_transition": "/workspace?tab=chat"
+    },
+    "mobile_shell": {
+      "top_header": "Brand mark, demo mode pill, location indicator, hamburger toggle",
+      "bottom_nav_items": ["হোম", "ক্যালেন্ডার", "স্ক্যান", "মার্কেট", "মেনু"]
+    }
+  },
+  "screenshots": [
+    "docs/screenshots/ui_r1_desktop_1440.png",
+    "docs/screenshots/ui_r1_mobile_375.png",
+    "docs/screenshots/ui_r1_chat_active_conversation.png"
+  ],
+  "final_verdict": "PHASE UI-R1 VERIFIED — READY FOR UI-R2"
+}
+

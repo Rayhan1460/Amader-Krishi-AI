@@ -1,0 +1,67 @@
+/* UI-07 | Scoped Crop Health scan surface, based on 07_crop_health_reference.png. */
+.crop-health-ui { color:#f4f8f4; width:100%; max-width:1230px; margin:0 auto; padding:3px 0 24px; }
+.crop-health-heading { margin:0 0 24px; }
+.crop-health-eyebrow { font-size:11px; letter-spacing:.21em; font-weight:800; color:#e8ad47; margin-bottom:9px; }
+.crop-health-eyebrow span { color:#6f987e; padding:0 4px; }
+.crop-health-heading h1 { font-size:clamp(25px,2.5vw,36px); line-height:1.24; font-weight:800; letter-spacing:-.035em; color:#fbfbf7; margin:0 0 8px; }
+.crop-health-heading p { margin:0; font-size:14px; color:#a9c5b5; line-height:1.6; }
+.crop-health-columns { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:stretch; }
+.crop-health-card { background:linear-gradient(160deg,#0c3425 0%,#08271c 100%); border:1px solid #1e4d38; border-radius:18px; min-width:0; padding:20px; box-shadow:0 16px 45px rgba(0,0,0,.08); }
+.crop-health-card-kicker { display:flex; align-items:center; flex-wrap:wrap; gap:9px; color:#fcf9ed; font-size:14px; font-weight:760; min-height:22px; margin-bottom:15px; }
+.crop-health-card-kicker svg { color:#e9ad46; }
+.crop-health-model-badge { margin-left:auto; font-size:10px; letter-spacing:.05em; color:#a4c8b0; border:1px solid #26573f; background:#103f2c; border-radius:20px; padding:4px 9px; }
+.crop-health-upload-panel { display:flex; flex-direction:column; }
+.crop-health-dropzone { outline:0; border:2px dashed #26533d; background:#07291c; border-radius:18px; min-height:315px; flex:1; display:flex; justify-content:center; align-items:center; padding:22px; text-align:center; cursor:pointer; transition:border-color .2s ease,background .2s ease,box-shadow .2s ease; }
+.crop-health-dropzone:hover,.crop-health-dropzone:focus-visible,.crop-health-dropzone.is-dragging { border-color:#e9ad46; background:#0c3828; box-shadow:0 0 0 3px rgba(233,173,70,.12); }
+.crop-health-dropzone.has-image { min-height:315px; }
+.crop-health-file-input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; }
+.crop-health-drop-prompt { display:flex; flex-direction:column; justify-content:center; align-items:center; max-width:300px; gap:12px; }
+.crop-health-drop-prompt > svg { color:#e9ad46; margin-bottom:3px; }
+.crop-health-drop-prompt strong { font-size:14px; font-weight:650; line-height:1.6; color:#e6f3eb; }
+.crop-health-drop-prompt small { color:#89ac9a; font-size:11px; }
+.crop-health-image-preview { display:flex; flex-direction:column; align-items:center; gap:6px; max-width:100%; width:100%; }
+.crop-health-image-preview img { width:100%; max-height:255px; object-fit:contain; border-radius:12px; }
+.crop-health-file-name { max-width:100%; overflow-wrap:anywhere; color:#f4f8f4; font-size:12px; font-weight:650; }
+.crop-health-help { font-size:11px; color:#a6c4b5; }
+.crop-health-controls { display:flex; gap:10px; margin-top:15px; }
+.crop-health-scan-button { flex:1; min-width:0; min-height:49px; border:0; background:#e9ad46; color:#0a1d13; border-radius:14px; font-weight:780; font-size:14px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:10px; transition:filter .2s ease,transform .2s ease; }
+.crop-health-scan-button:hover:not(:disabled) { filter:brightness(1.07); transform:translateY(-1px); }
+.crop-health-scan-button:focus-visible,.crop-health-clear:focus-visible,.crop-health-sample-row button:focus-visible { outline:2px solid #e9ad46; outline-offset:3px; }
+.crop-health-scan-button:disabled { opacity:.58; cursor:not-allowed; }
+.crop-health-clear { padding:0 15px; background:#133f2d; border:1px solid #28553f; border-radius:13px; color:#d1e2d6; cursor:pointer; font-weight:650; display:flex; align-items:center; gap:7px; }
+.crop-health-clear:disabled { opacity:.5; cursor:not-allowed; }
+.crop-health-sample-row { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding-top:13px; font-size:11px; color:#a4c2ae; }
+.crop-health-sample-row span { display:flex; align-items:center; gap:5px; }
+.crop-health-sample-row button { padding:6px 9px; font-size:11px; color:#e9d4a3; background:#123b2a; border:1px solid #28553f; border-radius:9px; cursor:pointer; }
+.crop-health-sample-row button:hover:not(:disabled) { background:#1b4a34; }
+.crop-health-sample-row button:disabled { opacity:.5; cursor:not-allowed; }
+.crop-health-synthetic-note { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#e4c18a; line-height:1.5; margin:10px 0 0; }
+.crop-health-synthetic-note svg { flex:none; }
+.crop-health-error { display:flex; align-items:flex-start; gap:8px; color:#fecaca; background:#401e22; border:1px solid #7b3438; border-radius:12px; font-size:12px; padding:12px; margin-top:12px; }
+.crop-health-error svg { flex:none; }
+.crop-health-results-panel { min-height:455px; }
+.crop-health-result-ready { margin-left:auto; color:#9bddb1!important; }
+.crop-health-results-empty { color:#a6c4b3; display:flex; flex-direction:column; gap:12px; padding:10px 0; font-size:14px; line-height:1.65; }
+.crop-health-results-empty p { margin:0; }
+.crop-health-results-empty span { font-size:12px; color:#86ad98; }
+.crop-health-empty-icon { display:flex; width:48px; height:48px; border:1px solid #24523c; border-radius:12px; background:#0c3928; align-items:center; justify-content:center; color:#e9ad46; }
+.crop-health-results-empty.is-loading { align-items:flex-start; }
+.crop-health-result-content { display:flex; flex-direction:column; gap:14px; }
+.crop-health-result-intro { display:flex; align-items:center; gap:9px; font-size:12px; font-weight:750; color:#b6e5c9; }
+.crop-health-result-intro svg { color:#9bddb1; }
+.crop-health-result { min-width:0; overflow-wrap:anywhere; color:#dff2e8; }
+/* The existing PredictionResultCard remains responsible for data rendering and history. */
+.crop-health-result [class*="bg-white"] { background-color:#103c2a!important; }
+.crop-health-result [class*="text-charcoal"] { color:#e4f2e9!important; }
+.crop-health-result [class*="text-sage"] { color:#adceba!important; }
+.crop-health-result [class*="border-sage"] { border-color:#32654b!important; }
+.crop-health-disclaimer { display:flex; gap:8px; align-items:flex-start; font-size:12px; color:#bad2c4; line-height:1.6; border-top:1px solid #23533b; padding-top:14px; margin:0; }
+.crop-health-disclaimer svg { flex:none; color:#e9ad46; margin-top:2px; }
+.crop-health-footnote { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:16px; font-size:11px; color:#8fae9a; }
+.crop-health-footnote svg { color:#e9ad46; }
+.crop-health-footnote-model { margin-left:auto; font-family:ui-monospace, monospace; color:#a3c8b4; }
+.crop-health-spinner { display:inline-block; width:19px; height:19px; flex:none; border:2px solid #8aa998; border-top-color:#e9ad46; border-radius:50%; animation:crop-health-spin .8s linear infinite; }
+@keyframes crop-health-spin { to { transform:rotate(360deg); } }
+@media (max-width:900px) { .crop-health-columns { grid-template-columns:1fr; } .crop-health-results-panel { min-height:240px; } .crop-health-dropzone { min-height:285px; } }
+@media (max-width:480px) { .crop-health-card { padding:14px; border-radius:16px; } .crop-health-heading { margin-bottom:18px; } .crop-health-dropzone { min-height:230px; padding:14px; } .crop-health-controls { flex-wrap:wrap; } .crop-health-clear { min-height:43px; justify-content:center; } }
+@media (prefers-reduced-motion:reduce) { .crop-health-ui * { transition:none!important; animation:none!important; } }

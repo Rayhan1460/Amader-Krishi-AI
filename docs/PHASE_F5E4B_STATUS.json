@@ -1,0 +1,82 @@
+{
+  "phase": "F5E-4B",
+  "name": "Historical Wholesale Market Price Intelligence & Baseline Supremacy",
+  "platform": "আমাদের কৃষি AI (AgriSphere-AI)",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F5E-4B VERIFIED — READY FOR F5E-5",
+  "timestamp": "2026-11-03T23:25:00+06:00",
+  "models": {
+    "tomato_price": {
+      "id": "tomato_price",
+      "commodity": "Tomato",
+      "type": "price",
+      "task": "Market Price — Tomato",
+      "algorithm": "RandomForestRegressor",
+      "total_features": 10,
+      "features": [
+        "lag_1", "lag_2", "lag_3", "lag_4", "lag_8",
+        "lag_12", "past_mean_4", "past_mean_8", "month", "week_of_month"
+      ],
+      "model_test_mae": 9.6159,
+      "baseline_test_mae": 5.8448,
+      "baseline_beats_ml": true,
+      "recommended_primary_benchmark": "lag_1 (naive last-observed weekly price)",
+      "target_unit": "BDT/kg (wholesale)",
+      "series_cutoff": "2026-02-22",
+      "price_type": "wholesale midpoint (DAM)"
+    },
+    "boro_rice_price": {
+      "id": "boro_rice_price",
+      "commodity": "Boro Rice",
+      "type": "price",
+      "task": "Market Price — Boro Rice",
+      "algorithm": "RandomForestRegressor",
+      "total_features": 10,
+      "features": [
+        "lag_1", "lag_2", "lag_3", "lag_4", "lag_8",
+        "lag_12", "past_mean_4", "past_mean_8", "month", "week_of_month"
+      ],
+      "model_test_mae": 0.7534,
+      "baseline_test_mae": 0.7372,
+      "baseline_beats_ml": true,
+      "recommended_primary_benchmark": "lag_1 (naive last-observed weekly price)",
+      "target_unit": "BDT/kg (wholesale)",
+      "series_cutoff": "2026-02-22",
+      "price_type": "wholesale midpoint (DAM)"
+    }
+  },
+  "verification_results": {
+    "playwright_e2e_tests": "23/23 PASS",
+    "market_price_api_tests": "11/11 PASS",
+    "regional_yield_api_tests": "14/14 PASS",
+    "yield_market_audit_tests": "12/12 PASS",
+    "harvest_api_tests": "19/19 PASS",
+    "model_integrity_tests": "21/21 PASS",
+    "targeted_backend_total": "77/77 PASS",
+    "frontend_production_build": "PASS (0 errors, 5.30s)",
+    "main_database_drift": "0 (339 users, 103 farms, 56 crops, 197 tasks, 77 predictions, 0 harvest records)"
+  },
+  "verified_artifacts": {
+    "screenshots": [
+      "f5e4b_market_price_desktop_1440.png",
+      "f5e4b_baseline_comparison_card.png",
+      "f5e4b_market_price_audit_drawer.png",
+      "f5e4b_market_price_mobile_375.png",
+      "f5e4b_harvest_market_separation_banner.png"
+    ],
+    "reports": [
+      "docs/PHASE_F5E4B_MARKET_INTELLIGENCE_REPORT.md",
+      "docs/PHASE_F5E4B_STATUS.json"
+    ]
+  },
+  "guardrails_enforced": [
+    "Baseline supremacy: lag_1 is primary recommended price across UI and API responses",
+    "Historical data cutoff notice (Feb 22, 2026) displayed prominently",
+    "Wholesale DAM midpoint clarity vs retail consumer prices",
+    "Zero harvest record creation or alteration during price forecast inference",
+    "No synthetic or speculative future price generation",
+    "Mandatory researcher disclaimer acknowledgment before inference",
+    "Input validation for 10 required features, month (1..12), week_of_month (1..5), non-negative values"
+  ]
+}
+

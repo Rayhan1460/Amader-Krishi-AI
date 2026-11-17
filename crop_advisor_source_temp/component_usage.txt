@@ -1,0 +1,160 @@
+﻿
+  src\components\landing\LimitationsSection.tsx:35:    },
+  src\components\landing\LimitationsSection.tsx:36:    {
+> src\components\landing\LimitationsSection.tsx:37:      modelId: 'crop_recommendation',
+  src\components\landing\LimitationsSection.tsx:38:      title: t('২২ ফসল নির্বাচন: ল্যাব বেঞ্চমার্ক ও জমির বাস্তবতা', 'Public Benchmark vs Bangladesh Soil'),
+  src\components\landing\LimitationsSection.tsx:39:      tag: t('মৃত্তিকা ও ফসল', 'Agronomy'),
+  src\components\landing\LimitationsSection.tsx:40:      finding: t(
+  src\components\landing\ModelCardsSection.tsx:69:    },
+  src\components\landing\ModelCardsSection.tsx:70:    {
+> src\components\landing\ModelCardsSection.tsx:71:      id: 'crop_recommendation',
+  src\components\landing\ModelCardsSection.tsx:72:      name: 'Precision Crop Recommendation',
+  src\components\landing\ModelCardsSection.tsx:73:      nameBn: 'মৃত্তিকা ও জলবায়ু উপযোগী ফসল নির্বাচন',
+  src\components\landing\ModelCardsSection.tsx:74:      category: 'agronomy',
+  src\components\workspace\ChatHomepageView.tsx:94:        : 'Which crop offers the highest yield based on my soil NPK and weather?',
+  src\components\workspace\ChatHomepageView.tsx:95:      tab: 'tools' as WorkspaceTab,
+> src\components\workspace\ChatHomepageView.tsx:96:      modelId: 'crop_recommendation',
+  src\components\workspace\ChatHomepageView.tsx:97:    },
+  src\components\workspace\ChatHomepageView.tsx:98:    {
+  src\components\workspace\ChatHomepageView.tsx:99:      id: 'market_price',
+  src\components\workspace\ChatView.tsx:211:        'My soil test shows N=90, P=42, K=43, pH=6.5. What crop is recommended for this soil?'
+  src\components\workspace\ChatView.tsx:212:      ),
+> src\components\workspace\ChatView.tsx:213:      modelId: 'crop_recommendation',
+  src\components\workspace\ChatView.tsx:214:    },
+  src\components\workspace\ChatView.tsx:215:    {
+  src\components\workspace\ChatView.tsx:216:      label: t('টমেটোর বর্তমান পাইকারি দর', 'Tomato wholesale price baseline'),
+  src\components\workspace\ChatView.tsx:333:              <button
+  src\components\workspace\ChatView.tsx:334:                type="button"
+> src\components\workspace\ChatView.tsx:335:                onClick={() => onSelectModelTool('crop_recommendation')}
+  src\components\workspace\ChatView.tsx:336:                className="p-1.5 rounded-lg bg-forest-950 border border-forest-800 hover:border-gold-400/50 text-gold-300 transition-colors"
+  src\components\workspace\ChatView.tsx:337:                title="Precision Crop Recommendation"
+  src\components\workspace\ChatView.tsx:338:              >
+  src\components\workspace\FarmDigitalTwinView.tsx:475:                  type="button"
+  src\components\workspace\FarmDigitalTwinView.tsx:476:                  data-testid="twin-crop-recommendation-btn"
+> src\components\workspace\FarmDigitalTwinView.tsx:477:                  onClick={() => onNavigateToModel('crop_recommendation', selectedFarmId ? { farm_id: selectedFarmId } : undefined)}
+  src\components\workspace\FarmDigitalTwinView.tsx:478:                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 font-bengali 
+text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+  src\components\workspace\FarmDigitalTwinView.tsx:479:                >
+  src\components\workspace\FarmDigitalTwinView.tsx:480:                  <Sprout className="w-3.5 h-3.5" />
+  src\components\workspace\ModelToolsView.tsx:4:import { TomatoDiseaseTool } from './tools/TomatoDiseaseTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:5:import { RiceDiseaseTool } from './tools/RiceDiseaseTool.tsx';
+> src\components\workspace\ModelToolsView.tsx:6:import { CropRecommendationTool } from './tools/CropRecommendationTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:7:import { RegionalYieldTool } from './tools/RegionalYieldTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:8:import { FloodSusceptibilityTool } from './tools/FloodSusceptibilityTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:9:import { MarketPriceTool } from './tools/MarketPriceTool.tsx';
+  src\components\workspace\ModelToolsView.tsx:49:    },
+  src\components\workspace\ModelToolsView.tsx:50:    {
+> src\components\workspace\ModelToolsView.tsx:51:      id: 'crop_recommendation',
+  src\components\workspace\ModelToolsView.tsx:52:      nameBn: 'উপযোগী ফসল',
+  src\components\workspace\ModelToolsView.tsx:53:      nameEn: 'Crop Recommend',
+  src\components\workspace\ModelToolsView.tsx:54:      tag: 'Soil NPK (22 Crops)',
+  src\components\workspace\ModelToolsView.tsx:138:          <RiceDiseaseTool onViewHistory={onViewHistory} />
+  src\components\workspace\ModelToolsView.tsx:139:        )}
+> src\components\workspace\ModelToolsView.tsx:140:        {activeModel === 'crop_recommendation' && (
+> src\components\workspace\ModelToolsView.tsx:141:          <CropRecommendationTool
+  src\components\workspace\ModelToolsView.tsx:142:            initialFarmId={initialFarmId}
+  src\components\workspace\ModelToolsView.tsx:143:            onViewHistory={onViewHistory}
+  src\components\workspace\ModelToolsView.tsx:144:            onNavigateToTab={onNavigateToTab}
+  src\components\workspace\PredictionHistoryView.tsx:136:              <option value="tomato_disease_v3">Tomato Disease</option>
+  src\components\workspace\PredictionHistoryView.tsx:137:              <option value="rice_disease">Rice Disease</option>
+> src\components\workspace\PredictionHistoryView.tsx:138:              <option value="crop_recommendation">Crop Recommendation</option>
+  src\components\workspace\PredictionHistoryView.tsx:139:              <option value="regional_crop_yield">Regional Yield</option>
+  src\components\workspace\PredictionHistoryView.tsx:140:              <option value="flood_susceptibility">Flood Risk</option>
+  src\components\workspace\PredictionHistoryView.tsx:141:              <option value="tomato_price">Tomato Price</option>
+  src\components\workspace\WorkspaceCalendarView.tsx:995:          <button
+  src\components\workspace\WorkspaceCalendarView.tsx:996:            type="button"
+> src\components\workspace\WorkspaceCalendarView.tsx:997:            onClick={() => onNavigateToModel?.('crop_recommendation')}
+  src\components\workspace\WorkspaceCalendarView.tsx:998:            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-forest-850 hover:bg-forest-800 text-cream-100 border border-forest-700 transition-colors 
+cursor-pointer"
+  src\components\workspace\WorkspaceCalendarView.tsx:999:          >
+  src\components\workspace\WorkspaceCalendarView.tsx:1000:            <span>🌱 {t('উপযুক্ত ফসল নির্বাচন', 'Crop Recommend')}</span>
+  src\components\workspace\WorkspaceDashboardView.tsx:60:      badge: t('সক্রিয় মডেল', 'Active Model'),
+  src\components\workspace\WorkspaceDashboardView.tsx:61:      actionText: t('মাটি পরীক্ষা করুন', 'Test Soil Profile'),
+> src\components\workspace\WorkspaceDashboardView.tsx:62:      onClick: () => onNavigateToTab('tools', 'crop_recommendation'),
+  src\components\workspace\WorkspaceDashboardView.tsx:63:    },
+  src\components\workspace\WorkspaceDashboardView.tsx:64:    {
+  src\components\workspace\WorkspaceDashboardView.tsx:65:      id: 'weather_risk',
+  src\components\workspace\WorkspaceSidebar.tsx:150:    {
+  src\components\workspace\WorkspaceSidebar.tsx:151:      id: 'tools' as WorkspaceTab,
+> src\components\workspace\WorkspaceSidebar.tsx:152:      modelId: 'crop_recommendation',
+  src\components\workspace\WorkspaceSidebar.tsx:153:      label: lang === 'bn' ? 'ফসল উপদেষ্টা' : 'Crop Advisor',
+  src\components\workspace\WorkspaceSidebar.tsx:154:      icon: Sprout,
+> src\components\workspace\WorkspaceSidebar.tsx:155:      isActive: activeTab === 'tools' && selectedModelId === 'crop_recommendation',
+  src\components\workspace\WorkspaceSidebar.tsx:156:    },
+  src\components\workspace\WorkspaceSidebar.tsx:157:    {
+  src\components\workspace\WorkspaceSidebar.tsx:158:      id: 'crop_monitoring' as WorkspaceTab,
+  src\components\workspace\WorkspaceSidebar.tsx:212:      icon: Wrench,
+  src\components\workspace\WorkspaceSidebar.tsx:213:      badge: '7 Models',
+> src\components\workspace\WorkspaceSidebar.tsx:214:      isActive: activeTab === 'tools' && !['flood_susceptibility', 'crop_recommendation', 'regional_crop_yield', 'tomato_price', 'boro_rice_price'].includes(selectedModelId || ''),
+  src\components\workspace\WorkspaceSidebar.tsx:215:    },
+  src\components\workspace\WorkspaceSidebar.tsx:216:    {
+  src\components\workspace\WorkspaceSidebar.tsx:217:      id: 'overview' as WorkspaceTab,
+  src\components\workspace\tools\CropRecommendationTool.tsx:7:import { Input } from '../../common/Input.tsx';
+  src\components\workspace\tools\CropRecommendationTool.tsx:8:import { PredictionResultCard } from '../PredictionResultCard.tsx';
+> src\components\workspace\tools\CropRecommendationTool.tsx:9:import { FarmCropRecommendationPanel } from './FarmCropRecommendationPanel.tsx';
+  src\components\workspace\tools\CropRecommendationTool.tsx:10:
+  src\components\workspace\tools\CropRecommendationTool.tsx:11:import type { WorkspaceTab } from '../WorkspaceSidebar.tsx';
+  src\components\workspace\tools\CropRecommendationTool.tsx:12:
+> src\components\workspace\tools\CropRecommendationTool.tsx:13:interface CropRecommendationToolProps {
+  src\components\workspace\tools\CropRecommendationTool.tsx:14:  initialFarmId?: number | null;
+  src\components\workspace\tools\CropRecommendationTool.tsx:15:  onViewHistory?: (recordId: number) => void;
+  src\components\workspace\tools\CropRecommendationTool.tsx:16:  onNavigateToTab?: (tab: WorkspaceTab, arg?: string, extraId?: number) => void;
+  src\components\workspace\tools\CropRecommendationTool.tsx:17:}
+  src\components\workspace\tools\CropRecommendationTool.tsx:18:
+> src\components\workspace\tools\CropRecommendationTool.tsx:19:export function CropRecommendationTool({
+  src\components\workspace\tools\CropRecommendationTool.tsx:20:  initialFarmId,
+  src\components\workspace\tools\CropRecommendationTool.tsx:21:  onViewHistory,
+  src\components\workspace\tools\CropRecommendationTool.tsx:22:  onNavigateToTab,
+> src\components\workspace\tools\CropRecommendationTool.tsx:23:}: CropRecommendationToolProps) {
+  src\components\workspace\tools\CropRecommendationTool.tsx:24:  const { t } = useLanguage();
+  src\components\workspace\tools\CropRecommendationTool.tsx:25:  const [activeSubMode, setActiveSubMode] = useState<'farm_aware' | 'general_presets'>('farm_aware');
+  src\components\workspace\tools\CropRecommendationTool.tsx:26:
+  src\components\workspace\tools\CropRecommendationTool.tsx:88:
+  src\components\workspace\tools\CropRecommendationTool.tsx:89:    try {
+> src\components\workspace\tools\CropRecommendationTool.tsx:90:      const res = await predictionApi.predict('crop_recommendation', { data: payload });
+  src\components\workspace\tools\CropRecommendationTool.tsx:91:      setResult(res);
+  src\components\workspace\tools\CropRecommendationTool.tsx:92:    } catch (err) {
+  src\components\workspace\tools\CropRecommendationTool.tsx:93:      setError(getErrorMessage(err));
+  src\components\workspace\tools\CropRecommendationTool.tsx:146:      {/* Render Active Sub-Mode */}
+  src\components\workspace\tools\CropRecommendationTool.tsx:147:      {activeSubMode === 'farm_aware' ? (
+> src\components\workspace\tools\CropRecommendationTool.tsx:148:        <FarmCropRecommendationPanel
+  src\components\workspace\tools\CropRecommendationTool.tsx:149:          initialFarmId={initialFarmId}
+  src\components\workspace\tools\CropRecommendationTool.tsx:150:          onViewHistory={onViewHistory}
+  src\components\workspace\tools\CropRecommendationTool.tsx:151:          onNavigateToTab={onNavigateToTab}
+  src\components\workspace\tools\CropRecommendationTool.tsx:165:                </h2>
+  src\components\workspace\tools\CropRecommendationTool.tsx:166:                <p className="text-xs text-sage-600">
+> src\components\workspace\tools\CropRecommendationTool.tsx:167:                  Model: <code className="font-mono text-forest-800">crop_recommendation</code> • Multi-Class Pipeline (Scikit-Learn 1.6)
+  src\components\workspace\tools\CropRecommendationTool.tsx:168:                </p>
+  src\components\workspace\tools\CropRecommendationTool.tsx:169:              </div>
+  src\components\workspace\tools\CropRecommendationTool.tsx:170:            </div>
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:33:import type { WorkspaceTab } from '../WorkspaceSidebar.tsx';
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:34:
+> src\components\workspace\tools\FarmCropRecommendationPanel.tsx:35:interface FarmCropRecommendationPanelProps {
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:36:  initialFarmId?: number | null;
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:37:  onViewHistory?: (recordId: number) => void;
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:38:  onNavigateToTab?: (tab: WorkspaceTab, arg?: string, extraId?: number) => void;
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:64:};
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:65:
+> src\components\workspace\tools\FarmCropRecommendationPanel.tsx:66:export function FarmCropRecommendationPanel({
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:67:  initialFarmId,
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:68:  onViewHistory,
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:69:  onNavigateToTab,
+> src\components\workspace\tools\FarmCropRecommendationPanel.tsx:70:}: FarmCropRecommendationPanelProps) {
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:71:  const { t } = useLanguage();
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:72:
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:73:  // Farm & Soil state
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:854:              <div>
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:855:                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-forest-100 text-forest-800 font-semibold">
+> src\components\workspace\tools\FarmCropRecommendationPanel.tsx:856:                  ANALYSIS COMPLETED • MODEL: crop_recommendation
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:857:                </span>
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:858:                <h3 className="font-bengali font-bold text-lg text-charcoal-900 mt-0.5">
+  src\components\workspace\tools\FarmCropRecommendationPanel.tsx:859:                  {t('এআই ফসল সুপারিশ ফলাফল', 'AI Crop Recommendation Result')}
+  src\services\api.ts:576:
+  src\services\api.ts:577:  async predictFarmCrop(payload: FarmCropRecommendationRequest): Promise<FarmCropRecommendationResponse> {
+> src\services\api.ts:578:    const response = await api.post<FarmCropRecommendationResponse>('/predict/crop_recommendation/farm-adapter', payload);
+  src\services\api.ts:579:    return response.data;
+  src\services\api.ts:580:  },
+  src\services\api.ts:581:};
+
+
+

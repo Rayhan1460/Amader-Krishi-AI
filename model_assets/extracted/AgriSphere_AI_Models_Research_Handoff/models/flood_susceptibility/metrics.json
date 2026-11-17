@@ -1,0 +1,15 @@
+{
+  "samples": 1381,
+  "held_out_station_count": 8,
+  "n_train": 1009,
+  "n_test": 372,
+  "balanced_accuracy": 0.8050787345722799,
+  "positive_f1": 0.7024793388429752,
+  "average_precision": 0.7159575451865362,
+  "roc_auc": 0.8817208114626189,
+  "split_seed": 42,
+  "split": "Station-level held-out groups, not random image split",
+  "source_repo": "https://github.com/Srabon-bot/Bangladesh-flood-data-set",
+  "label_semantics": "Observed historic flooded / repeatedly clean locations; static susceptibility",
+  "limitation": "Research spatial flood susceptibility only. NOT real-time forecast, cyclone warning, or full disaster risk."
+}

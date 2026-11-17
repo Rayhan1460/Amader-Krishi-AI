@@ -1,0 +1,166 @@
+"""Chat routing policy module.
+
+Provides a deterministic, lightweight decision function that determines how a
+user request should be routed based on the Intent Classifier output, Gemini
+configuration, and an explicit routing enable flag.
+
+The routing decision does **not** trigger any external service calls – it only
+produces a structured description of the recommended next action.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import List, Optional
+
+# ---------------------------------------------------------------------
+# Known classifier categories (exact 13 categories as verified elsewhere)
+# ---------------------------------------------------------------------
+ALL_CATEGORIES: List[str] = [
+    "crop_recommendation",
+    "flood_susceptibility",
+    "tomato_price_forecast",
+    "boro_rice_price_forecast",
+    "regional_crop_yield",
+    "plant_disease_pest",
+    "soil_quality",
+    "irrigation_advice",
+    "weather_query",
+    "pest_control",
+    "market_analysis",
+    "general_agri_question",
+    "non_agri",
+]
+
+# ---------------------------------------------------------------------
+# Data structure returned by the routing decision
+# ---------------------------------------------------------------------
+@dataclass(frozen=True)
+class RoutingDecision:
+    candidate_category: Optional[str]
+    candidate_domain: str  # "agriculture", "non_agriculture", "unresolved"
+    action_status: str     # "allowed", "blocked", "fallback"
+    reason: str
+    auto_action_permitted: bool
+
+# ---------------------------------------------------------------------
+# Helper to classify domain based on category
+# ---------------------------------------------------------------------
+def _category_to_domain(category: str) -> str:
+    """Map a classifier category to a high‑level domain.
+
+    - ``non_agri`` is treated as non‑agricultural.
+    - Any other known category is agricultural.
+    - Unknown categories are ``unresolved``.
+    """
+    if category == "non_agri":
+        return "non_agriculture"
+    if category in ALL_CATEGORIES:
+        return "agriculture"
+    return "unresolved"
+
+# ---------------------------------------------------------------------
+# Public routing decision function
+# ---------------------------------------------------------------------
+def decide_routing(
+    classifier_status: str,
+    predicted_category: Optional[str],
+    model_score: Optional[float],
+    gemini_configured: bool,
+    routing_enabled: bool = False,
+) -> RoutingDecision:
+    """Determine how a user request should be routed.
+
+    Parameters
+    ----------
+    classifier_status:
+        Status string returned by ``intent_classifier.classify`` – e.g. ``"ok"``
+        or an error code such as ``"model_missing"``.
+    predicted_category:
+        The category string returned by the classifier when ``classifier_status``
+        is ``"ok"``. May be ``None`` if the classifier did not produce a label.
+    model_score:
+        Raw confidence/score from the classifier (un‑calibrated). It is recorded
+        for observability but never used as a threshold.
+    gemini_configured:
+        ``True`` if a Gemini API key is present and the provider can be used.
+    routing_enabled:
+        Explicit flag – routing is **disabled by default**. When ``False`` the
+        function always falls back to a safe "no‑action" decision.
+
+    Returns
+    -------
+    RoutingDecision
+        A frozen dataclass describing the chosen candidate, its domain, the
+        overall action status, a human‑readable reason, and whether any automatic
+        action (e.g. invoking a tool or Gemini) is permitted.
+    """
+    # Default safe fallback when routing is not explicitly enabled.
+    if not routing_enabled:
+        return RoutingDecision(
+            candidate_category=None,
+            candidate_domain="unresolved",
+            action_status="fallback",
+            reason="Routing disabled by configuration.",
+            auto_action_permitted=False,
+        )
+
+    # Handle classifier errors first.
+    if classifier_status != "ok":
+        return RoutingDecision(
+            candidate_category=None,
+            candidate_domain="unresolved",
+            action_status="fallback",
+            reason=f"Classifier error: {classifier_status}.",
+            auto_action_permitted=False,
+        )
+
+    # Missing prediction.
+    if not predicted_category:
+        return RoutingDecision(
+            candidate_category=None,
+            candidate_domain="unresolved",
+            action_status="fallback",
+            reason="Classifier returned no category.",
+            auto_action_permitted=False,
+        )
+
+    # Determine domain.
+    domain = _category_to_domain(predicted_category)
+    if domain == "unresolved":
+        return RoutingDecision(
+            candidate_category=predicted_category,
+            candidate_domain="unresolved",
+            action_status="fallback",
+            reason="Category not recognised by routing policy.",
+            auto_action_permitted=False,
+        )
+
+    # Build a safe decision – automatic actions are never permitted at this
+    # level because the classifier is not field‑validated and scores are not
+    # calibrated.
+    reason_parts = [
+        f"Category '{predicted_category}' mapped to domain '{domain}'.",
+        "Routing is explicitly enabled.",
+    ]
+    if gemini_configured:
+        reason_parts.append("Gemini is configured but not auto‑invoked.")
+    else:
+        reason_parts.append("Gemini not configured; no Gemini action will be taken.")
+    if model_score is not None:
+        reason_parts.append(f"Raw model score: {model_score:.3f} (not used for confidence).")
+
+    return RoutingDecision(
+        candidate_category=predicted_category,
+        candidate_domain=domain,
+        action_status="fallback",
+        reason=" ".join(reason_parts),
+        auto_action_permitted=False,
+    )
+
+__all__ = [
+    "ALL_CATEGORIES",
+    "RoutingDecision",
+    "decide_routing",
+]
+

@@ -1,0 +1,38 @@
+{
+  "project": "AgriSphere-AI",
+  "run_id": "20261111_164920_951335_UTC",
+  "base_drive": "/content/drive/MyDrive/AgriSphere_datasets",
+  "output_dir": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Universal_Agri_Intelligence/20261111_164920_951335_UTC",
+  "model": "LogisticRegression trained over pretrained multilingual embeddings",
+  "encoder_model": "intfloat/multilingual-e5-small",
+  "encoder_finetuned": false,
+  "intent_training_source": "bootstrap_examples (NOT field validated)",
+  "intent_rows": 117,
+  "labels": [
+    "agri_economics",
+    "crop_cultivation",
+    "fertilizer_nutrients",
+    "fisheries",
+    "harvest_storage",
+    "irrigation_water",
+    "livestock_poultry",
+    "non_agriculture",
+    "plant_disease_pest",
+    "seeds_varieties",
+    "smart_agriculture",
+    "soil_management",
+    "weather_climate"
+  ],
+  "knowledge_docs_detected": 0,
+  "knowledge_chunks": 0,
+  "old_models_modified": false,
+  "rag_ready": false,
+  "limitations": [
+    "Not a universal LLM",
+    "Banglish performance not field-validated",
+    "Knowledge sources require authentication",
+    "No FastAPI or Gemini integration"
+  ],
+  "warnings": [],
+  "sklearn_version": "1.6.1"
+}

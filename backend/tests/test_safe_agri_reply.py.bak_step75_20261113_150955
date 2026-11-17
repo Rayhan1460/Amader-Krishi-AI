@@ -1,0 +1,94 @@
+
+from app.services.safe_agri_reply import select_safe_agri_reply
+
+
+def ask(text, *, category="plant_disease_pest", enabled=True):
+    return select_safe_agri_reply(
+        [{"role": "user", "content": text}],
+        category,
+        enabled=enabled,
+    )
+
+
+RICE = "\u09a7\u09be\u09a8"
+TOMATO = "\u099f\u09ae\u09c7\u099f\u09cb"
+LEAF = "\u09aa\u09be\u09a4\u09be"
+SPOT = "\u09a6\u09be\u0997"
+
+
+def test_disabled_by_default():
+    result = select_safe_agri_reply(
+        [{"role": "user", "content": f"{RICE} {LEAF} {SPOT}"}],
+        "plant_disease_pest",
+    )
+    assert result is None
+
+
+def test_explicit_rice_spots():
+    result = ask(f"{RICE} {LEAF} {SPOT}")
+    assert isinstance(result, str)
+    assert RICE in result
+
+
+def test_explicit_tomato_spots():
+    result = ask(f"{TOMATO} {LEAF} {SPOT}")
+    assert isinstance(result, str)
+    assert TOMATO in result
+
+
+def test_wrong_classifier_category():
+    assert ask(
+        f"{RICE} {LEAF} {SPOT}",
+        category="crop_cultivation",
+    ) is None
+
+
+def test_no_spots_reported():
+    assert ask(
+        f"{RICE} {LEAF} {SPOT} \u09a8\u09c7\u0987"
+    ) is None
+
+
+def test_general_leaf_question():
+    assert ask(f"{RICE} {LEAF} ???????? ????") is None
+
+
+def test_unknown_crop():
+    assert ask(f"{LEAF} {SPOT}") is None
+
+
+def test_both_crops():
+    assert ask(f"{RICE} {TOMATO} {LEAF} {SPOT}") is None
+
+
+def test_price_and_disease_mixed():
+    assert ask(
+        f"{RICE} {LEAF} {SPOT}, "
+        "\u09a6\u09be\u09ae \u0995\u09a4?"
+    ) is None
+
+
+def test_word_definition_question():
+    assert ask(
+        f"{RICE} {LEAF} {SPOT} "
+        "\u09ae\u09be\u09a8\u09c7 \u0995\u09c0?"
+    ) is None
+
+
+def test_followup_not_automatically_inherited():
+    messages = [
+        {"role": "user", "content": f"{RICE} {LEAF} {SPOT}"},
+        {"role": "user", "content": "What should I do now?"},
+    ]
+    assert select_safe_agri_reply(
+        messages,
+        "plant_disease_pest",
+        enabled=True,
+    ) is None
+
+
+def test_non_agriculture():
+    assert ask(
+        f"{RICE} {LEAF} {SPOT}",
+        category="non_agriculture",
+    ) is None

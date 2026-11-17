@@ -1,0 +1,54 @@
+{
+  "phase": "UI-R1.1",
+  "finalVerdict": "PHASE UI-R1.1 VERIFIED — READY FOR UI-R2",
+  "verifiedAt": "2026-11-04T19:23:51.804+06:00",
+  "filesChanged": [
+    "frontend/src/components/common/BrandLogo.tsx",
+    "frontend/src/components/workspace/WorkspaceSidebar.tsx",
+    "frontend/src/pages/WorkspacePage.tsx",
+    "frontend/src/components/workspace/ChatHomepageView.tsx",
+    "frontend/public/bogra-fields.jpg"
+  ],
+  "logo": {
+    "status": "verified",
+    "source": "frontend/public/amader_krishi_OFFICIAL_LOGO.png",
+    "locations": ["desktop sidebar", "mobile header", "chat homepage"],
+    "cropped": false,
+    "regenerated": false
+  },
+  "fakeMetricsRemoved": true,
+  "location": {
+    "source": "authenticated FarmProfile village, upazila and district",
+    "fallbackBn": "খামার নির্বাচন করুন",
+    "fallbackEn": "Select your farm",
+    "ipGeolocationUsed": false
+  },
+  "chatBackend": {
+    "createSession": "preserved",
+    "postMessage": "preserved",
+    "focusedPlaywrightRequestObserved": true,
+    "emptyMessageRejected": true,
+    "duplicateSubmissionGuard": true
+  },
+  "tests": {
+    "typescriptCompilation": "pass",
+    "viteProductionBuild": "pass",
+    "focusedPlaywright": "pass",
+    "focusedPlaywrightPassed": 13,
+    "focusedPlaywrightFailed": 0,
+    "fakeMetricScan": "pass",
+    "desktop1440Overflow": "pass",
+    "browserConsoleErrors": 0,
+    "backendChatConnectivity": "pass",
+    "mobile375Screenshot": "pass",
+    "backendHttpStatus": 200,
+    "frontendHttpStatus": 200,
+    "buildExitCode": 0
+  },
+  "screenshots": {
+    "desktop1440": "docs/screenshots/ui_r11_home_desktop_1440.png",
+    "mobile375": "docs/screenshots/ui_r11_home_mobile_375.png"
+  },
+  "remainingBlockers": [],
+  "remainingVisualDifferences": "Minor responsive adaptation differences from the Lovable reference; no known blocking visual defect."
+}

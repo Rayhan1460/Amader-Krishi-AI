@@ -1,0 +1,108 @@
+{
+  "phase": "F5B-1",
+  "phase_name": "Soil Data Foundation, Backend API & Test Isolation",
+  "timestamp": "2026-11-03T12:20:00+06:00",
+  "verdict": "PHASE F5B-1 VERIFIED — READY FOR F5B-2",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "database_isolation": {
+    "status": "VERIFIED_ISOLATED",
+    "main_database": "backend/app/agri.db",
+    "main_db_counts_before": {
+      "users": 339,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5
+    },
+    "main_db_counts_after": {
+      "users": 339,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5
+    },
+    "main_db_modified_by_tests": false,
+    "test_database": "backend/tests/e2e_test.db",
+    "test_backend_port": 8001,
+    "test_frontend_port": 5174,
+    "test_server_script": "backend/run_test_server.py",
+    "test_frontend_env": "frontend/.env.test"
+  },
+  "soil_data_foundation": {
+    "table_name": "soil_tests",
+    "model_file": "backend/app/db/__init__.py",
+    "schema_file": "backend/app/models/soil.py",
+    "api_file": "backend/app/api/soil.py",
+    "fields_implemented": [
+      "id",
+      "user_id",
+      "farm_id",
+      "crop_id",
+      "sample_label",
+      "sample_date",
+      "test_source",
+      "laboratory_name",
+      "nitrogen_n",
+      "phosphorus_p",
+      "potassium_k",
+      "soil_ph",
+      "organic_matter_percent",
+      "electrical_conductivity",
+      "soil_moisture_percent",
+      "soil_type",
+      "measurement_unit_n",
+      "measurement_unit_p",
+      "measurement_unit_k",
+      "ph_measurement_method",
+      "farmer_notes",
+      "created_at",
+      "updated_at"
+    ],
+    "nullability_integrity": "Unmeasured nutrients are preserved as NULL / None and never coerced to 0.0",
+    "validation_rules": {
+      "soil_ph": "0.0 <= ph <= 14.0",
+      "nutrients_n_p_k": ">= 0.0",
+      "percentages": "0.0 <= percent <= 100.0",
+      "electrical_conductivity": ">= 0.0",
+      "sample_date": "YYYY-MM-DD, realistic year bound 1990 <= year <= current_year + 1"
+    }
+  },
+  "endpoints_implemented": [
+    "POST /soil/tests",
+    "GET /soil/tests",
+    "GET /soil/tests/{test_id}",
+    "PUT /soil/tests/{test_id}",
+    "DELETE /soil/tests/{test_id}",
+    "GET /farms/{farm_id}/soil-tests",
+    "GET /soil/model-input-spec"
+  ],
+  "ai_model_integration_interface": {
+    "model_id": "crop_recommendation",
+    "target_classes_count": 22,
+    "features_count": 7,
+    "features": ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"],
+    "unit_ambiguity_documented": true,
+    "inference_performed_in_f5b1": false,
+    "automatic_unit_conversion_in_f5b1": false,
+    "caveat": "Public 22-crop benchmark with macro F1 0.993; NOT validated advice for Bangladesh farmland."
+  },
+  "test_results": {
+    "targeted_soil_tests": "16/16 PASS",
+    "total_backend_tests": "116/116 PASS",
+    "playwright_farm_twin_e2e": "27/27 PASS (isolated on port 8001/5174)",
+    "frontend_production_build": "PASS (5.09s, zero TypeScript errors)"
+  }
+}
+

@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-11-03T01:00:00+06:00",
+  "brand": "আমাদের কৃষি",
+  "platform": "আমাদের কৃষি AI",
+  "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।",
+  "milestone": "Phase F4B — Production-Structured Smart Crop Scheduling & Personalized Agricultural Calendar",
+  "final_verdict": "PHASE F4B VERIFIED — READY FOR F4C",
+  "verified_templates": [
+    {
+      "id": "bamis_brri_boro_rice_v1",
+      "crop_name": "Rice (Boro)",
+      "crop_name_bn": "বোরো ধান",
+      "season": "rabi",
+      "stages_count": 8,
+      "duration_days": 145,
+      "source_agency": "Bangladesh Rice Research Institute (BRRI) & BAMIS"
+    },
+    {
+      "id": "bamis_brri_aman_rice_v1",
+      "crop_name": "Rice (Aman)",
+      "crop_name_bn": "আমন ধান",
+      "season": "kharif_2",
+      "stages_count": 7,
+      "duration_days": 135,
+      "source_agency": "Bangladesh Rice Research Institute (BRRI) & DAE"
+    },
+    {
+      "id": "bamis_brri_aus_rice_v1",
+      "crop_name": "Rice (Aus)",
+      "crop_name_bn": "আউশ ধান",
+      "season": "kharif_1",
+      "stages_count": 6,
+      "duration_days": 115,
+      "source_agency": "Bangladesh Rice Research Institute (BRRI) & BAMIS"
+    },
+    {
+      "id": "bamis_bari_winter_tomato_v1",
+      "crop_name": "Tomato (Winter)",
+      "crop_name_bn": "শীতকালীন টমেটো",
+      "season": "rabi",
+      "stages_count": 7,
+      "duration_days": 120,
+      "source_agency": "Bangladesh Agricultural Research Institute (BARI) & BAMIS"
+    }
+  ],
+  "database_preservation_status": {
+    "status": "PRESERVED_INTACT",
+    "backup_file": "backend/app/agri.db.bak_pre_f4b",
+    "live_record_counts": {
+      "users": 279,
+      "predictions": 75,
+      "chat_sessions": 62,
+      "farm_profiles": 68,
+      "farm_crops": 38,
+      "calendar_tasks": 121,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 12
+    }
+  },
+  "tests_summary": {
+    "backend_pytest_total": 82,
+    "backend_pytest_passed": 82,
+    "backend_pytest_failed": 0,
+    "playwright_f4b_checks_passed": 36,
+    "playwright_f4b_checks_failed": 0,
+    "playwright_f4a_regression_passed": 30,
+    "playwright_f4a_regression_failed": 0,
+    "frontend_typescript_errors": 0,
+    "frontend_build_status": "PASS",
+    "models_integrity_verified": 7
+  },
+  "screenshots_captured": [
+    "docs/screenshots/f4b_calendar_dashboard_1440.png",
+    "docs/screenshots/f4b_schedule_generator_modal_1440.png",
+    "docs/screenshots/f4b_schedule_preview_panel_1440.png",
+    "docs/screenshots/f4b_growth_timeline_1440.png",
+    "docs/screenshots/f4b_provenance_tab_1440.png",
+    "docs/screenshots/f4b_calendar_mobile_375.png"
+  ],
+  "files_created_or_modified": [
+    "backend/app/db/__init__.py",
+    "backend/app/models/schedule.py",
+    "backend/app/api/calendar.py",
+    "backend/tests/test_schedule_api.py",
+    "frontend/src/types/index.ts",
+    "frontend/src/services/api.ts",
+    "frontend/src/components/calendar/GrowthTimeline.tsx",
+    "frontend/src/components/calendar/SchedulePreviewPanel.tsx",
+    "frontend/src/components/workspace/WorkspaceCalendarView.tsx",
+    "frontend/test_phase_f4b_schedule.mjs",
+    "docs/PHASE_F4B_SMART_CALENDAR_REPORT.md",
+    "docs/PHASE_F4B_STATUS.json"
+  ],
+  "next_recommended_checkpoint": "Phase F4C: Agrometeorological Weather Warnings, Automated Rescheduling, and SMS/Push Advisory Alerts"
+}
+

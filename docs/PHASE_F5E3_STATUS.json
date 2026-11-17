@@ -1,0 +1,86 @@
+{
+  "phase": "F5E-3",
+  "name": "Premium Harvest Dashboard & Real Data Integration",
+  "timestamp": "2026-11-03T22:25:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F5E-3 VERIFIED — READY FOR F5E-4",
+  "metrics": {
+    "playwright_e2e_tests_passed": 20,
+    "playwright_e2e_tests_failed": 0,
+    "backend_harvest_api_tests_passed": 19,
+    "backend_harvest_api_tests_failed": 0,
+    "model_integrity_tests_passed": 21,
+    "model_integrity_tests_failed": 0,
+    "frontend_build_status": "SUCCESS",
+    "main_db_drift": 0
+  },
+  "deliverables": {
+    "dashboard_component": "frontend/src/components/workspace/HarvestManagementDashboard.tsx",
+    "api_client_integration": "frontend/src/services/api.ts (harvestApi)",
+    "type_definitions": "frontend/src/types/index.ts (HarvestRecord, HarvestYieldMetric, etc.)",
+    "sidebar_navigation": "frontend/src/components/workspace/WorkspaceSidebar.tsx ('harvest' tab with PackageCheck icon)",
+    "workspace_page_routing": "frontend/src/pages/WorkspacePage.tsx (tab routing, context preservation, searchParams synchronization)",
+    "digital_twin_card": "frontend/src/components/workspace/FarmDigitalTwinView.tsx (twin-harvest-summary with quick-action shortcut)",
+    "playwright_suite": "frontend/test_phase_f5e3_harvest_dashboard.mjs"
+  },
+  "screenshots": [
+    {
+      "filename": "f5e3_harvest_dashboard_desktop_1440.png",
+      "viewport": "1440x900",
+      "description": "Full desktop view of Harvest Management Dashboard with 4 KPI cards, SVG trend chart, filter bar, and records table"
+    },
+    {
+      "filename": "f5e3_harvest_modal.png",
+      "viewport": "1440x900",
+      "description": "Add / Edit Harvest Record modal showing validation, quantity sources, harvest types, and unit selections"
+    },
+    {
+      "filename": "f5e3_twin_harvest_card.png",
+      "viewport": "1440x900",
+      "description": "Compact Harvest Summary Card inside Farm Digital Twin (360° View) with quick-action button"
+    },
+    {
+      "filename": "f5e3_harvest_dashboard_mobile_375.png",
+      "viewport": "375x812",
+      "description": "Mobile responsive layout of Harvest Management Dashboard at 375px viewport"
+    }
+  ],
+  "scientific_integrity_safeguards": {
+    "no_unsupported_yield_extrapolations": true,
+    "weighed_vs_estimated_distinction_preserved": true,
+    "partial_and_final_harvest_segregation": true,
+    "no_fabricated_ai_predictions": true,
+    "calendar_tasks_untouched": true,
+    "crop_statuses_untouched": true,
+    "duplicate_prevention_alert": true
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_instances": 19,
+      "crop_schedule_templates": 4,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "soil_tests": 0,
+      "harvest_records": 0
+    }
+  },
+  "seven_original_ai_models_preserved": [
+    "tomato_disease_v3",
+    "rice_disease",
+    "crop_recommendation",
+    "regional_crop_yield",
+    "flood_susceptibility",
+    "tomato_price",
+    "boro_rice_price"
+  ]
+}
+

@@ -1,0 +1,8 @@
+# Pyrefly Configuration for AgriSphere-AI Backend
+python-interpreter-path = ".venv2/Scripts/python.exe"
+
+search-path = [
+    ".",
+    "app"
+]
+

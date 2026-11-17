@@ -1,0 +1,155 @@
+# Authentication router for AgriSphere AI
+
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+
+from ..db import get_db, User
+from ..core.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token,
+    decode_access_token,
+)
+
+router = APIRouter()
+security_bearer = HTTPBearer(auto_error=False)
+
+
+class UserCreate(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=6)
+    email: Optional[str] = Field(None)
+
+
+class UserLogin(BaseModel):
+    username: str = Field(..., min_length=1)
+    password: str = Field(..., min_length=1)
+    email: Optional[str] = None
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserProfileResponse(BaseModel):
+    id: int
+    username: str
+    email: Optional[str] = None
+    is_active: bool
+
+
+def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
+    db: Session = Depends(get_db),
+) -> User:
+    """Dependency requiring valid Bearer authentication."""
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    payload = decode_access_token(credentials.credentials)
+    if not payload or "sub" not in payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    username = payload["sub"]
+    user = db.query(User).filter(User.username == username).first()
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Dependency that returns authenticated user if token present and valid, or None."""
+    if not credentials:
+        return None
+    payload = decode_access_token(credentials.credentials)
+    if not payload or "sub" not in payload:
+        return None
+    username = payload["sub"]
+    return db.query(User).filter(User.username == username, User.is_active == True).first()
+
+
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+def register(user: UserCreate, db: Session = Depends(get_db)):
+    trimmed_username = user.username.strip()
+    if len(trimmed_username) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be at least 3 characters long",
+        )
+
+    existing = db.query(User).filter(User.username == trimmed_username).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already taken",
+        )
+
+    trimmed_email = user.email.strip() if user.email else None
+    user_email = trimmed_email or f"{trimmed_username}@agrisphere.local"
+    existing_email = db.query(User).filter(User.email == user_email).first()
+    if existing_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email address already registered",
+        )
+
+    hashed = get_password_hash(user.password)
+    db_user = User(
+        username=trimmed_username,
+        email=user_email,
+        hashed_password=hashed,
+        is_active=True,
+    )
+    db.add(db_user)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account registration failed due to duplicate username or email",
+        )
+    db.refresh(db_user)
+    token = create_access_token({"sub": db_user.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@router.post("/login", response_model=TokenResponse)
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    trimmed_username = user.username.strip()
+    db_user = db.query(User).filter(User.username == trimmed_username).first()
+    if not db_user or not db_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
+    if not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
+    token = create_access_token({"sub": db_user.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@router.get("/me", response_model=UserProfileResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user

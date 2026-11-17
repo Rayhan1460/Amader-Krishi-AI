@@ -1,0 +1,12 @@
+{
+  "features": [
+    "elevation_m",
+    "slope_deg",
+    "dist_to_river_m",
+    "drainage_density_km_per_km2",
+    "landcover_class"
+  ],
+  "categorical": [
+    "landcover_class"
+  ]
+}

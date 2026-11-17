@@ -1,0 +1,116 @@
+import builtins
+import importlib
+import json
+import zipfile
+import types
+from pathlib import Path
+from unittest import mock
+
+import pytest
+
+# Import the module under test
+ic = importlib.import_module('app.services.intent_classifier')
+
+def test_import_safety():
+    """Importing the module should not raise and should not import heavy libs."""
+    import sys
+    # Ensure heavy libs are not already loaded
+    for lib in ('torch', 'sentence_transformers'):
+        sys.modules.pop(lib, None)
+    importlib.reload(ic)
+    for lib in ('torch', 'sentence_transformers'):
+        assert lib not in sys.modules, f"{lib} was imported"
+
+def test_find_model_zip_exists(tmp_path, monkeypatch):
+    """_find_model_zip should locate the model zip in the project root."""
+    # Mock Path(__file__).resolve().parents[3] to point to a temporary directory
+    fake_root = tmp_path / 'project_root'
+    fake_root.mkdir()
+    zip_path = fake_root / 'AgriSphere_Trained_Intent_Model_PORTABLE_test.zip'
+    zip_path.touch()
+    # Monkeypatch Path.resolve to return itself for any Path
+    monkeypatch.setattr(Path, 'resolve', lambda self: self)
+    # Patch __file__ location inside the module
+    fake_file = fake_root / 'backend' / 'app' / 'services' / 'intent_classifier.py'
+    fake_file.parent.mkdir(parents=True, exist_ok=True)
+    fake_file.touch()
+    monkeypatch.setattr(ic, '__file__', str(fake_file))
+    found = ic._find_model_zip()
+    assert found == zip_path
+
+def test_load_manifest_success(tmp_path, monkeypatch):
+    """_load_manifest should read manifest.json from a real temporary zip and cache labels."""
+    # Create temporary zip with expected internal manifest location
+    zip_path = tmp_path / 'temp_model.zip'
+    manifest_content = {'labels': [f'label{i}' for i in range(13)]}
+    with zipfile.ZipFile(zip_path, 'w') as z:
+        z.writestr('AgriSphere_Trained_Intent_Model/manifest.json', json.dumps(manifest_content))
+    # Monkeypatch the ZIP finder to return our temporary zip
+    monkeypatch.setattr(ic, '_find_model_zip', lambda: zip_path)
+    manifest, status = ic._load_manifest()
+    assert status == 'ok'
+    assert manifest == manifest_content
+    assert ic._labels_cache == manifest_content['labels']
+
+def test_resolve_label_int_and_str():
+    ic._labels_cache = ['cat0', 'cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9', 'cat10', 'cat11', 'cat12']
+    assert ic._resolve_label(3) == 'cat3'
+    assert ic._resolve_label('cat7') == 'cat7'
+    assert ic._resolve_label('unknown') is None
+    assert ic._resolve_label(20) is None
+
+def test_classify_invalid_input():
+    payload, status = ic.classify('')
+    assert status == 'invalid_input'
+    assert payload == {}
+
+def test_classify_missing_zip(monkeypatch):
+    monkeypatch.setattr(ic, '_find_model_zip', lambda: None)
+    payload, status = ic.classify('some question')
+    assert status == 'model_missing'
+    assert payload == {}
+
+def test_classify_disabled_inference(monkeypatch):
+    # Ensure manifest loads successfully
+    dummy_manifest = {'labels': ['a' + str(i) for i in range(13)]}
+    monkeypatch.setattr(ic, '_load_manifest', lambda: (dummy_manifest, 'ok'))
+    # Ensure real inference flag is False
+    ic._ENABLE_REAL_INFERENCE = False
+    payload, status = ic.classify('What is rice disease?')
+    assert status == 'inference_disabled'
+    assert payload == {}
+
+def test_classify_real_inference(monkeypatch):
+    # Enable real inference
+    ic._ENABLE_REAL_INFERENCE = True
+    # Mock manifest
+    dummy_labels = ['cat' + str(i) for i in range(13)]
+    dummy_manifest = {'labels': dummy_labels}
+    monkeypatch.setattr(ic, '_load_manifest', lambda: (dummy_manifest, 'ok'))
+    # Prepare mock encoder
+    class MockEncoder:
+        def encode(self, sentences, normalize_embeddings=True):
+            return [[0.0] * 384]
+    # Prepare mock classifier
+    class MockClassifier:
+        classes_ = dummy_labels
+        def predict_proba(self, X):
+            # Return uniform probabilities with a distinct peak at index 5
+            probs = [0.0] * 13
+            probs[5] = 0.9
+            probs = [p / sum(probs) for p in probs]
+            return [probs]
+        def predict(self, X):
+            return ['cat5']
+    ic._encoder = MockEncoder()
+    ic._classifier = MockClassifier()
+    # Monkeypatch _initialize_model to simply return True (model already set)
+    monkeypatch.setattr(ic, '_initialize_model', lambda: True)
+    payload, status = ic.classify('Test question')
+    assert status == 'ok'
+    assert payload['predicted_category'] == 'cat5'
+    assert isinstance(payload['confidence'], float)
+    assert payload['confidence'] > 0
+
+# Backup before adding real‑inference tests
+# Generated on 20231113_0130

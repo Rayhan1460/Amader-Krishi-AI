@@ -1,0 +1,396 @@
+import { useState, useEffect } from 'react';
+import {
+  ShieldCheck,
+  Activity,
+  Layers,
+  Eye,
+  Waves,
+  TrendingUp,
+  Lock,
+  ArrowUpRight,
+  Database,
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext.tsx';
+import { systemApi, historyApi } from '../services/api.ts';
+import type { HealthResponse } from '../types/index.ts';
+import { WorkspaceNavbar } from '../components/layout/WorkspaceNavbar.tsx';
+import { WorkspaceSidebar, type WorkspaceTab } from '../components/workspace/WorkspaceSidebar.tsx';
+import { ChatView } from '../components/workspace/ChatView.tsx';
+import { ModelToolsView } from '../components/workspace/ModelToolsView.tsx';
+import { PredictionHistoryView } from '../components/workspace/PredictionHistoryView.tsx';
+import { Card } from '../components/common/Card.tsx';
+import { Badge } from '../components/common/Badge.tsx';
+
+export function WorkspacePage() {
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>('chat');
+  const [selectedModelId, setSelectedModelId] = useState<string>('tomato_disease_v3');
+  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null);
+  const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [loadingHealth, setLoadingHealth] = useState(true);
+  const [historyCount, setHistoryCount] = useState<number>(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchStatus() {
+      try {
+        const h = await systemApi.getHealth();
+        if (isMounted) setHealth(h);
+      } catch (err) {
+        console.error('Failed to load system health:', err);
+      } finally {
+        if (isMounted) setLoadingHealth(false);
+      }
+    }
+
+    async function fetchCount() {
+      try {
+        const hist = await historyApi.listHistory(100);
+        if (isMounted) setHistoryCount(hist.length);
+      } catch {
+        // silent fallback
+      }
+    }
+
+    fetchStatus();
+    fetchCount();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeTab]);
+
+  const handleLaunchTool = (modelId: string) => {
+    setSelectedModelId(modelId);
+    setActiveTab('tools');
+  };
+
+  const handleViewHistory = (recordId: number) => {
+    setSelectedRecordId(recordId);
+    setActiveTab('history');
+  };
+
+  const modelCards = [
+    {
+      id: 'tomato_disease_v3',
+      title: 'Tomato Disease Vision Diagnosis',
+      type: 'TensorFlow 2.21 • 8 Classes',
+      icon: Eye,
+      status: 'Ready for Inference',
+      description:
+        'Analyzes uploaded 224x224 RGB tomato leaf imagery with dual-split validation across PlantVillage & PlantDoc.',
+      specs: 'Input: 5MB JPEG/PNG/WebP • Output: Top Pathology + Softmax Probabilities',
+    },
+    {
+      id: 'rice_disease',
+      title: 'Rice Foliar Pathology Classifier',
+      type: 'TensorFlow 2.21 • 7 Classes',
+      icon: Eye,
+      status: 'Ready for Inference',
+      description:
+        'Detects 7 rice foliar conditions: Healthy, Insect, Leaf Scald, Rice Blast, Rice Leaffolder, Rice Stripes, and Rice Tungro with research softmax scoring.',
+      specs: 'Input: 224x224 RGB Tensor • Output: Condition Category + Softmax Scores',
+    },
+    {
+      id: 'crop_recommendation',
+      title: 'Precision Crop Recommendation',
+      type: 'Scikit-Learn 1.6 • 22 Crops',
+      icon: Layers,
+      status: 'Ready for Inference',
+      description:
+        'Matches Nitrogen (N), Phosphorus (P), Potassium (K), temperature, rainfall, and pH to optimal crop yield envelopes.',
+      specs: 'Input: 7 Soil/Climate Features • Output: Primary Crop + Top-5 Alternatives',
+    },
+    {
+      id: 'regional_crop_yield',
+      title: 'Regional Crop Yield Forecaster',
+      type: 'Scikit-Learn 1.6 • Historical Regression',
+      icon: Layers,
+      status: 'Ready for Inference',
+      description:
+        'Multivariate regression on historical Bangladesh division and district weather, seasonal rainfall, and NDVI data.',
+      specs: 'Input: 20 District & NDVI Features • Output: Regional Yield Estimate (t/ha)',
+    },
+    {
+      id: 'flood_susceptibility',
+      title: 'Flood Susceptibility Risk Scoring',
+      type: 'Scikit-Learn 1.6 • Station-Held-Out',
+      icon: Waves,
+      status: 'Ready for Inference',
+      description:
+        'Evaluates digital elevation, river distance, drainage density, slope, and landcover classification for hydrological risk.',
+      specs: 'Input: 5 Topographic Features • Output: Binary Category + Susceptibility Prob',
+    },
+    {
+      id: 'tomato_price',
+      title: 'Tomato Weekly Wholesale Price',
+      type: 'Scikit-Learn 1.6 • Baseline-First Rule',
+      icon: TrendingUp,
+      status: 'Ready for Inference',
+      description:
+        'Empirical last-observed wholesale market baseline (5.84 MAE) compared against machine learning regression (9.61 MAE).',
+      specs: 'Input: 10 Lag & Rolling Features • Output: Recommended Price (BDT/kg)',
+    },
+    {
+      id: 'boro_rice_price',
+      title: 'Boro Rice Wholesale Price',
+      type: 'Scikit-Learn 1.6 • Baseline-First Rule',
+      icon: TrendingUp,
+      status: 'Ready for Inference',
+      description:
+        'Weekly wholesale price tracking in BDT/kg. Strictly enforces empirical last-price baseline dominance (0.737 vs 0.753 MAE).',
+      specs: 'Input: 10 Lag & Rolling Features • Output: Recommended Price (BDT/kg)',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-cream-100 flex flex-col">
+      <WorkspaceNavbar />
+
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+        
+        {/* Workspace Layout Container: Sidebar + Content */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          
+          {/* Left Sidebar */}
+          <WorkspaceSidebar
+            activeTab={activeTab}
+            onSelectTab={setActiveTab}
+            historyCount={historyCount}
+          />
+
+          {/* Main Working Area */}
+          <div className="flex-1 w-full min-w-0">
+            
+            {/* View 1: AI Chat Co-Pilot */}
+            {activeTab === 'chat' && (
+              <ChatView onSelectModelTool={handleLaunchTool} />
+            )}
+
+            {/* View 2: Interactive 7 Model Tools */}
+            {activeTab === 'tools' && (
+              <ModelToolsView
+                initialModelId={selectedModelId}
+                onViewHistory={handleViewHistory}
+              />
+            )}
+
+            {/* View 3: Prediction History & Audit Log */}
+            {activeTab === 'history' && (
+              <PredictionHistoryView initialRecordId={selectedRecordId} />
+            )}
+
+            {/* View 4: Model Registry & Architecture Overview */}
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                
+                {/* Header Card */}
+                <div className="bg-white rounded-3xl p-6 border border-sage-200 shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-2 mb-2">
+                        <Badge variant="forest" size="sm" dot>
+                          Connected Session Active
+                        </Badge>
+                        <span className="text-xs text-sage-600 font-mono">
+                          User #{user?.id} ({user?.username})
+                        </span>
+                      </div>
+                      <h1 className="font-display font-extrabold text-2xl text-forest-950">
+                        Model Registry & System Architecture
+                      </h1>
+                      <p className="text-xs text-charcoal-700 mt-1">
+                        All seven research model checkpoints verified with SHA-256 hashes against manifest.json
+                      </p>
+                    </div>
+
+                    <div className="glass-card rounded-2xl p-3.5 border border-sage-200 bg-white/80 shadow-xs flex items-center gap-3 self-start sm:self-auto">
+                      <div className="w-8 h-8 rounded-xl bg-forest-100 flex items-center justify-center text-forest-700">
+                        <Activity className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-sage-600">
+                          FastAPI Engine
+                        </p>
+                        <p className="text-xs font-semibold text-forest-900 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          {loadingHealth
+                            ? 'Checking...'
+                            : `${health?.service || 'AgriSphere'} • ${health?.models_count || 7} Models`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Details & Encryption */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card variant="white" className="border-sage-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-xl bg-forest-100 flex items-center justify-center text-forest-700">
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-sm text-charcoal-900">
+                          User Profile
+                        </h3>
+                        <p className="text-[11px] text-sage-600">Authenticated Credentials</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Username</span>
+                        <span className="font-semibold text-charcoal-900">{user?.username}</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">User ID</span>
+                        <span className="font-mono text-charcoal-900">#{user?.id}</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Email</span>
+                        <span className="font-medium text-charcoal-700">{user?.email || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-sage-600">Status</span>
+                        <span className="inline-flex items-center gap-1 font-semibold text-emerald-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          Active / Verified
+                        </span>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card variant="white" className="border-sage-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-xl bg-sage-100 flex items-center justify-center text-sage-700">
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-sm text-charcoal-900">
+                          Security Standard
+                        </h3>
+                        <p className="text-[11px] text-sage-600">Argon2 + JWT Session</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Password Hashing</span>
+                        <span className="font-mono text-charcoal-900">Argon2 / PBKDF2</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Token Type</span>
+                        <span className="font-semibold text-charcoal-900">Bearer JWT (HS256)</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Cross-User Isolation</span>
+                        <span className="font-medium text-emerald-700 font-semibold">Enforced (403 on breach)</span>
+                      </div>
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-sage-600">Storage</span>
+                        <span className="font-medium text-forest-700">Scoped SessionStorage</span>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card variant="white" className="border-sage-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-700">
+                        <Database className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-sm text-charcoal-900">
+                          Backend Checkpoints
+                        </h3>
+                        <p className="text-[11px] text-sage-600">FastAPI Architecture</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Models Loaded</span>
+                        <span className="font-bold text-forest-800">7 of 7 Verified</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">TensorFlow</span>
+                        <span className="font-mono text-charcoal-900">v2.21.0 (Win x64)</span>
+                      </div>
+                      <div className="flex justify-between py-1.5 border-b border-sage-100">
+                        <span className="text-sage-600">Scikit-Learn</span>
+                        <span className="font-mono text-charcoal-900">v1.6.1</span>
+                      </div>
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-sage-600">Checksum Status</span>
+                        <span className="font-semibold text-emerald-700">100% SHA-256 Match</span>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* 7 Models Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {modelCards.map((model) => {
+                    const Icon = model.icon;
+                    return (
+                      <Card
+                        key={model.id}
+                        variant="white"
+                        className="border-sage-200 p-6 flex flex-col justify-between hover:border-forest-400 transition-colors shadow-2xs"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-8 h-8 rounded-lg bg-forest-50 flex items-center justify-center text-forest-700">
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded">
+                              {model.status}
+                            </span>
+                          </div>
+
+                          <code className="text-xs font-mono font-bold text-forest-900 block mb-1">
+                            {model.id}
+                          </code>
+                          <h3 className="font-display font-bold text-base text-charcoal-900 mb-1">
+                            {model.title}
+                          </h3>
+                          <p className="text-[11px] text-sage-600 font-medium mb-3">
+                            {model.type}
+                          </p>
+
+                          <p className="text-xs text-charcoal-700 mb-4 leading-relaxed">
+                            {model.description}
+                          </p>
+                        </div>
+
+                        <div className="pt-3 border-t border-sage-100 text-[11px] text-sage-600 bg-cream-50/70 -mx-6 -mb-6 p-4 rounded-b-2xl">
+                          <span className="block font-semibold text-charcoal-800 mb-0.5">
+                            Interface Contract:
+                          </span>
+                          <span>{model.specs}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleLaunchTool(model.id)}
+                            className="mt-2 flex items-center gap-1 text-forest-700 hover:text-forest-900 font-semibold text-[11px] cursor-pointer"
+                          >
+                            <span>Open in Tool Console</span>
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <footer className="border-t border-sage-200 bg-white py-4 text-center text-xs text-sage-600">
+        AgriSphere AI • Agricultural Intelligence Platform • Connected to Real FastAPI Backend
+      </footer>
+    </div>
+  );
+}

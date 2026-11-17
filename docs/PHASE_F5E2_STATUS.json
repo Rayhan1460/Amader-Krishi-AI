@@ -1,0 +1,75 @@
+{
+  "phase": "F5E-2",
+  "name": "Harvest Records & Actual Yield Tracking Backend",
+  "timestamp": "2026-11-03T21:55:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F5E-2 VERIFIED — READY FOR F5E-3",
+  "metrics": {
+    "backend_tests_collected": 192,
+    "backend_tests_passed": 192,
+    "backend_tests_failed": 0,
+    "backend_tests_skipped": 0,
+    "targeted_harvest_tests_collected": 19,
+    "targeted_harvest_tests_passed": 19,
+    "targeted_harvest_tests_failed": 0,
+    "model_integrity_collected": 21,
+    "model_integrity_passed": 21,
+    "frontend_build_status": "SUCCESS",
+    "main_db_drift": 0
+  },
+  "root_cause_diagnosis": {
+    "issue": "Asyncio loopback IPC socket.accept() blocked inside Windows sandbox",
+    "mechanism": "Starlette TestClient and anyio initialize an internal event loop using socketpair IPC. On Windows, Python's proactor event loop creates an internal loopback socket pair via _fallback_socketpair calling localhost. Under standard sandbox mode (BypassSandbox: false), local socket binding/connection is blocked, causing socket.accept() to hang indefinitely.",
+    "resolution": "Executed pytest with loopback permission enabled (BypassSandbox: true) as per execution rules for local socket test servers. Tests completed in 7.37s with 19/19 passing."
+  },
+  "endpoints_implemented": [
+    "POST /harvest/records",
+    "GET /harvest/records",
+    "GET /harvest/records/{record_id}",
+    "PUT /harvest/records/{record_id}",
+    "DELETE /harvest/records/{record_id}",
+    "GET /farms/{farm_id}/harvest-records",
+    "GET /harvest/summary",
+    "GET /farms/{farm_id}/harvest-summary"
+  ],
+  "validation_rules_enforced": {
+    "positive_quantity_required": true,
+    "allowed_quantity_sources": ["weighed", "farmer_estimated"],
+    "allowed_harvest_types": ["partial", "final"],
+    "supported_area_units": ["Hectare", "Acre", "Bigha", "Decimal", "Satak", "Katha", "Sq Metre", "Sq Ft"],
+    "cross_user_isolation": true,
+    "farm_crop_relationship_enforced": true,
+    "calendar_task_non_interference": true,
+    "crop_status_non_interference": true,
+    "accidental_duplicate_prevention": true
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_instances": 19,
+      "crop_schedule_templates": 4,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "soil_tests": 0,
+      "harvest_records": 0
+    }
+  },
+  "seven_original_ai_models_preserved": [
+    "tomato_disease_v3",
+    "rice_disease",
+    "crop_recommendation",
+    "regional_crop_yield",
+    "flood_susceptibility",
+    "tomato_price",
+    "boro_rice_price"
+  ]
+}
+

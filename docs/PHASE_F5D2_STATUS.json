@@ -1,0 +1,85 @@
+{
+  "phase": "F5D-2",
+  "phase_name": "Premium Crop Monitoring Dashboard & Cultivation Timeline",
+  "timestamp": "2026-11-03T16:15:00+06:00",
+  "verdict": "PHASE F5D-2 VERIFIED — READY FOR F5D-3",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "database_integrity": {
+    "main_database": "backend/app/agri.db",
+    "counts_before_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0
+    },
+    "counts_after_phase": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "cultivation_activities": 0,
+      "crop_observations": 0
+    },
+    "drift_detected": false
+  },
+  "test_isolation": {
+    "e2e_database": "backend/tests/e2e_test.db",
+    "e2e_backend_port": 8001,
+    "e2e_frontend_port": 5174,
+    "unit_test_database": "backend/tests/temp_test_suite.db"
+  },
+  "frontend_deliverables": {
+    "component": "frontend/src/components/workspace/CropMonitoringDashboard.tsx",
+    "types": "frontend/src/types/index.ts (CultivationActivity, CropObservation, CultivationTimelineItem, etc.)",
+    "api_service": "frontend/src/services/api.ts (cultivationApi with 10 CRUD methods)",
+    "sidebar_integration": "frontend/src/components/workspace/WorkspaceSidebar.tsx ('crop_monitoring' tab)",
+    "workspace_page": "frontend/src/pages/WorkspacePage.tsx (state management and deep linking)",
+    "twin_integration": "frontend/src/components/workspace/FarmDigitalTwinView.tsx (Recent Activity & Monitoring Quick-Nav)",
+    "calendar_integration": "frontend/src/components/workspace/WorkspaceCalendarView.tsx (Monitoring shortcut button)"
+  },
+  "scientific_honesty_compliance": {
+    "no_automated_ai_diagnosis": true,
+    "pure_farmer_scouting_log": true,
+    "no_chemical_dosages_prescribed": true,
+    "no_automatic_calendar_task_mutation": true,
+    "explicit_disclaimers_rendered": true,
+    "ephemeral_demo_mode_banner": true
+  },
+  "model_integrity": {
+    "original_models_preserved": 7,
+    "manifest_verified": true,
+    "checksums_verified": true,
+    "test_suite": "tests/test_model_integrity.py (21/21 PASS)"
+  },
+  "verification_results": {
+    "backend_cultivation_tests": "14/14 PASS",
+    "backend_model_integrity": "21/21 PASS",
+    "backend_soil_crop_regression": "30/30 PASS",
+    "playwright_f5d2_e2e": "31/31 PASS",
+    "frontend_production_build": "PASS (0 errors)",
+    "database_drift": "0 (zero records written to main agri.db)"
+  },
+  "screenshots": [
+    "docs/screenshots/f5d2_crop_monitoring_desktop_1440.png",
+    "docs/screenshots/f5d2_cultivation_timeline.png",
+    "docs/screenshots/f5d2_activity_modal.png",
+    "docs/screenshots/f5d2_crop_monitoring_mobile_375.png"
+  ]
+}
+

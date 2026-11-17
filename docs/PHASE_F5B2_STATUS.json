@@ -1,0 +1,99 @@
+{
+  "phase": "F5B-2",
+  "phase_name": "Premium Soil Health Dashboard & Farm Digital Twin Integration",
+  "timestamp": "2026-11-03T12:50:00+06:00",
+  "verdict": "PHASE F5B-2 VERIFIED — READY FOR F5C",
+  "project_identity": {
+    "brand_name": "আমাদের কৃষি",
+    "platform_name": "আমাদের কৃষি AI",
+    "tagline": "প্রযুক্তির ছোঁয়ায়, স্মার্ট কৃষির পথে।"
+  },
+  "database_isolation": {
+    "status": "VERIFIED_ISOLATED",
+    "main_database": "backend/app/agri.db",
+    "main_db_counts_before": {
+      "users": 339,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5
+    },
+    "main_db_counts_after": {
+      "users": 339,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5
+    },
+    "main_db_modified_by_tests": false,
+    "test_database": "backend/tests/e2e_test.db",
+    "test_backend_port": 8001,
+    "test_frontend_port": 5174,
+    "test_server_script": "backend/run_test_server.py",
+    "test_frontend_env": "frontend/.env.test"
+  },
+  "frontend_components": {
+    "dashboard_component": "frontend/src/components/workspace/SoilHealthDashboard.tsx",
+    "digital_twin_component": "frontend/src/components/workspace/FarmDigitalTwinView.tsx",
+    "sidebar_navigation": "frontend/src/components/workspace/WorkspaceSidebar.tsx",
+    "workspace_page": "frontend/src/pages/WorkspacePage.tsx",
+    "api_service": "frontend/src/services/api.ts",
+    "type_definitions": "frontend/src/types/index.ts",
+    "vite_configuration": "frontend/vite.config.ts",
+    "playwright_suite": "frontend/test_phase_f5b2_soil_dashboard.mjs"
+  },
+  "key_features_verified": [
+    "Farm selector with profile summary and district/upazila context",
+    "Latest soil test hero card with laboratory provenance and test date",
+    "NPK nutrient cards with explicit units (kg/ha, ppm, %, etc.)",
+    "Soil pH card with visual color gauge (acidic, neutral, alkaline)",
+    "Organic matter (%), Electrical conductivity (dS/m), Soil moisture (%), Texture class",
+    "Interactive historical trend chart sorted chronologically ascending by sample date",
+    "Trend metric toggles (pH, NPK, OM & Moisture)",
+    "Historical test records table with edit and delete actions",
+    "Add / Edit soil test modal with client-side physical validation (pH 0-14, NPK non-negative)",
+    "Delete confirmation modal with safe cancel",
+    "Strict null-value policy: unmeasured fields display 'তথ্য পাওয়া যায়নি', NEVER coerced to 0 or 0.0",
+    "Farm Digital Twin integration: compact soil summary card (data-testid='twin-soil-summary') with button linking to Soil Health Dashboard (data-testid='view-full-soil-dashboard-btn')",
+    "Phase F5C Handoff Card ('AI ফসল সুপারিশ') with unit calibration caveats and navigation link to 7 AI Models Console"
+  ],
+  "ai_models_status": {
+    "total_models": 7,
+    "models_preserved": 7,
+    "manifest_file": "model_assets/extracted/AgriSphere_AI_Models_Research_Handoff/manifest.json",
+    "models": [
+      "tomato_disease_v3",
+      "rice_disease",
+      "crop_recommendation",
+      "regional_crop_yield",
+      "flood_susceptibility",
+      "tomato_price",
+      "boro_rice_price"
+    ],
+    "f5c_crop_recommendation_ready": true,
+    "unit_calibration_in_f5b2": false,
+    "unit_calibration_caveat": "Public 22-crop benchmark with macro F1 0.993; NOT validated advice for Bangladesh farmland."
+  },
+  "test_results": {
+    "backend_pytest": "116/116 PASS",
+    "soil_api_tests": "16/16 PASS",
+    "playwright_f5b2_e2e": "46/46 PASS (isolated test database on port 8001 / 5174)",
+    "frontend_production_build": "PASS (4.54s, zero TypeScript errors)"
+  },
+  "screenshots_captured": [
+    "docs/screenshots/f5b2_soil_dashboard_desktop_1440.png",
+    "docs/screenshots/f5b2_soil_add_modal.png",
+    "docs/screenshots/f5b2_soil_trends_and_table.png",
+    "docs/screenshots/f5b2_farm_twin_soil_summary.png",
+    "docs/screenshots/f5b2_soil_dashboard_mobile_375.png"
+  ]
+}
+

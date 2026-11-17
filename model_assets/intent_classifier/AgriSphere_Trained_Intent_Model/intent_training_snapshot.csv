@@ -1,0 +1,118 @@
+﻿question,intent
+How do I grow rice in my field?,crop_cultivation
+When is the best season to plant tomatoes?,crop_cultivation
+Which crop should I cultivate in winter?,crop_cultivation
+ধান চাষ করার নিয়ম কী?,crop_cultivation
+টমেটো কখন রোপণ করা ভালো?,crop_cultivation
+এই মৌসুমে কোন ফসল লাগাব?,crop_cultivation
+Dhan chash korar niyom ki?,crop_cultivation
+Tomato kokhon lagabo?,crop_cultivation
+Amar jomite kon foshol chash korbo?,crop_cultivation
+How can I improve clay soil?,soil_management
+What does my soil pH mean?,soil_management
+How to manage salty soil?,soil_management
+মাটির পিএইচ কী বোঝায়?,soil_management
+দোআঁশ মাটির উন্নতি কীভাবে করব?,soil_management
+লবণাক্ত মাটিতে কী করব?,soil_management
+Matir pH ki bujhay?,soil_management
+Lobonakto mati kivabe thik korbo?,soil_management
+Doash matir gun ki?,soil_management
+How do I interpret NPK soil test values?,fertilizer_nutrients
+What is the difference between urea and TSP?,fertilizer_nutrients
+When should I apply fertilizer?,fertilizer_nutrients
+ইউরিয়া সার কখন দিতে হয়?,fertilizer_nutrients
+এনপিকে রিপোর্ট কীভাবে বুঝব?,fertilizer_nutrients
+গাছে পুষ্টির অভাব কীভাবে বুঝব?,fertilizer_nutrients
+Urea sar kobe debo?,fertilizer_nutrients
+NPK report kivabe bujhbo?,fertilizer_nutrients
+Gache pustir obhab hole ki korbo?,fertilizer_nutrients
+Why are my tomato leaves yellow?,plant_disease_pest
+What causes brown spots on rice leaves?,plant_disease_pest
+How to control aphids on plants?,plant_disease_pest
+টমেটো পাতায় হলুদ দাগ কেন?,plant_disease_pest
+ধানের পাতায় বাদামি দাগ হয়েছে,plant_disease_pest
+গাছে পোকা ধরেছে কী করব?,plant_disease_pest
+Tomato pata holud hocche keno?,plant_disease_pest
+Dhaner patay dag poreche,plant_disease_pest
+Gache poka dhorle ki korbo?,plant_disease_pest
+How frequently should I irrigate my plants?,irrigation_water
+What to do if farmland is waterlogged?,irrigation_water
+Which irrigation method saves water?,irrigation_water
+জমিতে পানি জমে গেলে কী করব?,irrigation_water
+গাছে কতবার পানি দিতে হবে?,irrigation_water
+সেচের পানি বাঁচানোর উপায় কী?,irrigation_water
+Jomite pani jome thakle ki korbo?,irrigation_water
+Gache koto bar pani dibo?,irrigation_water
+Secher pani kivabe bachabo?,irrigation_water
+How will heavy rain affect my crops?,weather_climate
+How to protect seedlings from heatwaves?,weather_climate
+What are the effects of drought?,weather_climate
+অতিরিক্ত বৃষ্টিতে ফসল বাঁচাব কীভাবে?,weather_climate
+তাপপ্রবাহে গাছের যত্ন কীভাবে নেব?,weather_climate
+খরায় কী করণীয়?,weather_climate
+Brishti beshi hole foshol bachabo kivabe?,weather_climate
+Gorome gach bachabo kivabe?,weather_climate
+Khoray ki kora uchit?,weather_climate
+How do I choose good quality seeds?,seeds_varieties
+Which rice variety is suitable?,seeds_varieties
+How should I store tomato seeds?,seeds_varieties
+ভালো বীজ চিনব কীভাবে?,seeds_varieties
+কোন ধানের জাত ভালো?,seeds_varieties
+বীজ সংরক্ষণের নিয়ম কী?,seeds_varieties
+Valo bij chinbo kivabe?,seeds_varieties
+Kon dhaner jat bhalo?,seeds_varieties
+Bij kivabe songrokkhon korbo?,seeds_varieties
+When should I harvest my vegetables?,harvest_storage
+How to store harvested rice?,harvest_storage
+How can I prevent post-harvest losses?,harvest_storage
+সবজি কখন সংগ্রহ করা ভালো?,harvest_storage
+ধান কাটার পরে সংরক্ষণ কীভাবে করব?,harvest_storage
+ফসল কাটার পরে ক্ষতি কমাব কীভাবে?,harvest_storage
+Sobji kokhon tulbo?,harvest_storage
+Dhan kete kivabe rakhbo?,harvest_storage
+Foshol katar por khoti komabo kivabe?,harvest_storage
+How to calculate farming costs?,agri_economics
+What determines the market price of tomato?,agri_economics
+How can I estimate profit from rice?,agri_economics
+চাষের খরচ হিসাব করব কীভাবে?,agri_economics
+টমেটোর বাজারদর কেন বদলায়?,agri_economics
+ধান চাষে লাভ কত হতে পারে?,agri_economics
+Chasher khoroch kivabe hisab korbo?,agri_economics
+Tomato bajar dam koto hote pare?,agri_economics
+Dhan chashe profit hisab korbo?,agri_economics
+How should I feed dairy cattle?,livestock_poultry
+Why are my chickens not eating?,livestock_poultry
+How to keep the cattle shed clean?,livestock_poultry
+গরুকে কী খাবার দেব?,livestock_poultry
+মুরগি খাবার খাচ্ছে না কেন?,livestock_poultry
+গোয়ালঘর পরিষ্কার রাখব কীভাবে?,livestock_poultry
+Goru ke ki khawabo?,livestock_poultry
+Murgi khabar khacche na keno?,livestock_poultry
+Gowal ghor porishkar korbo kivabe?,livestock_poultry
+How can I improve pond water quality?,fisheries
+Why are fish dying in my pond?,fisheries
+What should I feed farmed tilapia?,fisheries
+পুকুরের পানি ভালো রাখব কীভাবে?,fisheries
+পুকুরে মাছ মারা যাচ্ছে কেন?,fisheries
+তেলাপিয়া মাছকে কী খাবার দেব?,fisheries
+Pukurer pani bhalo rakhbo kivabe?,fisheries
+Pukure mach morche keno?,fisheries
+Tilapia macher khabar ki?,fisheries
+What is precision agriculture?,smart_agriculture
+How do soil moisture sensors work?,smart_agriculture
+How can drones support farmers?,smart_agriculture
+স্মার্ট কৃষি কী?,smart_agriculture
+মাটির আর্দ্রতা সেন্সর কীভাবে কাজ করে?,smart_agriculture
+কৃষিতে ড্রোন ব্যবহার কীভাবে করব?,smart_agriculture
+Smart krishi ki?,smart_agriculture
+Soil sensor kivabe kaj kore?,smart_agriculture
+Krishite drone use korbo kivabe?,smart_agriculture
+Write a Python calculator program,non_agriculture
+Who won the football game?,non_agriculture
+How do I reset my email password?,non_agriculture
+পাইথন ক্যালকুলেটর কোড দাও,non_agriculture
+আজ কোন সিনেমা দেখব?,non_agriculture
+আমাকে গণিত শেখাও,non_agriculture
+Python code likhe dao,non_agriculture
+Football match ke jitse?,non_agriculture
+Amar email password reset korbo kivabe?,non_agriculture

@@ -1,0 +1,65 @@
+/* UI-09 Harvest & Storage: farmer-first reference composition, scoped to this module. */
+.harvest-lovable { width:100%; color:#f9faf8; font-family:inherit; padding: 8px 0 3px; }
+.harvest-lovable * { box-sizing:border-box; }
+.harvest-lovable-hero { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; margin:8px 0 24px; }
+.harvest-lovable-kicker { font-size:12px; font-weight:750; letter-spacing:.19em; color:#e6ae45; margin:0 0 8px; text-transform:uppercase; }
+.harvest-lovable-hero h1 { color:#fff; font-size:clamp(26px,3vw,37px); letter-spacing:-.025em; font-weight:800; margin:0; line-height:1.3; }
+.harvest-lovable-hero p:not(.harvest-lovable-kicker) { font-size:14px; color:#b0d0c5; margin:9px 0 0; line-height:1.6; }
+.harvest-lovable-add { display:inline-flex; align-items:center; justify-content:center; gap:7px; background:#ecaf4b; color:#081f17; font-weight:800; border:1px solid #f6bd60; border-radius:13px; padding:11px 16px; font-size:13px; cursor:pointer; transition:transform .17s,filter .17s; }
+.harvest-lovable-add:hover:not(:disabled) { transform:translateY(-2px); filter:brightness(1.06); }
+.harvest-lovable-add:disabled { opacity:.5; cursor:not-allowed; }
+.harvest-lovable-context { display:grid; grid-template-columns:1fr 1fr 1.15fr; gap:13px; align-items:stretch; margin-bottom:16px; }
+.harvest-lovable-context>label, .harvest-lovable-recorded { display:flex; flex-direction:column; gap:8px; background:#092d21; border:1px solid #1e5240; border-radius:14px; padding:14px; color:#b2d7c8; font-size:12px; font-weight:700; min-width:0; }
+.harvest-lovable-context select { border:1px solid #39614e; background:#0b392a; color:#f5f8f3; border-radius:9px; width:100%; min-width:0; padding:10px 9px; font:inherit; font-size:13px; }
+.harvest-lovable-recorded { display:grid; grid-template-columns:auto 1fr; align-content:center; gap:3px 10px; }
+.harvest-lovable-recorded>svg { color:#e6ae45; grid-row:span 2; align-self:center; }
+.harvest-lovable-recorded strong { color:#f0b94f; font-size:18px; }
+.harvest-lovable-recorded button { grid-column:2; color:#f0b94f; font-size:12px; text-decoration:underline; text-align:left; border:0; background:none; padding:2px 0; cursor:pointer; }
+.harvest-lovable-batch { background:linear-gradient(125deg,#0d3a2b,#0a3024); border:1px solid #235845; border-radius:18px; padding:21px 24px 17px; margin-bottom:19px; }
+.harvest-lovable-batch-top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:13px; }
+.harvest-lovable-batch-top>label { font-size:15px; font-weight:800; color:white; }
+.harvest-lovable-number { display:flex; align-items:center; border:1px solid #427561; border-radius:10px; background:#08261c; overflow:hidden; }
+.harvest-lovable-number input { width:132px; background:transparent; border:0; color:#f3bb52; text-align:right; font-weight:800; font-size:17px; padding:9px 4px 9px 10px; outline-offset:-2px; }
+.harvest-lovable-number b { font-size:12px; padding:0 10px; color:#d6e5dd; white-space:nowrap; }
+.harvest-lovable-slider { width:100%; height:7px; accent-color:#edb348; cursor:pointer; }
+.harvest-lovable-slider:disabled { cursor:not-allowed; opacity:.3; }
+.harvest-lovable-hint { display:flex; align-items:center; gap:7px; margin:9px 0 0; color:#aacdbb; font-size:11px; line-height:1.5; }
+.harvest-lovable-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.harvest-lovable-card { min-width:0; border-radius:18px; border:1px solid #205441; background:linear-gradient(155deg,#0a3225,#082b20); padding:20px; display:flex; flex-direction:column; box-shadow:0 8px 24px #001c1222; transition:border-color .2s, transform .2s; }
+.harvest-lovable-card:hover { border-color:#56836a; transform:translateY(-2px); }
+.harvest-lovable-card-best { border-color:#efb44d; box-shadow:0 0 0 1px #efb44d66,0 12px 34px #bf86291a; }
+.harvest-lovable-card-heading { display:flex; align-items:center; justify-content:space-between; gap:9px; min-height:28px; margin-bottom:13px; }
+.harvest-lovable-card-icon { color:#efb44d; background:#193b2b; border:1px solid #385744; padding:8px; border-radius:11px; }
+.harvest-lovable-best-label { display:flex; align-items:center; gap:4px; color:#e6b351; font-size:10px; font-weight:800; }
+.harvest-lovable-card h2 { font-size:17px; font-weight:850; line-height:1.4; margin:0; color:#f8faf5; }
+.harvest-lovable-card-desc { font-size:12px; line-height:1.6; color:#a6c7b8; margin:5px 0 18px; min-height:34px; }
+.harvest-lovable-value { font-size:clamp(22px,2.7vw,32px); line-height:1.25; font-weight:850; color:#f1b64c; margin:0; letter-spacing:-.03em; }
+.harvest-lovable-value-label { font-size:11px; color:#accbbb; min-height:34px; line-height:1.5; margin:5px 0 14px; }
+.harvest-lovable-track { height:9px; width:100%; border-radius:12px; background:#062217; overflow:hidden; margin-top:auto; }
+.harvest-lovable-track span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#c88e30,#f2bc56); transition:width .22s; }
+.harvest-lovable-expand { border:1px solid #406753; border-radius:10px; margin-top:15px; width:100%; padding:10px 12px; color:#f7e0a1; background:#0c3929; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+.harvest-lovable-expand:hover { background:#174934; }
+.harvest-lovable-expand[aria-expanded='true'] svg { transform:rotate(90deg); }
+.harvest-lovable-inputs { display:grid; gap:12px; border-top:1px solid #355847; padding-top:16px; margin-top:15px; }
+.harvest-lovable-field { display:block; min-width:0; }
+.harvest-lovable-field>span:first-child { display:block; font-size:12px; color:#bfd7cb; font-weight:650; margin-bottom:6px; }
+.harvest-lovable-field-row { display:flex; align-items:center; background:#051f17; border:1px solid #36624e; border-radius:9px; overflow:hidden; }
+.harvest-lovable-field-row input { flex:1; width:0; min-width:0; color:#fff; background:transparent; border:0; padding:10px 12px; font-size:14px; outline-offset:-2px; }
+.harvest-lovable-field-row small { color:#b7d3c6; font-size:11px; padding:0 8px; white-space:nowrap; }
+.harvest-lovable-verdict { display:flex; align-items:flex-start; gap:12px; margin-top:18px; padding:16px 18px; border:1px solid #886524; background:linear-gradient(90deg,#173729,#202f1e); border-radius:15px; }
+.harvest-lovable-verdict>svg { color:#efb34c; flex-shrink:0; }
+.harvest-lovable-verdict strong { color:#f8e8b8; font-size:15px; }
+.harvest-lovable-verdict p { color:#bfd6c9; font-size:12px; line-height:1.7; margin:4px 0 0; }
+.harvest-lovable-disclaimer { display:flex; align-items:flex-start; gap:10px; border:1px solid #2a5745; background:#0b2c21; border-radius:13px; padding:13px 15px; color:#b5d4c4; font-size:12px; line-height:1.7; margin:13px 0 0; }
+.harvest-lovable-disclaimer svg { color:#f0b450; flex-shrink:0; margin-top:2px; }
+.harvest-lovable-footnote { display:flex; align-items:center; gap:9px; color:#91bca9; font-size:11px; margin:14px 0 4px; flex-wrap:wrap; }
+.harvest-lovable-advanced { border:1px solid #285741; background:#08251c; border-radius:18px; overflow:visible; }
+.harvest-lovable-advanced>summary { list-style:none; cursor:pointer; padding:19px 21px; font-size:15px; font-weight:800; color:#f2bc58; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.harvest-lovable-advanced>summary::-webkit-details-marker { display:none; }
+.harvest-lovable-advanced>summary::after { content:'+'; font-size:22px; font-weight:400; }
+.harvest-lovable-advanced[open]>summary::after { content:'−'; }
+.harvest-lovable-advanced>summary:hover { background:#103b29; }
+.harvest-lovable-advanced-inner { padding:0 14px 16px; }
+@media (max-width:1050px) { .harvest-lovable-context { grid-template-columns:repeat(2,minmax(0,1fr)); } .harvest-lovable-recorded { grid-column:span 2; } .harvest-lovable-grid { gap:11px; } .harvest-lovable-card { padding:16px; } }
+@media (max-width:760px) { .harvest-lovable-grid { grid-template-columns:1fr; } .harvest-lovable-context { grid-template-columns:1fr; } .harvest-lovable-recorded { grid-column:span 1; } .harvest-lovable-hero { gap:14px; } .harvest-lovable-hero h1 { font-size:27px; } .harvest-lovable-add { width:100%; } .harvest-lovable-batch { padding:17px; } .harvest-lovable-batch-top { align-items:flex-start; flex-wrap:wrap; } .harvest-lovable-number { width:100%; justify-content:space-between; } .harvest-lovable-number input { width:80%; } .harvest-lovable-card { padding:20px; } .harvest-lovable-card-desc { min-height:0; } .harvest-lovable-value-label { min-height:0; } .harvest-lovable-advanced-inner { padding:0 9px 12px; } }
+@media (prefers-reduced-motion:reduce) { .harvest-lovable * { transition:none!important; animation:none!important; } }

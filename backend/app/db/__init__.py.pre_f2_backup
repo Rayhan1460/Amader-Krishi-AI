@@ -1,0 +1,105 @@
+import os
+from pathlib import Path
+from typing import Generator
+
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    JSON,
+    func,
+)
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Session
+from sqlalchemy.pool import NullPool
+
+from ..config import SQLALCHEMY_DATABASE_URL
+
+# Canonical Database engine configuration (SQLite for local dev, PostgreSQL for production)
+db_url = SQLALCHEMY_DATABASE_URL
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+is_sqlite = db_url.startswith("sqlite")
+
+engine_kwargs = {"echo": False}
+if is_sqlite:
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+    engine_kwargs["poolclass"] = NullPool
+else:
+    engine_kwargs["pool_pre_ping"] = True
+    try:
+        engine_kwargs["pool_size"] = int(os.getenv("DB_POOL_SIZE", "10"))
+        engine_kwargs["max_overflow"] = int(os.getenv("DB_MAX_OVERFLOW", "20"))
+    except ValueError:
+        engine_kwargs["pool_size"] = 10
+        engine_kwargs["max_overflow"] = 20
+
+engine = create_engine(db_url, **engine_kwargs)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=True)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+
+    predictions = relationship(
+        "PredictionRecord", back_populates="user", cascade="all, delete-orphan"
+    )
+    chat_sessions = relationship(
+        "ChatSession", back_populates="user", cascade="all, delete-orphan"
+    )
+
+
+class PredictionRecord(Base):
+    __tablename__ = "predictions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    model_id = Column(String, nullable=False, index=True)
+    request_payload = Column(JSON, nullable=False)
+    response = Column(JSON, nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="predictions")
+
+
+# Backward compatibility alias
+Prediction = PredictionRecord
+
+
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String, default="Agricultural Consultation")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    messages = Column(JSON, default=list)
+
+    user = relationship("User", back_populates="chat_sessions")
+
+
+def get_db() -> Generator[Session, None, None]:
+    """Dependency for obtaining a SQLAlchemy session per request."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def init_db():
+    """Controlled database schema initialization without publishing default credentials."""
+    Base.metadata.create_all(bind=engine)
+

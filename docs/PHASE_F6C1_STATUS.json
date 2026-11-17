@@ -1,0 +1,115 @@
+{
+  "phase": "F6C-1",
+  "name": "Contextual Farm Action Center — Backend Foundation",
+  "timestamp": "2026-11-04T13:06:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F6C-1 VERIFIED — READY FOR F6C-2",
+  "audit_scope": [
+    "Contextual Farm Action Schemas & Contracts (FarmActionItem, FarmActionsResponse)",
+    "Deterministic Rule-Based Service (backend/app/services/farm_actions.py)",
+    "Rule A: Overdue Calendar Task Review Reminders (high priority)",
+    "Rule B: Upcoming Calendar Tasks Notice (high priority for today, medium priority for 7-day)",
+    "Rule C: Neutral Missing Soil Test Completeness Notice (low priority, non-judgmental)",
+    "Rule D: Farmer-Reported Field Observation Review (non-diagnostic review reminder)",
+    "Rule E: Source-Attributed Active Weather Advisory Notice",
+    "Completed Tasks Exclusion from Overdue and Upcoming Reminders",
+    "Exclusion of 'healthy' Observations from Issue Action Triggers",
+    "Safe Navigation Destinations ({calendar, soil_health, crop_monitoring, harvest, farm_twin})",
+    "Authenticated Read-Only Endpoint (GET /farms/{farm_id}/actions)",
+    "Strict User Isolation & Ownership Check (403 Forbidden)",
+    "Zero Database Mutation on Repeated GET Requests",
+    "Original 7 ML Model Integrity Verification"
+  ],
+  "metrics": {
+    "action_center_backend_tests_collected": 15,
+    "action_center_backend_tests_passed": 15,
+    "action_center_backend_tests_failed": 0,
+    "farm_intelligence_regression_passed": 10,
+    "farm_twin_regression_passed": 7,
+    "total_regression_suite_passed": 32,
+    "model_integrity_tests_collected": 21,
+    "model_integrity_tests_passed": 21,
+    "original_ml_models_preserved": 7,
+    "frontend_production_build": "SUCCESS (built in 6.13s)",
+    "main_db_drift": 0
+  },
+  "rules_defined": {
+    "rule_a": {
+      "id": "overdue_task",
+      "priority": "high",
+      "trigger": "Pending task with due_date < today_dhaka",
+      "destination_tab": "calendar"
+    },
+    "rule_b": {
+      "id": "upcoming_task",
+      "priority": "high for today, medium for 1-7 days",
+      "trigger": "Pending task with today_dhaka <= due_date <= today_dhaka + 7 days",
+      "destination_tab": "calendar"
+    },
+    "rule_c": {
+      "id": "missing_soil_test",
+      "priority": "low",
+      "trigger": "Farm has 0 soil tests on file",
+      "destination_tab": "soil_health",
+      "scientific_honesty": "Neutral prompt; does not claim soil is unhealthy"
+    },
+    "rule_d": {
+      "id": "farmer_reported_issue",
+      "priority": "high for severe_issue, medium for moderate_issue, low for minor_issue",
+      "trigger": "Observation condition in [minor_issue, moderate_issue, severe_issue]",
+      "destination_tab": "crop_monitoring",
+      "scientific_honesty": "Explicit non-AI diagnosis caveat; no treatment/pesticide dosage instructions"
+    },
+    "rule_e": {
+      "id": "weather_advisory",
+      "priority": "high for storm/flood/heavy rain, medium for others",
+      "trigger": "Weather status == 'ok' with active_advisories present",
+      "destination_tab": "calendar"
+    }
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts_before": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    },
+    "record_counts_after": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    }
+  },
+  "files_created_or_modified": [
+    "backend/app/models/farm_actions.py",
+    "backend/app/services/farm_actions.py",
+    "backend/app/api/calendar.py",
+    "backend/tests/test_farm_action_center_api.py",
+    "docs/PHASE_F6C1_STATUS.json",
+    "docs/PHASE_F6C1_ACTION_BACKEND_REPORT.md"
+  ]
+}
+

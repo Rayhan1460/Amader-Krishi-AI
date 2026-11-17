@@ -1,0 +1,178 @@
+
+"""Conservative Bengali crop-health guidance. No diagnosis or model calls."""
+
+RICE_REPLY = (
+    "\u09a7\u09be\u09a8\u09c7\u09b0 \u09aa\u09be\u09a4\u09be\u09df "
+    "\u09a6\u09be\u0997\u09c7\u09b0 \u0995\u09be\u09b0\u09a3 "
+    "\u09b6\u09c1\u09a7\u09c1 \u09b2\u09c7\u0996\u09be "
+    "\u09a6\u09c7\u0996\u09c7 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4 "
+    "\u0995\u09b0\u09be \u09af\u09be\u09df \u09a8\u09be\u0964 "
+    "\u09aa\u09be\u09a4\u09be\u09b0 \u099b\u09ac\u09bf, "
+    "\u09a6\u09be\u0997\u09c7\u09b0 \u09b0\u0982 "
+    "\u0993 \u0997\u09be\u099b\u09c7\u09b0 \u09ac\u09df\u09b8 "
+    "\u099c\u09be\u09a8\u09be\u09a8\u0964 "
+    "\u09b0\u09cb\u0997 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4 "
+    "\u09a8\u09be \u0995\u09b0\u09c7 "
+    "\u09b0\u09be\u09b8\u09be\u09df\u09a8\u09bf\u0995 "
+    "\u09b8\u09cd\u09aa\u09cd\u09b0\u09c7 "
+    "\u0995\u09b0\u09ac\u09c7\u09a8 \u09a8\u09be\u0964"
+)
+
+TOMATO_REPLY = (
+    "\u099f\u09ae\u09c7\u099f\u09cb\u09b0 "
+    "\u09aa\u09be\u09a4\u09be\u09df \u09a6\u09be\u0997 "
+    "\u09ac\u09bf\u09ad\u09bf\u09a8\u09cd\u09a8 "
+    "\u0995\u09be\u09b0\u09a3\u09c7 \u09b9\u09a4\u09c7 "
+    "\u09aa\u09be\u09b0\u09c7\u0964 "
+    "\u09aa\u09be\u09a4\u09be\u09b0 \u099b\u09ac\u09bf, "
+    "\u09a6\u09be\u0997\u09c7\u09b0 \u09b0\u0982 "
+    "\u0993 \u0997\u09be\u099b\u09c7\u09b0 \u09ac\u09df\u09b8 "
+    "\u099c\u09be\u09a8\u09be\u09a8\u0964 "
+    "\u09b0\u09cb\u0997 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4 "
+    "\u09a8\u09be \u0995\u09b0\u09c7 "
+    "\u09b0\u09be\u09b8\u09be\u09df\u09a8\u09bf\u0995 "
+    "\u09b8\u09cd\u09aa\u09cd\u09b0\u09c7 "
+    "\u0995\u09b0\u09ac\u09c7\u09a8 \u09a8\u09be\u0964"
+)
+
+UNKNOWN_REPLY = (
+    "\u0995\u09cb\u09a8 \u09ab\u09b8\u09b2\u09c7\u09b0 "
+    "\u09aa\u09be\u09a4\u09be\u09df "
+    "\u09b8\u09ae\u09b8\u09cd\u09af\u09be "
+    "\u09b9\u099a\u09cd\u099b\u09c7? "
+    "\u09ab\u09b8\u09b2\u09c7\u09b0 \u09a8\u09be\u09ae, "
+    "\u09a6\u09be\u0997\u09c7\u09b0 \u09b0\u0982 "
+    "\u0993 \u098f\u0995\u099f\u09bf "
+    "\u09aa\u09b0\u09bf\u09b7\u09cd\u0995\u09be\u09b0 "
+    "\u099b\u09ac\u09bf \u09a6\u09bf\u09a8\u0964"
+)
+
+BOTH_REPLY = (
+    "\u09a7\u09be\u09a8 \u0993 "
+    "\u099f\u09ae\u09c7\u099f\u09cb\u09b0 "
+    "\u09ae\u09a7\u09cd\u09af\u09c7 "
+    "\u0995\u09cb\u09a8 \u09ab\u09b8\u09b2\u099f\u09bf\u09b0 "
+    "\u09b8\u09ae\u09b8\u09cd\u09af\u09be "
+    "\u09a8\u09bf\u09df\u09c7 \u099c\u09be\u09a8\u09a4\u09c7 "
+    "\u099a\u09be\u09a8?"
+)
+
+
+def _detect_crop(text):
+    text = text.lower()
+    rice = any(x in text for x in (
+        "\u09a7\u09be\u09a8", "rice", "paddy"
+    ))
+    tomato = any(x in text for x in (
+        "\u099f\u09ae\u09c7\u099f\u09cb", "tomato"
+    ))
+    if rice and tomato:
+        return "both"
+    if rice:
+        return "rice"
+    if tomato:
+        return "tomato"
+    return None
+
+
+def draft_agricultural_answer(messages, category):
+    """Create limited crop-health guidance from one session's user turns.
+
+    Returns None when outside the supported scope.
+    Does not call an ML model, Gemini, network, or database.
+    """
+    if category != "plant_disease_pest":
+        return None
+
+    if not isinstance(messages, (list, tuple)):
+        return None
+
+    turns = [
+        item["content"].strip()
+        for item in messages
+        if isinstance(item, dict)
+        and item.get("role") == "user"
+        and isinstance(item.get("content"), str)
+        and item["content"].strip()
+    ]
+
+    if not turns:
+        return None
+
+    latest = turns[-1].lower().strip()
+
+    # V1 handles leaf spots, not general questions about leaves.
+    leaf_terms = (
+        "\u09aa\u09be\u09a4\u09be",
+        "leaf",
+        "leaves",
+    )
+    spot_terms = (
+        "\u09a6\u09be\u0997",
+        "spot",
+        "blight",
+    )
+
+    def is_leaf_spot_question(text):
+        return (
+            any(term in text for term in leaf_terms)
+            and any(term in text for term in spot_terms)
+        )
+
+    # Never substitute disease guidance for market,
+    # weather, cost, or yield questions.
+    unrelated_terms = (
+        "\u09a6\u09be\u09ae",
+        "\u09ac\u09be\u099c\u09be\u09b0",
+        "\u09ae\u09c2\u09b2\u09cd\u09af",
+        "\u0986\u09ac\u09b9\u09be\u0993\u09df\u09be",
+        "\u09ab\u09b2\u09a8",
+        "price",
+        "market",
+        "cost",
+        "weather",
+        "yield",
+    )
+
+    if any(term in latest for term in unrelated_terms):
+        return None
+
+    current_symptom = is_leaf_spot_question(latest)
+
+    previous = turns[-2].lower() if len(turns) > 1 else ""
+    previous_symptom = is_leaf_spot_question(previous)
+
+    # Only a small set of explicit follow-ups may use
+    # the immediately preceding crop-health context.
+    normalized_followup = latest.strip(" \t\r\n?!. \u0964")
+
+    allowed_followups = {
+        "\u098f\u0996\u09a8 \u0995\u09c0 \u0995\u09b0\u09ac",
+        "\u098f\u0996\u09a8 \u0995\u09bf \u0995\u09b0\u09ac",
+        "\u0995\u09c0 \u0995\u09b0\u09ac",
+        "\u0995\u09bf \u0995\u09b0\u09ac",
+        "what should i do now",
+        "what should i do",
+    }
+
+    followup = (
+        previous_symptom
+        and normalized_followup in allowed_followups
+    )
+
+    if not current_symptom and not followup:
+        return None
+
+    crop = _detect_crop(latest)
+
+    if crop is None and followup:
+        crop = _detect_crop(previous)
+
+    if crop == "rice":
+        return RICE_REPLY
+    if crop == "tomato":
+        return TOMATO_REPLY
+    if crop == "both":
+        return BOTH_REPLY
+
+    return UNKNOWN_REPLY

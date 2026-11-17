@@ -1,0 +1,256 @@
+{
+  "scope": "Research models only — not production ready",
+  "all_6_tasks_represented_only_if_seven_artifacts_pass": true,
+  "models": [
+    {
+      "id": "tomato_disease_v3",
+      "task": "Tomato Disease Detection",
+      "type": "image",
+      "caveat": "Validation-selected experimental checkpoint; PlantDoc macro F1 about 0.440; independent field test REQUIRED.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/tomato_disease_mobilenetv2/V3_Class_Balanced/20261029_150124_UTC/v3_gate_passed_candidate.keras",
+      "source_model_sha256": "9d7adb96264cbd0cb53324bae2f27864570b2455c60720532217aa5378830b04",
+      "input_spec": {
+        "image_size": [
+          224,
+          224
+        ],
+        "color": "RGB",
+        "dtype": "float32",
+        "pixel_range": "0..255",
+        "preprocessing": "resize to 224x224, DO NOT divide by 255; scaling is embedded inside model",
+        "class_names": [
+          "Tomato___Bacterial_spot",
+          "Tomato___Early_blight",
+          "Tomato___Late_blight",
+          "Tomato___Leaf_Mold",
+          "Tomato___Septoria_leaf_spot",
+          "Tomato___Spider_mites Two-spotted_spider_mite",
+          "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+          "Tomato___healthy"
+        ],
+        "n_classes": 8
+      },
+      "smoke": "PASS — SYNTHETIC INPUT ONLY",
+      "package_path": "models/tomato_disease_v3/model.keras",
+      "included_report_files": [
+        "summary.json",
+        "dual_validation_epochs.csv",
+        "plantdoc_class_report.csv",
+        "plantvillage_class_report.csv"
+      ]
+    },
+    {
+      "id": "rice_disease",
+      "task": "Rice Disease Detection",
+      "type": "image",
+      "caveat": "Seven classes; reported accuracy 0.574, macro F1 0.548; split not verified field-independent.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/Run_20261029_163206_UTC/Rice_Disease_Detection/rice_best.keras",
+      "source_model_sha256": "fd8223a193437a74c0719cd6d8ef73e31da280fb2f527e7c0b7872de133ea052",
+      "input_spec": {
+        "image_size": [
+          224,
+          224
+        ],
+        "color": "RGB",
+        "dtype": "float32",
+        "pixel_range": "0..255",
+        "preprocessing": "resize to 224x224, DO NOT divide by 255; scaling is embedded inside model",
+        "class_names": [
+          "Healthy",
+          "Insect",
+          "Leaf Scald",
+          "Rice Blast",
+          "Rice Leaffolder",
+          "Rice Stripes",
+          "Rice Tungro"
+        ],
+        "n_classes": 7
+      },
+      "smoke": "PASS — SYNTHETIC INPUT ONLY",
+      "package_path": "models/rice_disease/model.keras",
+      "included_report_files": [
+        "metadata.json",
+        "classification_report.csv",
+        "confusion_matrix.csv",
+        "training_history.csv"
+      ]
+    },
+    {
+      "id": "crop_recommendation",
+      "task": "Crop Recommendation",
+      "type": "crop",
+      "caveat": "Public 22-crop benchmark with macro F1 0.993; NOT validated advice for Bangladesh farmland.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/PublicData_Followup_20261029_164641_UTC/Crop_Recommendation_BENCHMARK/crop_recommendation_research.joblib",
+      "source_model_sha256": "8280d325824d83a56122db995ea0d4e3b9492c700f929c76ea30a67bfd694089",
+      "input_spec": {
+        "features": [
+          "N",
+          "P",
+          "K",
+          "temperature",
+          "humidity",
+          "ph",
+          "rainfall"
+        ],
+        "example_is_synthetic": true,
+        "target": "crop class",
+        "source": "Public benchmark — not Bangladesh field-validated"
+      },
+      "smoke": "PASS — SYNTHETIC SCHEMA INPUT ONLY",
+      "package_path": "models/crop_recommendation/model.joblib",
+      "included_report_files": [
+        "classification_report.csv"
+      ]
+    },
+    {
+      "id": "regional_crop_yield",
+      "task": "Crop Yield Prediction",
+      "type": "yield",
+      "caveat": "Regional historical research; MAE 0.260 source units; target physical units NOT independently verified; NOT farm-level.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/Final_Three_Research_20261029_165426_UTC/Yield_Regional_Research/model.joblib",
+      "source_model_sha256": "8f75c90b948fb28486745c70627ec0dfbb70934ac7c70c03400c10e02e343258",
+      "input_spec": {
+        "features": [
+          "Year",
+          "District",
+          "Division",
+          "Season",
+          "Rain",
+          "Sunshine",
+          "Wind",
+          "TempRange",
+          "NDVI_mean_season",
+          "NDVI_max_season",
+          "NDVI_integral",
+          "NDVI_anom",
+          "Pct_irrigated",
+          "NDVI_peak_month",
+          "NDVI_peak_doy",
+          "NDVI_mean_trend2",
+          "Rain_ma3",
+          "Sunshine_ma3",
+          "NDVI_mean_season_ma3",
+          "ndvi_rain_interaction"
+        ],
+        "categorical": [
+          "District",
+          "Division",
+          "Season"
+        ],
+        "target": "Yield_t_ha",
+        "target_unit": "NOT VERIFIED from source; see original source",
+        "example_is_synthetic": true
+      },
+      "smoke": "PASS — SYNTHETIC SCHEMA INPUT ONLY",
+      "package_path": "models/regional_crop_yield/model.joblib",
+      "included_report_files": [
+        "metrics.json",
+        "test_predictions.csv"
+      ]
+    },
+    {
+      "id": "flood_susceptibility",
+      "task": "Flood Susceptibility (Disaster sub-task)",
+      "type": "flood",
+      "caveat": "Station-held-out AP 0.716 F1 0.702; static historical flood susceptibility, NOT real-time prediction/cyclone alert.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/Final_Three_Research_20261029_165426_UTC/Flood_Susceptibility_Research/model.joblib",
+      "source_model_sha256": "25c0ba6246ee52087a603df2d94c152e4ec87f49cdfb1fa3b210c8a118ca16e8",
+      "input_spec": {
+        "features": [
+          "elevation_m",
+          "slope_deg",
+          "dist_to_river_m",
+          "drainage_density_km_per_km2",
+          "landcover_class"
+        ],
+        "categorical": [
+          "landcover_class"
+        ],
+        "target": "historic station flood-susceptibility binary label",
+        "example_is_synthetic": true
+      },
+      "smoke": "PASS — SYNTHETIC SCHEMA INPUT ONLY",
+      "package_path": "models/flood_susceptibility/model.joblib",
+      "included_report_files": [
+        "metrics.json",
+        "classification_report.txt",
+        "test_predictions.csv"
+      ]
+    },
+    {
+      "id": "tomato_price",
+      "task": "Market Price — Tomato",
+      "type": "price",
+      "caveat": "Weekly WHOLESALE BDT/kg research; model MAE 9.6159 > last-price baseline MAE 5.8448; prefer baseline.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/Market_Price_Range_Unit_Fix_20261029_171359_UTC/Tomato/model.joblib",
+      "source_model_sha256": "d1ac325e4666eae82566ea91c3bb6460fd943d618ad8723519fd6533774eafd3",
+      "input_spec": {
+        "features": [
+          "lag_1",
+          "lag_2",
+          "lag_3",
+          "lag_4",
+          "lag_8",
+          "lag_12",
+          "past_mean_4",
+          "past_mean_8",
+          "month",
+          "week_of_month"
+        ],
+        "price_type": "wholesale",
+        "unit": "BDT/kg",
+        "forecast_horizon": "next observed weekly record",
+        "input_example": "Saved historical real observation, not a future forecast",
+        "last_price_baseline_beats_ml": true
+      },
+      "smoke": "PASS — SAVED HISTORICAL ROW",
+      "package_path": "models/tomato_price/model.joblib",
+      "included_report_files": [
+        "test_predictions.csv",
+        "cleaned_weekly_prices_bdt_per_kg.csv"
+      ]
+    },
+    {
+      "id": "boro_rice_price",
+      "task": "Market Price — Boro Rice",
+      "type": "price",
+      "caveat": "Weekly WHOLESALE BDT/kg research; model MAE 0.7534 > last-price baseline MAE 0.7372; prefer baseline.",
+      "model_source": "/content/drive/MyDrive/AgriSphere_datasets/Training_Results/Remaining_5_Models/Market_Price_Range_Unit_Fix_20261029_171359_UTC/Boro_Rice/model.joblib",
+      "source_model_sha256": "914e70a4ffbe37fb2c7c92eb00931978130cd299231d1e1d8441b11708ff5d4c",
+      "input_spec": {
+        "features": [
+          "lag_1",
+          "lag_2",
+          "lag_3",
+          "lag_4",
+          "lag_8",
+          "lag_12",
+          "past_mean_4",
+          "past_mean_8",
+          "month",
+          "week_of_month"
+        ],
+        "price_type": "wholesale",
+        "unit": "BDT/kg",
+        "forecast_horizon": "next observed weekly record",
+        "input_example": "Saved historical real observation, not a future forecast",
+        "last_price_baseline_beats_ml": true
+      },
+      "smoke": "PASS — SAVED HISTORICAL ROW",
+      "package_path": "models/boro_rice_price/model.joblib",
+      "included_report_files": [
+        "test_predictions.csv",
+        "cleaned_weekly_prices_bdt_per_kg.csv"
+      ]
+    }
+  ],
+  "runtime": {
+    "python": "3.13.16",
+    "tensorflow": "2.21.0",
+    "scikit_learn": "1.6.1",
+    "pandas": "2.2.3",
+    "joblib": "1.6.0",
+    "time_utc": "2026-10-29T17:23:38.676679+00:00",
+    "purpose": "serialization and structural smoke verification, NOT real-world model validation"
+  }
+}

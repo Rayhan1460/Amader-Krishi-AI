@@ -1,0 +1,168 @@
+/* আমাদের কৃষি AI — Premium Design System Tokens & Styling (UI-R1) */
+
+.krishi-pro-app {
+  --krishi-bg: #001c12;
+  --krishi-sidebar: #111610;
+  --krishi-surface: #082b1f;
+  --krishi-card: #0b3325;
+  --krishi-card-deep: #062519;
+
+  --krishi-gold: #e9ad46;
+  --krishi-gold-hover: #f3bf63;
+  --krishi-gold-soft: #f8d794;
+
+  --krishi-green: #153f2e;
+  --krishi-green-bright: #37b97f;
+  --krishi-canopy: #1b4d38;
+
+  --krishi-text: #f8fbf7;
+  --krishi-muted: #a7b9ae;
+  --krishi-border: rgba(34, 75, 57, 0.45);
+  --krishi-sidebar-border: rgba(40, 80, 60, 0.35);
+
+  --krishi-radius: 14px;
+  --krishi-radius-lg: 20px;
+  --krishi-radius-xl: 26px;
+
+  --krishi-sidebar-width: 272px;
+
+  min-height: 100vh;
+  color: var(--krishi-text);
+  background: var(--krishi-bg);
+  font-family: "Plus Jakarta Sans", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Glass panel for desktop and mobile sidebars */
+.krishi-glass-panel {
+  background: rgba(17, 22, 16, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--krishi-sidebar-border);
+}
+
+/* Premium Card Glass */
+.krishi-card-glass {
+  background: rgba(11, 51, 37, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--krishi-border);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.krishi-card-glass:hover {
+  transform: translateY(-2px);
+  border-color: rgba(233, 173, 70, 0.45);
+  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.75), 0 0 20px -4px rgba(233, 173, 70, 0.25);
+}
+
+/* Prompt pill button */
+.krishi-prompt-pill {
+  background: rgba(11, 51, 37, 0.6);
+  border: 1px solid rgba(40, 90, 65, 0.6);
+  color: #e5ede7;
+  transition: all 0.2s ease;
+}
+
+.krishi-prompt-pill:hover {
+  background: rgba(21, 63, 46, 0.9);
+  border-color: var(--krishi-gold);
+  color: var(--krishi-gold);
+  transform: translateY(-1px);
+}
+
+/* Bottom Chat Input Glass */
+.krishi-input-glass {
+  background: rgba(11, 35, 24, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(40, 95, 70, 0.5);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7);
+}
+
+.krishi-input-glass:focus-within {
+  border-color: rgba(233, 173, 70, 0.6);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px -4px rgba(233, 173, 70, 0.25);
+}
+
+/* Gold send button */
+.krishi-gold-btn {
+  background: var(--krishi-gold);
+  color: #111610;
+  transition: all 0.2s ease;
+}
+
+.krishi-gold-btn:hover:not(:disabled) {
+  background: var(--krishi-gold-hover);
+  box-shadow: 0 0 18px rgba(233, 173, 70, 0.5);
+  transform: scale(1.03);
+}
+
+.krishi-gold-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Agricultural animations */
+@keyframes krishi-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes krishi-leaf-sway {
+  0%, 100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes krishi-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.krishi-reveal {
+  animation: krishi-rise 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.krishi-leaf {
+  animation: krishi-leaf-sway 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Custom scrollbar for sidebar & chat */
+.krishi-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.krishi-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.krishi-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(34, 75, 57, 0.4);
+  border-radius: 9999px;
+}
+.krishi-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(233, 173, 70, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .krishi-pro-app *,
+  .krishi-pro-app *::before,
+  .krishi-pro-app *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

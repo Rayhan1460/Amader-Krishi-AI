@@ -1,0 +1,118 @@
+import os
+from pathlib import Path
+import hashlib
+import json
+from typing import Any, Dict
+import joblib
+import tensorflow as tf
+import numpy as np
+
+from ..config import settings
+
+class ModelLoadError(Exception):
+    pass
+
+class ModelManager:
+    """Loads and caches the 7 research models based on manifest.json.
+    Verifies SHA‑256 checksums and provides a unified ``predict`` method.
+    """
+
+    def __init__(self):
+        self.manifest_path = Path(settings.MODEL_ROOT).parent / "manifest.json"
+        if not self.manifest_path.is_file():
+            raise FileNotFoundError(f"Manifest not found at {self.manifest_path}")
+        with open(self.manifest_path, "r", encoding="utf-8") as f:
+            self.manifest = json.load(f)
+        self.models: Dict[str, Any] = {}
+        self._load_all()
+
+    def _verify_checksum(self, file_path: Path, expected_sha256: str) -> bool:
+        """Calculate SHA‑256 of ``file_path`` and compare to ``expected_sha256``.
+        Returns ``True`` if they match, ``False`` otherwise.
+        """
+        sha256 = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                sha256.update(chunk)
+        return sha256.hexdigest() == expected_sha256
+
+    def _load_model(self, model_id: str, entry: dict) -> Any:
+        """Load a single model based on its manifest entry.
+        Supports:
+        * TensorFlow/Keras (.h5 or SavedModel directory)
+        * Scikit‑learn / joblib (.joblib)
+        """
+        artifact_path = Path(entry["artifact_path"]).resolve()
+        checksum = entry.get("sha256")
+        if checksum and not self._verify_checksum(artifact_path, checksum):
+            raise ModelLoadError(f"Checksum mismatch for {model_id}: {artifact_path}")
+        # Determine loader by file suffix / folder content
+        if artifact_path.suffix in {".h5", ".keras"}:
+            # Keras model file
+            return tf.keras.models.load_model(str(artifact_path))
+        elif artifact_path.is_dir():
+            # Assume SavedModel directory
+            return tf.keras.models.load_model(str(artifact_path))
+        elif artifact_path.suffix in {".joblib", ".pkl"}:
+            return joblib.load(str(artifact_path))
+        else:
+            raise ModelLoadError(f"Unsupported model format for {model_id}: {artifact_path}")
+
+    def _load_all(self) -> None:
+        """Iterate over manifest entries and load each model.
+        The manifest is expected to have a top‑level ``models`` dictionary where each
+        key is a model identifier and the value contains at least ``artifact_path``
+        and ``sha256``.
+        """
+        models_section = self.manifest.get("models", {})
+        for model_id, entry in models_section.items():
+            try:
+                self.models[model_id] = self._load_model(model_id, entry)
+            except Exception as e:
+                raise ModelLoadError(f"Failed to load model {model_id}: {e}")
+
+    def get_model(self, model_id: str) -> Any:
+        if model_id not in self.models:
+            raise ModelLoadError(f"Model {model_id} not loaded")
+        return self.models[model_id]
+
+    def predict(self, model_id: str, payload: Dict[str, Any]):
+        """Run inference for ``model_id``.
+        ``payload`` should match the model's expected input schema defined in the
+        manifest (see ``input_schema``). This implementation performs a very
+        lightweight conversion: for tabular models it creates a ``numpy`` array;
+        for image models it expects a base64‑encoded PNG/JPEG string which is
+        decoded into a ``tf.Tensor``.
+        """
+        model_entry = self.manifest["models"].get(model_id)
+        if not model_entry:
+            raise ModelLoadError(f"Unknown model {model_id}")
+        model = self.get_model(model_id)
+        # Simple generic handling – real projects would use the schema details.
+        if "input_schema" in model_entry:
+            schema = model_entry["input_schema"]
+            # If the schema indicates image (e.g., type == "image"), decode.
+            if schema.get("type") == "image":
+                import base64
+                from io import BytesIO
+                from PIL import Image
+                img_data = base64.b64decode(payload["image_base64"])
+                img = Image.open(BytesIO(img_data)).convert("RGB")
+                img_array = np.array(img) / 255.0
+                img_tensor = tf.expand_dims(img_array, axis=0)
+                preds = model(img_tensor, training=False)
+            else:
+                # Assume tabular data – ordered list of features.
+                features = [payload.get(f) for f in schema.get("features", [])]
+                arr = np.array([features], dtype=np.float32)
+                preds = model.predict(arr)
+        else:
+            # Fallback: feed payload directly if model accepts dict.
+            preds = model.predict(payload)
+        # Convert predictions to JSON‑serialisable structure
+        if isinstance(preds, (np.ndarray, tf.Tensor)):
+            preds = preds.tolist()
+        return {"predictions": preds}
+
+# Instantiate a singleton for the application lifecycle
+model_manager = ModelManager()

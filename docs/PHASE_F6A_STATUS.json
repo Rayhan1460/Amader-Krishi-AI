@@ -1,0 +1,105 @@
+{
+  "phase": "F6A",
+  "name": "Unified Farm Intelligence Backend Foundation",
+  "timestamp": "2026-11-04T12:32:00+06:00",
+  "status": "COMPLETED_AND_VERIFIED",
+  "verdict": "PHASE F6A VERIFIED — READY FOR F6B",
+  "audit_scope": [
+    "Unified Farm Intelligence Schemas & Models",
+    "Multi-Domain Aggregation Service (10 Domains)",
+    "Strict Cross-User Isolation & Demo User Support",
+    "Missing Data Handling (Zero Synthetic Coercion)",
+    "Provenance Audit (Farmer vs Lab vs AI vs Official)",
+    "Read-Only Non-Destructive Behavior (Zero DB Mutations on GET)",
+    "Circular Import Resolution Between Harvest and Intelligence Modules",
+    "Digital Twin Backward Compatibility",
+    "Original 7 ML Model Integrity Verification"
+  ],
+  "metrics": {
+    "focused_farm_intelligence_tests_collected": 10,
+    "focused_farm_intelligence_tests_passed": 10,
+    "focused_farm_intelligence_tests_failed": 0,
+    "farm_twin_regression_collected": 7,
+    "farm_twin_regression_passed": 7,
+    "farm_twin_regression_failed": 0,
+    "harvest_api_regression_collected": 19,
+    "harvest_api_regression_passed": 19,
+    "harvest_api_regression_failed": 0,
+    "model_integrity_tests_collected": 21,
+    "model_integrity_tests_passed": 21,
+    "full_backend_pytest_collected": 227,
+    "full_backend_pytest_passed": 227,
+    "full_backend_pytest_failed": 0,
+    "full_backend_pytest_skipped": 0,
+    "original_ml_models_preserved": 7,
+    "frontend_production_build": "SUCCESS",
+    "main_db_drift": 0
+  },
+  "domains_aggregated": {
+    "1_farm_identity_and_location": "name, division, district, upazila, village, total_area, area_unit, soil_type, coordinates",
+    "2_registered_crops_and_statuses": "crop list, current stages, sowing/transplanting/harvest dates, status",
+    "3_soil_test_and_nutrient_completeness": "latest lab vs farmer soil tests, pH, NPK, organic matter, micronutrients, is_lab_tested, completeness %",
+    "4_calendar_tasks_and_urgency": "pending, overdue, completed tasks, schedule link, urgency flags, due dates in Asia/Dhaka",
+    "5_cultivation_activities": "chronological farm events, activity types, input materials, costs, notes",
+    "6_crop_observations_and_diagnoses": "farmer visual scouting reports vs AI leaf disease diagnoses strictly separated",
+    "7_harvest_quantities_and_maunds": "total kg, official maunds (40 kg/maund), record count, partial/final tracking",
+    "8_harvest_date_and_defensible_yield": "latest harvest date, defensible yield rate with calculation_status ('exact', 'partial', 'not_available')",
+    "9_farm_associated_predictions": "disease diagnoses and farm-matched crop recommendations, legacy/unbound models explicitly unlinked",
+    "10_weather_intelligence_and_advisories": "3-day forecast, temperature, precipitation, agro-meteorological advisories"
+  },
+  "scientific_and_governance_rules": {
+    "zero_synthetic_health_score": true,
+    "zero_fabricated_missing_readings": true,
+    "strict_read_only_on_get": true,
+    "multi_domain_provenance_audit": true,
+    "farmer_reported_vs_ai_diagnosis_separation": true
+  },
+  "database_baseline_audit": {
+    "database_file": "backend/app/agri.db",
+    "drift_detected": false,
+    "record_counts_before": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    },
+    "record_counts_after": {
+      "users": 339,
+      "farm_profiles": 103,
+      "farm_crops": 56,
+      "calendar_tasks": 197,
+      "crop_schedule_templates": 4,
+      "crop_schedule_instances": 19,
+      "reminder_notifications": 5,
+      "soil_tests": 0,
+      "cultivation_activities": 0,
+      "crop_observations": 0,
+      "harvest_records": 0,
+      "predictions": 77,
+      "chat_sessions": 66,
+      "total_records": 866
+    }
+  },
+  "files_created_or_modified": [
+    "backend/app/models/farm_intelligence.py",
+    "backend/app/services/farm_intelligence.py",
+    "backend/app/models/farm_twin.py",
+    "backend/app/models/harvest.py",
+    "backend/app/api/harvest.py",
+    "backend/app/api/calendar.py",
+    "backend/tests/test_farm_intelligence_api.py",
+    "docs/PHASE_F6A_STATUS.json",
+    "docs/PHASE_F6A_FARM_INTELLIGENCE_BACKEND_REPORT.md"
+  ]
+}
+

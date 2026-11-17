@@ -1,0 +1,229 @@
+/* Amader Krishi AI — Lovable-aligned, farmer-first chat landing. All selectors scoped. */
+.nc-root {
+  --nc-gold: #e8ac45;
+  --nc-ink: #061e15;
+  --nc-muted: #aec7b8;
+  min-height: 100%;
+  width: 100%;
+  color: #f7faf7;
+  background: radial-gradient(ellipse 850px 470px at 52% 90%, #0d402b 0%, #002b1e 55%, #002115 100%);
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Inter', system-ui, sans-serif;
+  overflow-x: clip;
+}
+.nc-root *, .nc-root *::before, .nc-root *::after { box-sizing: border-box; }
+.nc-content {
+  max-width: 1110px;
+  margin: 0 auto;
+  padding: 22px 20px 36px;
+}
+.nc-hero {
+  min-height: 545px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #112f22;
+  background-image: linear-gradient(180deg, rgba(6,15,17,.55) 0%, rgba(8,25,23,.42) 30%, rgba(5,28,20,.47) 61%, rgba(1,21,15,.86) 100%),
+    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1900&q=85');
+  background-size: cover;
+  background-position: center 54%;
+  border: 1px solid rgba(234,182,79,.12);
+  box-shadow: 0 28px 75px rgba(0,0,0,.15);
+}
+.nc-hero-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 54% at 50% 45%, rgba(1,11,12,.07), rgba(2,20,18,.40) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+.nc-hero-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 340px;
+  padding: 54px 30px 10px;
+}
+.nc-eyebrow {
+  font-family: 'Inter', 'Hind Siliguri', system-ui, sans-serif;
+  color: var(--nc-gold);
+  letter-spacing: .035em;
+  font-weight: 750;
+  font-size: 12px;
+  line-height: 1.6;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.nc-eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--nc-gold); box-shadow: 0 0 8px var(--nc-gold); }
+.nc-gold-rule { display: block; width: 52px; height: 1px; margin: 24px auto 31px; background: rgba(236,181,79,.75); }
+.nc-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(24px, 2.65vw, 35px);
+  font-weight: 780;
+  line-height: 1.35;
+  letter-spacing: -.016em;
+  text-shadow: 0 3px 19px rgba(0,0,0,.44);
+}
+.nc-tagline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 550;
+  color: #f1e4ce;
+  background: rgba(8,26,19,.38);
+  border-radius: 99px;
+  padding: 6px 12px;
+  margin: 16px 0 0;
+}
+.nc-tagline svg { color: #e8b249; }
+.nc-insights {
+  position: relative;
+  z-index: 1;
+  padding: 0 34px 38px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.nc-insight {
+  border-radius: 11px;
+  background: rgba(18,23,17,.93);
+  border: 1px solid rgba(228,218,189,.12);
+  min-width: 0;
+  min-height: 91px;
+  padding: 14px 15px;
+  text-align: left;
+  color: #faf6ec;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.nc-insight-name { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 650; }
+.nc-insight-name svg { color: #d9b36e; flex: none; }
+.nc-insight-description { font-size: 15px; font-weight: 750; line-height: 1.25; color: var(--nc-gold); padding-right: 14px; }
+.nc-insight-arrow { position: absolute; right: 13px; bottom: 15px; color: #a4b3a0; }
+.nc-insight:hover { transform: translateY(-3px); border-color: rgba(233,173,69,.70); background: rgba(20,33,23,.96); }
+.nc-insight:focus-visible, .nc-quick:focus-visible, .nc-circle:focus-visible, .nc-submit:focus-visible { outline: 2px solid #ffce69; outline-offset: 3px; }
+.nc-quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 23px; }
+.nc-quick {
+  display: inline-flex; gap: 9px; align-items: center;
+  color: #e6f1e6;
+  font-family: inherit;
+  font-weight: 550;
+  font-size: 13px;
+  padding: 11px 17px;
+  border-radius: 99px;
+  border: 1px solid rgba(129,197,159,.17);
+  background: rgba(0,45,32,.70);
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.nc-quick svg { color: #ddba6e; }
+.nc-quick:hover { background: #154c34; border-color: rgba(233,173,69,.58); transform: translateY(-1px); }
+.nc-composer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 66px;
+  padding: 7px 8px 7px 10px;
+  background: #111b15;
+  border: 1px solid #284b37;
+  border-radius: 21px;
+  box-shadow: 0 9px 35px rgba(0,0,0,.14);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.nc-composer:focus-within { border-color: var(--nc-gold); box-shadow: 0 0 0 3px rgba(232,172,69,.12); }
+.nc-compose-left { display: flex; align-items: center; gap: 8px; flex: none; }
+.nc-circle {
+  display: grid; place-items: center;
+  border: 0; border-radius: 16px;
+  width: 47px; height: 47px;
+  background: #124a37;
+  color: #f1fff6;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
+}
+.nc-circle:hover { background: #1d6749; transform: translateY(-1px); }
+.nc-circle-active { background: #a24928; }
+.nc-composer textarea {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  min-height: 28px;
+  max-height: 108px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #f9fff9;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 6px 3px;
+}
+.nc-composer textarea::placeholder { color: #adc2b5; opacity: 1; }
+.nc-submit {
+  width: 48px; height: 48px; flex: none;
+  display: grid; place-items: center;
+  border: none; border-radius: 15px;
+  background: #e8ac45;
+  color: #0b2217;
+  box-shadow: 0 3px 12px rgba(232,172,69,.14);
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease;
+}
+.nc-submit:disabled { opacity: .55; cursor: not-allowed; }
+.nc-submit:hover:not(:disabled) { background: #ffc968; transform: translateY(-1px); }
+.nc-feedback { color: #ffd59a; font-size: 13px; padding: 8px 12px; margin: 0; }
+.nc-note { display: flex; justify-content: center; align-items: center; gap: 7px; margin: 17px 0 0; font-size: 11px; color: #a5c0af; text-align: center; }
+.nc-note svg { flex: none; color: #bdcfbd; }
+@media (min-width: 1350px) and (min-height: 800px) { .nc-hero { min-height: 585px; } }
+@media (max-width: 900px) {
+  .nc-content { padding: 18px 17px 35px; }
+  .nc-hero { min-height: 510px; }
+  .nc-hero-center { padding-inline: 18px; }
+  .nc-insights { padding: 0 18px 25px; gap: 10px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .nc-insight { min-height: 75px; }
+}
+@media (max-width: 540px) {
+  .nc-content { padding: 12px 11px 24px; }
+  .nc-hero { min-height: 520px; }
+  .nc-hero-center { min-height: 255px; padding: 34px 16px 12px; }
+  .nc-eyebrow { font-size: 10px; }
+  .nc-gold-rule { margin: 18px auto 20px; width: 35px; }
+  .nc-headline { font-size: clamp(20px, 5.2vw, 27px); line-height: 1.45; }
+  .nc-tagline { font-size: 11px; padding: 5px 10px; }
+  .nc-insights { gap: 9px; padding: 0 11px 17px; }
+  .nc-insight { min-height: 84px; padding: 11px; gap: 7px; }
+  .nc-insight-name { font-size: 12px; }
+  .nc-insight-description { font-size: 12px; }
+  .nc-insight-arrow { width: 13px; right: 8px; bottom: 9px; }
+  .nc-quick-actions { margin: 16px 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .nc-quick-actions::-webkit-scrollbar { display: none; }
+  .nc-quick { white-space: nowrap; padding: 10px 12px; font-size: 12px; flex: none; }
+  .nc-composer { gap: 7px; min-height: 62px; border-radius: 18px; padding: 6px; }
+  .nc-compose-left { gap: 5px; }
+  .nc-circle { width: 40px; height: 40px; border-radius: 12px; }
+  .nc-submit { width: 41px; height: 41px; border-radius: 12px; }
+  .nc-composer textarea { font-size: 13px; }
+  .nc-note { font-size: 10px; padding-inline: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nc-root *, .nc-root *::before, .nc-root *::after { transition: none !important; animation: none !important; }
+}

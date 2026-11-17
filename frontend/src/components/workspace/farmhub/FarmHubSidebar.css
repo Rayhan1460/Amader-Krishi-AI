@@ -1,0 +1,14 @@
+.fh-sidebar{background:linear-gradient(160deg,#132f26,#0c211b 76%);border-right:1px solid #29483b;box-shadow:0 0 22px #05191045;min-height:0;scrollbar-gutter:stable}
+.fh-brand-mark{display:grid;place-items:center;width:35px;height:35px;flex:none;border-radius:11px;background:linear-gradient(135deg,#e9f2bf,#b3d486);color:#1b4832;box-shadow:0 3px 13px #030e0875}
+.fh-brand-mark svg{width:25px;height:25px}
+.fh-sidebar button[data-nav-id],.fh-sidebar button[aria-current]{position:relative;min-height:42px;transition:background .2s,color .2s,box-shadow .2s}
+.fh-sidebar button[aria-current="page"]{background:#2a4937;color:#eff7db;box-shadow:inset 3px 0 #d5ea9d;border-color:#47644e}
+.fh-sidebar button[aria-current="page"] svg{color:#d5ea9d}
+.fh-sidebar button:focus-visible{outline:2px solid #d5ea9d;outline-offset:2px}
+@media(prefers-reduced-motion:no-preference){.fh-sidebar:has(button[aria-label="Close menu"]){animation:fh-drawer .22s ease-out}}
+@keyframes fh-drawer{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+
+.fh-sidebar{overflow:hidden}
+.fh-sidebar-body{overflow-y:auto;overflow-x:hidden;min-height:0;flex:1}
+.fh-sidebar-foot{flex:none;padding-top:9px;margin-top:7px}
+@media(max-height:670px){.fh-sidebar{overflow-y:auto}.fh-sidebar-body{overflow:visible;flex:none}}

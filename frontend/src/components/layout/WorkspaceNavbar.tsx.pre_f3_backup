@@ -1,0 +1,76 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { LogOut, UserCheck, Sparkles, UserPlus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.tsx';
+import { Button } from '../common/Button.tsx';
+import { BrandLogo } from '../common/BrandLogo.tsx';
+
+export function WorkspaceNavbar() {
+  const { user, isDemo, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-sage-200 py-3">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        
+        {/* Brand */}
+        <Link to="/workspace" className="flex items-center gap-2 group">
+          <BrandLogo size="md" variant="dark" withTagline={false} />
+        </Link>
+
+        {/* User Badge & Actions */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          
+          {/* Demo Mode Notice Badge */}
+          {isDemo ? (
+            <div id="demo-mode-badge" className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-xs text-amber-900 font-bengali font-semibold shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+              <span>ডেমো মোড (Demo Guest)</span>
+              <span className="hidden md:inline font-mono text-[10px] text-amber-700">#{user?.id}</span>
+            </div>
+          ) : (
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-50 border border-forest-200 text-xs text-forest-900">
+              <UserCheck className="w-3.5 h-3.5 text-forest-600" />
+              <span className="font-semibold">{user?.username}</span>
+              <span className="text-sage-500 font-mono">• #{user?.id}</span>
+            </div>
+          )}
+
+          {isDemo && (
+            <Link to="/register" className="hidden sm:inline-block">
+              <Button
+                variant="primary"
+                size="sm"
+                className="font-bengali text-xs shadow-xs"
+                leftIcon={<UserPlus className="w-3.5 h-3.5" />}
+              >
+                একাউন্ট খুলুন
+              </Button>
+            </Link>
+          )}
+
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="font-bengali text-xs">
+              মূল পোর্টাল
+            </Button>
+          </Link>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            leftIcon={<LogOut className="w-3.5 h-3.5 text-red-600" />}
+            className="border-sage-300 text-charcoal-800 hover:bg-red-50 hover:text-red-700 hover:border-red-300 font-bengali text-xs"
+          >
+            {isDemo ? 'ডেমো সমাপ্ত' : 'লগআউট'}
+          </Button>
+        </div>
+
+      </div>
+    </header>
+  );
+}

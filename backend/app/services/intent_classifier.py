@@ -1,0 +1,179 @@
+"""Intent classifier service (lazy, no heavy imports).
+
+- Resolves project root via ``Path(__file__).resolve().parents[3]``.
+- Locates the portable model ZIP (first file whose name starts with
+  ``AgriSphere_Trained_Intent_Model_PORTABLE``) in the project root.
+- Reads ``manifest.json`` inside the ZIP to obtain the ordered list of
+  ``labels`` (13 categories).
+- Provides :func:`classify` which validates input and returns a structured
+  result without actually loading the encoder or the job‑lib classifier.
+- Caches the manifest and label list after the first successful read.
+- Includes a helper ``_resolve_label`` that can turn an integer, a NumPy
+  integer or a string label into the canonical string label.
+- All heavy model loading is deferred to later implementation; if the
+  ZIP is missing or the manifest cannot be read the function returns a
+  ``status`` of ``"model_missing"`` or ``"manifest_error"``.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import json
+import zipfile
+import threading
+import os
+
+# Caches
+_manifest_cache: dict | None = None
+_labels_cache: List[str] | None = None
+_model_zip_path: Path | None = None
+
+# Lazy loaded heavy objects
+_encoder = None  # type: ignore
+_classifier = None  # type: ignore
+_load_lock = threading.Lock()
+
+# Flag to enable real inference – keep False until explicitly approved.
+_ENABLE_REAL_INFERENCE: bool = False
+
+# ---------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------
+def _find_model_zip() -> Path | None:
+    """Search the project root for the portable intent‑model ZIP.
+
+    Returns ``None`` if no matching file is found.
+    """
+    project_root = Path(__file__).resolve().parents[3]
+    candidates = list(project_root.glob('AgriSphere_Trained_Intent_Model_PORTABLE*.zip'))
+    return candidates[0] if candidates else None
+
+def _load_manifest() -> Tuple[dict | None, str]:
+    """Read ``manifest.json`` from the ZIP.
+
+    Returns a tuple ``(manifest_dict, status)`` where ``status`` is ``"ok"``
+    on success or an error code string.
+    """
+    global _manifest_cache, _labels_cache, _model_zip_path
+    # Always locate the zip anew to avoid stale cache
+    _model_zip_path = _find_model_zip()
+    # If we have a cached manifest and the zip still exists, return it
+    if _manifest_cache is not None:
+        if _model_zip_path is not None and _model_zip_path.is_file():
+            return _manifest_cache, "ok"
+        # Zip missing – clear caches
+        _manifest_cache = None
+        _labels_cache = None
+        return None, "model_missing"
+    # If the zip is missing, report model_missing
+    if _model_zip_path is None or not _model_zip_path.is_file():
+        return None, "model_missing"
+    # Load manifest from zip
+    try:
+        with zipfile.ZipFile(_model_zip_path, 'r') as z:
+            with z.open('AgriSphere_Trained_Intent_Model/manifest.json') as f:
+                manifest = json.load(f)
+                _manifest_cache = manifest
+                labels = manifest.get('labels')
+                if not isinstance(labels, list) or len(labels) != 13:
+                    _manifest_cache = None
+                    return None, "invalid_labels"
+                _labels_cache = labels
+                return manifest, "ok"
+    except Exception as exc:  # pragma: no cover – defensive
+        _manifest_cache = None
+        return None, f"manifest_error: {exc}"
+
+def _resolve_label(raw_label: Any) -> str | None:
+    """Convert a raw classifier output to the canonical string label.
+
+    ``raw_label`` may be an ``int`` index, a NumPy int, or a string label.
+    Returns ``None`` if it cannot be resolved.
+    """
+    if _labels_cache is None:
+        return None
+    if isinstance(raw_label, int):
+        if 0 <= raw_label < len(_labels_cache):
+            return _labels_cache[raw_label]
+        return None
+    if isinstance(raw_label, str):
+        return raw_label if raw_label in _labels_cache else None
+    return None
+
+# ---------------------------------------------------------------------
+# Model initialization (real inference)
+# ---------------------------------------------------------------------
+def _initialize_model() -> bool:
+    """Load encoder and classifier from the extracted model directory.
+
+    Returns ``True`` on success, ``False`` otherwise.
+    Heavy libraries are imported only inside this function.
+    """
+    global _encoder, _classifier
+    if _encoder is not None and _classifier is not None:
+        return True
+    with _load_lock:
+        if _encoder is not None and _classifier is not None:
+            return True
+        model_root = Path(__file__).resolve().parents[3] / "model_assets" / "intent_classifier" / "AgriSphere_Trained_Intent_Model"
+        required_paths = [
+            model_root / "agriculture_intent_router.joblib",
+            model_root / "encoder",
+        ]
+        if not all(p.exists() for p in required_paths):
+            return False
+        # Disable TensorFlow, enforce PyTorch for sentence_transformers
+        os.environ.setdefault("USE_TF", "0")
+        os.environ.setdefault("USE_TORCH", "1")
+        try:
+            import joblib
+            from sentence_transformers import SentenceTransformer
+            saved = joblib.load(str(model_root / "agriculture_intent_router.joblib"))
+            if not isinstance(saved, dict) or "classifier" not in saved:
+                return False
+            _classifier = saved["classifier"]
+            if not (hasattr(_classifier, "predict") and hasattr(_classifier, "predict_proba") and hasattr(_classifier, "classes_")):
+                _classifier = None
+                return False
+            _encoder = SentenceTransformer(str(model_root / "encoder"), device="cpu", local_files_only=True, trust_remote_code=False)
+            return True
+        except Exception:
+            _encoder = None
+            _classifier = None
+            return False
+
+# ---------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------
+def classify(question: str) -> Tuple[Dict[str, Any], str]:
+    """Validate *question* and optionally perform real inference.
+
+    Returns ``(payload, status)``. When real inference is disabled, status
+    is ``"inference_disabled"`` and payload is empty.
+    """
+    if not isinstance(question, str) or not question.strip():
+        return {}, "invalid_input"
+    _, manifest_status = _load_manifest()
+    if manifest_status != "ok":
+        return {}, manifest_status
+    if not _ENABLE_REAL_INFERENCE:
+        return {}, "inference_disabled"
+    if not _initialize_model():
+        return {}, "model_missing"
+    query = f"query: {question.strip()}"
+    try:
+        vectors = _encoder.encode([query], normalize_embeddings=True)
+        probs = _classifier.predict_proba(vectors)[0]
+        best_idx = int(probs.argmax())
+        label = _classifier.classes_[best_idx]
+        if _labels_cache is not None and label not in _labels_cache:
+            return {}, "invalid_prediction"
+        confidence = float(probs.max())
+        payload = {"predicted_category": label, "confidence": confidence}
+        return payload, "ok"
+    except Exception:
+        return {}, "inference_error"
+
+__all__ = ["classify", "_resolve_label", "_load_manifest"]

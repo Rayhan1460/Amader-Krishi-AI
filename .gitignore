@@ -1,0 +1,56 @@
+# AgriSphere AI Git Ignore
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/.venv/
+backend/.venv2/
+backend/.keras/
+.venv/
+env/
+venv/
+ENV/
+
+# Database & SQLite files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+backend/app/*.db
+backend/app/*.db.bak
+
+# Testing & Caches
+.pytest_cache/
+.coverage
+htmlcov/
+.playwright-artifacts/
+test-results/
+
+# Node & Frontend
+frontend/node_modules/
+frontend/dist/
+dist/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+

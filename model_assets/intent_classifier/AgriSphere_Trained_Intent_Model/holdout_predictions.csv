@@ -1,0 +1,31 @@
+﻿question,actual,predicted
+মুরগি খাবার খাচ্ছে না কেন?,livestock_poultry,fisheries
+What should I feed farmed tilapia?,fisheries,fisheries
+Kon dhaner jat bhalo?,seeds_varieties,non_agriculture
+Sobji kokhon tulbo?,harvest_storage,seeds_varieties
+Goru ke ki khawabo?,livestock_poultry,weather_climate
+Secher pani kivabe bachabo?,irrigation_water,weather_climate
+Who won the football game?,non_agriculture,non_agriculture
+How will heavy rain affect my crops?,weather_climate,smart_agriculture
+পুকুরের পানি ভালো রাখব কীভাবে?,fisheries,fisheries
+গরুকে কী খাবার দেব?,livestock_poultry,livestock_poultry
+When is the best season to plant tomatoes?,crop_cultivation,crop_cultivation
+Pukurer pani bhalo rakhbo kivabe?,fisheries,non_agriculture
+Gache pustir obhab hole ki korbo?,fertilizer_nutrients,livestock_poultry
+ধান কাটার পরে সংরক্ষণ কীভাবে করব?,harvest_storage,harvest_storage
+What to do if farmland is waterlogged?,irrigation_water,irrigation_water
+Gache poka dhorle ki korbo?,plant_disease_pest,weather_climate
+What causes brown spots on rice leaves?,plant_disease_pest,plant_disease_pest
+পাইথন ক্যালকুলেটর কোড দাও,non_agriculture,non_agriculture
+Dhan chashe profit hisab korbo?,agri_economics,agri_economics
+Doash matir gun ki?,soil_management,soil_management
+বীজ সংরক্ষণের নিয়ম কী?,seeds_varieties,irrigation_water
+What are the effects of drought?,weather_climate,irrigation_water
+Smart krishi ki?,smart_agriculture,smart_agriculture
+How do soil moisture sensors work?,smart_agriculture,smart_agriculture
+মাটির আর্দ্রতা সেন্সর কীভাবে কাজ করে?,smart_agriculture,soil_management
+How can I improve clay soil?,soil_management,soil_management
+How do I interpret NPK soil test values?,fertilizer_nutrients,fertilizer_nutrients
+আমাকে গণিত শেখাও,non_agriculture,non_agriculture
+Tomato kokhon lagabo?,crop_cultivation,plant_disease_pest
+Tomato bajar dam koto hote pare?,agri_economics,plant_disease_pest
