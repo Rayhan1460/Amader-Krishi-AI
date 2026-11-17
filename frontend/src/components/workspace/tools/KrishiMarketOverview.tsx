@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   ArrowUpRight, BadgeInfo, CalendarDays, CheckCircle2,
   ChevronDown, ClipboardList, Compass, MapPin,
-  Plus, Search, ShieldAlert, Sprout, Trash2, Truck, X, BarChart3, TrendingUp, ShieldCheck, RotateCcw, Sparkles, ArrowRight, AlertTriangle,
+  Plus, Search, ShieldAlert, Sprout, Trash2, Truck, X,
 } from 'lucide-react';
 import { useLanguage } from '../../../context/LanguageContext.tsx';
 import './KrishiMarketLovable.css';
@@ -126,7 +126,6 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
   const [batchKg, setBatchKg] = useState('');
   const [error, setError] = useState('');
   const [storageError, setStorageError] = useState('');
-  const [noteToDelete, setNoteToDelete] = useState<PriceNote | null>(null);
 
   useEffect(() => {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); setStorageError(''); }
@@ -158,8 +157,6 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
   const qty = batchKg.trim() === '' ? null : Number(batchKg);
   const validQty = qty != null && Number.isFinite(qty) && qty > 0;
   const maxPrice = shownNotes.length ? Math.max(...shownNotes.map((n) => n.price)) : null;
-  const savedDivisionCount = countByDivision.size;
-  const clearFilters = () => { setSelectedDivision('all'); setSearchText(''); };
 
   const saveNote = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -184,66 +181,59 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
 
   return (
     <section className="km-root font-bengali" aria-label={t('কৃষি বাজার', 'KrishiMarket')} data-testid="krishimarket-farmer-dashboard">
-      <header className="km-heading km-hero">
-        <div className="km-hero-copy">
-          <p className="km-eyebrow"><Sparkles size={15} aria-hidden="true" /> {t('আমাদের কৃষি • কৃষকের বাজার', 'Amader Krishi • Farmer market')}</p>
-          <h1>{t('ফসলের সঠিক দাম,\nআরও ভালো সিদ্ধান্ত।', 'Better crop prices.\nSmarter decisions.')}</h1>
-          <p className="km-subtitle">{t('নিজে সংগ্রহ করা বাজারদর সংরক্ষণ করুন, এলাকার বাজার দেখুন এবং পরিবহন খরচসহ তুলনা করুন।', 'Save prices you collected, explore markets by area and compare transport-adjusted estimates.')}</p>
-          <div className="km-hero-trust">
-            <span><ShieldCheck size={15} aria-hidden="true" /> {t('আপনার তথ্য, আপনার নিয়ন্ত্রণ', 'Your data, your control')}</span>
-            <span><MapPin size={15} aria-hidden="true" /> {t('৮ বিভাগ • ৬৪ জেলা', '8 divisions • 64 districts')}</span>
-          </div>
-          <button type="button" className="km-add-btn" onClick={openNewNote}>
-            <Plus size={20} aria-hidden="true" /> {t('নতুন বাজারদর যোগ করুন', 'Add a market price')} <ArrowRight size={17} aria-hidden="true" />
-          </button>
+      <header className="km-heading">
+        <div>
+          <p className="km-eyebrow">KRISHIMARKET <span>•</span> {t('কৃষকের বাজার', 'Farmer market')}</p>
+          <h1>{t('কোন বাজারে ফসলের ভালো দাম?', 'Where can you get a better crop price?')}</h1>
+          <p className="km-subtitle">{t('জেলা ও বাজারের নিজে সংগ্রহ করা দাম এক জায়গায় দেখুন।', 'View the district and market prices you have recorded.')}</p>
         </div>
-        <div className="km-hero-overview" aria-label={t('আপনার নোটের সারসংক্ষেপ', 'Your saved price overview')}>
-          <div className="km-overview-heading"><span className="km-overview-icon"><BarChart3 size={24} aria-hidden="true" /></span><span>{t('আমার বাজারের সারাংশ', 'My market overview')}</span></div>
-          <div className="km-overview-lead"><strong>{formatMoney(uniqueMarkets.length, lang)}</strong><span>{t('রেকর্ড করা বাজার', 'markets recorded')}</span></div>
-          <div className="km-overview-metrics">
-            <div><strong>{formatMoney(savedDivisionCount, lang)}</strong><span>{t('বিভাগের তথ্য', 'divisions covered')}</span></div>
-            <div><strong>{formatMoney(currentNotes.length, lang)}</strong><span>{t('সংরক্ষিত নোট', 'saved notes')}</span></div>
-          </div>
-          <p><BadgeInfo size={14} aria-hidden="true" /> {t('ব্যক্তিগত নোট • সরকারি বা লাইভ বাজারদর নয়', 'Personal notes • not official or live rates')}</p>
-        </div>
+        <button type="button" className="km-add-btn" onClick={openNewNote}>
+          <Plus size={19} aria-hidden="true" /> {t('নতুন বাজারদর যোগ করুন', 'Add a market price')}
+        </button>
       </header>
 
       <div className="km-action-line">
-        <div className="km-switch-group">
-          <span className="km-switch-caption">{t('কোন ফসলের দাম দেখতে চান?', 'Which crop would you like to compare?')}</span>
-          <div className="km-commodity-switch" role="group" aria-label={t('ফসল বাছাই', 'Select a crop')}>
-            <button type="button" aria-pressed={commodity === 'tomato_price'} className={commodity === 'tomato_price' ? 'active' : ''} onClick={() => onCommodityChange('tomato_price')}>
-              <span aria-hidden="true">🍅</span> {t('টমেটো', 'Tomato')}
-            </button>
-            <button type="button" aria-pressed={commodity === 'boro_rice_price'} className={commodity === 'boro_rice_price' ? 'active' : ''} onClick={() => onCommodityChange('boro_rice_price')}>
-              <span aria-hidden="true">🌾</span> {t('বোরো ধান', 'Boro rice')}
-            </button>
-          </div>
+        <div className="km-commodity-switch" role="group" aria-label={t('ফসল বাছাই', 'Select a crop')}>
+          <button type="button" aria-pressed={commodity === 'tomato_price'} className={commodity === 'tomato_price' ? 'active' : ''} onClick={() => onCommodityChange('tomato_price')}>
+            <span aria-hidden="true">🍅</span> {t('টমেটো', 'Tomato')}
+          </button>
+          <button type="button" aria-pressed={commodity === 'boro_rice_price'} className={commodity === 'boro_rice_price' ? 'active' : ''} onClick={() => onCommodityChange('boro_rice_price')}>
+            <span aria-hidden="true">🌾</span> {t('বোরো ধান', 'Boro rice')}
+          </button>
         </div>
-        <span className="km-historical-note"><ShieldCheck size={17} aria-hidden="true" /> {t('সংরক্ষিত দাম শুধু এই ব্রাউজারে আছে', 'Saved prices stay in this browser')}</span>
+        <span className="km-historical-note"><BadgeInfo size={15} aria-hidden="true" /> {t('নিজের নোট • লাইভ বাজারদর নয়', 'Your notes • Not live prices')}</span>
       </div>
 
       <div className="km-main-grid">
         <section className="km-panel km-map-panel" aria-labelledby="km-map-title">
-          <div className="km-panel-heading"><div className="km-heading-title"><span className="km-panel-icon"><Compass size={23} aria-hidden="true" /></span><div><span className="km-kicker">{t('ধাপ ১ • এলাকা খুঁজুন', 'STEP 1 • EXPLORE')}</span><h2 id="km-map-title">{t('বাংলাদেশের বাজারের মানচিত্র', 'Bangladesh market map')}</h2></div></div><span className="km-panel-tag">{t('৮টি বিভাগ', '8 divisions')}</span></div>
+          <div className="km-panel-heading"><div><span className="km-kicker">01 / MAP</span><h2 id="km-map-title">{t('বাংলাদেশের বাজারের মানচিত্র', 'Bangladesh market map')}</h2></div><Compass size={23} aria-hidden="true" /></div>
           <p className="km-help">{t('মানচিত্রে একটি বিভাগের নাম চাপুন, সেই এলাকার নোট দেখাবে।', 'Choose a division to see your recorded market prices there.')}</p>
           <div className="km-map-frame">
             <div className="km-map-topline"><span className="km-map-live-dot" /> {t('৮ বিভাগ • ৬৪ জেলা', '8 divisions • 64 districts')}</div>
             <div className="km-map-stage">
-            <svg className="km-country" viewBox="0 0 520 412" role="img" aria-label={t('বাংলাদেশের অবস্থান বোঝানোর মানচিত্র; বিভাগের কেন্দ্র নির্দেশক', 'Illustrative Bangladesh map with approximate division markers')}>
+            <svg className="km-country" viewBox="0 0 520 412" role="img" aria-label={t('বাংলাদেশের বাজারের মানচিত্র; বিভাগের আনুমানিক অবস্থান', 'Bangladesh market map with approximate division positions')}>
               <defs>
-                <linearGradient id="km-land-fill" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stopColor="#164938" /><stop offset="100%" stopColor="#115340" /></linearGradient>
-                <pattern id="km-geo-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="#4e9f7c" strokeWidth="0.6" opacity=".15" /></pattern>
+                <linearGradient id="km-land-fill" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%" stopColor="#168c58" />
+                  <stop offset="100%" stopColor="#0f7849" />
+                </linearGradient>
+                <pattern id="km-geo-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+                  <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#bfcdbf" strokeWidth="0.8" opacity=".55" />
+                </pattern>
+                <filter id="km-land-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="14" stdDeviation="14" floodColor="#154d37" floodOpacity="0.12" />
+                </filter>
                 <clipPath id="km-bd-clip"><path d={BANGLADESH_PATH} /></clipPath>
               </defs>
               <rect x="0" y="0" width="520" height="412" fill="url(#km-geo-grid)" />
-              <path d={BANGLADESH_PATH} fill="url(#km-land-fill)" stroke="#519d7a" strokeWidth="2.1" strokeLinejoin="round" />
-              <g clipPath="url(#km-bd-clip)" opacity=".36" strokeLinecap="round" fill="none">
-                <path d="M 181 85 Q 205 134 242 159 T 267 253 Q 274 279 328 310" stroke="#70b1a4" strokeWidth="2.7" />
-                <path d="M 303 152 Q 283 196 288 216 T 275 295" stroke="#70b1a4" strokeWidth="2.2" />
-                <path d="M 340 142 Q 335 203 376 239 T 408 342" stroke="#70b1a4" strokeWidth="1.8" />
+              <path d={BANGLADESH_PATH} fill="url(#km-land-fill)" stroke="#eef7f0" strokeWidth="3.1" strokeLinejoin="round" filter="url(#km-land-shadow)" />
+              <g clipPath="url(#km-bd-clip)" opacity=".9" strokeLinecap="round" fill="none">
+                <path d="M 170 108 Q 205 130 244 165 T 270 248 Q 280 279 325 305" stroke="#eef7f0" strokeWidth="2.6" />
+                <path d="M 300 138 Q 286 188 289 219 T 278 297" stroke="#eef7f0" strokeWidth="2.2" />
+                <path d="M 336 128 Q 334 189 372 233 T 407 324" stroke="#eef7f0" strokeWidth="1.9" />
+                <path d="M 222 202 Q 266 191 307 205 T 389 196" stroke="#eef7f0" strokeWidth="1.8" opacity=".9" />
               </g>
-              <text x="22" y="385" fill="#76a38e" opacity=".6" fontSize="12" fontWeight="500">BANGLADESH</text>
+              <text x="24" y="386" fill="#83a08e" opacity=".85" fontSize="12" fontWeight="700" letterSpacing="0.08em">BANGLADESH</text>
             </svg>
             <div className="km-marker-layer">
               {DIVISIONS.map((division) => {
@@ -254,7 +244,7 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
                     className={`km-map-marker ${isSelected ? 'selected' : ''} ${count ? 'has-price' : ''}`}
                     style={{ left: `${(division.pinX / 520) * 100}%`, top: `${(division.pinY / 412) * 100}%` }}
                     onClick={() => setSelectedDivision(isSelected ? 'all' : division.key)}>
-                    <span className="km-marker-symbol" aria-hidden="true"><MapPin size={18} /></span>
+                    <span className="km-marker-symbol" aria-hidden="true"><span className="km-marker-dot" /></span>
                     <span className="km-marker-label">{t(division.bn, division.en)}</span>
                     {count > 0 && <span className="km-marker-count">{formatMoney(count, lang)} {t('দর', 'notes')}</span>}
                   </button>
@@ -263,21 +253,12 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
             </div>
             </div>
           </div>
-          <div className="km-mobile-divisions" role="group" aria-label={t('বিভাগ দিয়ে ফিল্টার করুন', 'Filter by division')}>
-            {DIVISIONS.map((division) => (
-              <button type="button" key={division.key} aria-pressed={selectedDivision === division.key}
-                onClick={() => setSelectedDivision(selectedDivision === division.key ? 'all' : division.key)}>
-                {t(division.bn, division.en)}
-                {(countByDivision.get(division.key)?.length ?? 0) > 0 && <small>{formatMoney(countByDivision.get(division.key)?.length ?? 0, lang)}</small>}
-              </button>
-            ))}
-          </div>
           <div className="km-map-legend"><span><span className="km-legend-dot gold" /> {t('আপনার বাজারদর আছে', 'Price noted')}</span><span><span className="km-legend-dot pale" /> {t('দর যোগ করা হয়নি', 'No note yet')}</span></div>
           <p className="km-map-disclaimer">{t('মানচিত্রটি এলাকার ধারণা দেওয়ার জন্য; চিহ্নগুলো বিভাগের আনুমানিক অবস্থান, জেলার সীমানা নয়।', 'Illustrative map only. Markers show approximate division areas, not district boundaries.')}</p>
         </section>
 
         <section className="km-panel km-comparison-panel" aria-labelledby="km-comparison-title">
-          <div className="km-panel-heading"><div className="km-heading-title"><span className="km-panel-icon"><ClipboardList size={23} aria-hidden="true" /></span><div><span className="km-kicker">{t('ধাপ ২ • বাজার তুলনা', 'STEP 2 • COMPARE')}</span><h2 id="km-comparison-title">{t('বাজারের দাম তুলনা করুন', 'Compare market prices')}</h2></div></div><span className="km-panel-tag">{t('নিজস্ব সংগ্রহ', 'Personal notes')}</span></div>
+          <div className="km-panel-heading"><div><span className="km-kicker">02 / COMPARE</span><h2 id="km-comparison-title">{t('বাজারের দাম তুলনা করুন', 'Compare market prices')}</h2></div><ClipboardList size={23} aria-hidden="true" /></div>
           <div className="km-comparison-filter">
             <label className="km-region-select-wrap">
               <span className="sr-only">{t('বিভাগ বাছাই', 'Choose a division')}</span>
@@ -288,25 +269,16 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
             </label>
             <label className="km-search-wrap"><Search size={16} aria-hidden="true" /><span className="sr-only">{t('বাজার খুঁজুন', 'Search markets')}</span><input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder={t('বাজার খুঁজুন', 'Search markets')} /></label>
           </div>
-          <div className="km-batch-row"><label htmlFor="km-qty"><BarChart3 size={17} aria-hidden="true" /> {t('আপনার ফসলের পরিমাণ', 'Your crop quantity')}</label><div><input id="km-qty" type="number" min="0" step="any" value={batchKg} onChange={(e) => setBatchKg(e.target.value)} placeholder={t('যেমন: ১০০', 'e.g. 100')} /><span>{t('কেজি', 'kg')}</span></div></div>
-          <div className="km-results-toolbar"><span>{t('পাওয়া বাজার:', 'Markets found:')} <strong>{formatMoney(shownNotes.length, lang)}</strong></span><span><TrendingUp size={15} aria-hidden="true" /> {t('দাম: বেশি থেকে কম', 'Sorted: high to low')}</span>
-            {(selectedDivision !== 'all' || searchText.trim()) && <button type="button" onClick={clearFilters}><RotateCcw size={13} aria-hidden="true" /> {t('ফিল্টার সরান', 'Reset filters')}</button>}
-          </div>
+          <div className="km-batch-row"><label htmlFor="km-qty">{t('আপনার ফসল কত কেজি?', 'How many kg do you have?')}</label><div><input id="km-qty" type="number" min="0" step="any" value={batchKg} onChange={(e) => setBatchKg(e.target.value)} placeholder={t('যেমন: ১০০', 'e.g. 100')} /><span>{t('কেজি', 'kg')}</span></div></div>
           <div className="km-comparison-list" aria-live="polite">
             {shownNotes.length === 0 ? (
               <div className="km-no-data">
                 <div className="km-no-data-icon"><MapPin size={28} /></div>
-                <h3>{uniqueMarkets.length ? t('এই খোঁজে কোনো বাজার পাওয়া যায়নি', 'No markets match these filters') : t('এখনো কোনো বাজারদর যোগ করা হয়নি', 'Your market notebook is empty')}</h3>
-                <p>{uniqueMarkets.length
-                  ? t('অন্য বিভাগ বেছে দেখুন অথবা সার্চ মুছে আবার চেষ্টা করুন।', 'Try a different division or clear your search to see saved markets.')
-                  : selectedDivisionName
-                    ? t(`${selectedDivisionName.bn} বিভাগের বাজারের দর নিজে সংগ্রহ করে যোগ করুন।`, `Add market prices you collected in ${selectedDivisionName.en}.`)
-                    : t('প্রথমে বাজারের নাম, জেলা, তারিখ ও কেজিপ্রতি দাম লিখুন। এরপর এখানে তুলনা দেখতে পাবেন।', 'Add a market name, district, date and per-kg price to start comparing.')}</p>
-                {uniqueMarkets.length ? (
-                  <button className="km-empty-add" type="button" onClick={clearFilters}><RotateCcw size={16} /> {t('সব বাজার দেখুন', 'Clear filters')}</button>
-                ) : (
-                  <button className="km-empty-add" type="button" onClick={openNewNote}><Plus size={16} /> {t('প্রথম বাজারদর যোগ করুন', 'Add your first price')}</button>
-                )}
+                <h3>{t('এখনো কোনো বাজারদর লেখা নেই', 'No market prices recorded yet')}</h3>
+                <p>{selectedDivisionName
+                  ? t(`${selectedDivisionName.bn} বিভাগের বাজারের দর নিজে সংগ্রহ করে যোগ করুন।`, `Add market prices you collected in ${selectedDivisionName.en}.`)
+                  : t('যে বাজারের দর জানেন, তার নাম, জেলা ও তারিখ লিখুন। এরপর মানচিত্র ও তুলনায় দেখাবে।', 'Add a market name, district, date and a price you know. It will appear in the map and comparison.')}</p>
+                <button className="km-empty-add" type="button" onClick={openNewNote}><Plus size={16} /> {t('প্রথম বাজারদর যোগ করুন', 'Add your first price')}</button>
               </div>
             ) : shownNotes.map((note) => {
               const division = DIVISIONS.find((d) => d.key === note.division);
@@ -326,7 +298,7 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
                       <span className={afterTransport >= 0 ? 'km-positive' : 'km-negative'}><Truck size={15} /> {t('পরিবহন বাদে প্রায়', 'After transport approx.')} ৳{formatMoney(afterTransport, lang, 2)}</span>
                     ) : (<span className="km-not-ready"><Truck size={15} /> {t('পরিবহনসহ মোট হিসাব নেই', 'No transport-adjusted total')}</span>)}
                     <div className="km-price-card-actions">{isHighest && <span className="km-highest-label"><ArrowUpRight size={14} /> {t('নোটকৃত বেশি দর', 'Highest noted')}</span>}
-                      <button type="button" aria-label={`${note.market} ${t('মুছুন', 'delete')}`} title={t('এই নোট মুছুন', 'Delete this note')} onClick={() => setNoteToDelete(note)}><Trash2 size={16} /></button>
+                      <button type="button" aria-label={`${note.market} ${t('মুছুন', 'delete')}`} title={t('এই নোট মুছুন', 'Delete this note')} onClick={() => removeNote(note.id)}><Trash2 size={16} /></button>
                     </div>
                   </div>
                 </article>
@@ -337,19 +309,8 @@ export function KrishiMarketOverview({ commodity, onCommodityChange, onToggleRes
         </section>
       </div>
 
-      <div className="km-lower-bar"><div><span className="km-round-icon"><Sprout size={22} aria-hidden="true" /></span><div><span className="km-kicker">{t('আরও গভীর বিশ্লেষণ', 'ADVANCED INSIGHTS')}</span><h3>{t('ঐতিহাসিক বাজারদর বিশ্লেষণ', 'Historical market price research')}</h3><p>{t('কৃষকের সহজ তুলনার পাশাপাশি ১০টি ইনপুটের AI গবেষণা টুল দেখতে পারবেন।', 'Open the separate 10-input AI research tool alongside your simple price comparison.')}</p></div></div><button type="button" className="km-research-btn" onClick={onToggleResearch} aria-expanded={researchOpen} aria-controls="market-price-research-panel">{researchOpen ? t('বিশ্লেষণ বন্ধ করুন', 'Close research tool') : t('গবেষণা টুল খুলুন', 'Explore research tool')} <ChevronDown size={18} className={researchOpen ? 'km-arrow-up' : ''} /></button></div>
+      <div className="km-lower-bar"><div><span className="km-round-icon"><Sprout size={21} /></span><div><h3>{t('কৃষকের জন্য সহজ, গবেষণার জন্য বিস্তারিত', 'Simple for farmers, detailed for researchers')}</h3><p>{t('ঐতিহাসিক বাজারদর পূর্বাভাসের ১০টি ইনপুট ও AI Model নিচে আলাদাভাবে আছে।', 'The historical 10-input AI prediction tool remains available below.')}</p></div></div><button type="button" className="km-research-btn" onClick={onToggleResearch} aria-expanded={researchOpen} aria-controls="market-price-research-panel">{researchOpen ? t('গবেষণার ফর্ম লুকান', 'Hide research tool') : t('ঐতিহাসিক AI বিশ্লেষণ খুলুন', 'Open historical AI research')} <ChevronDown size={18} className={researchOpen ? 'km-arrow-up' : ''} /></button></div>
       {storageError && <p className="km-storage-alert" role="alert">{storageError}</p>}
-
-      {noteToDelete && (
-        <div className="km-modal-backdrop" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setNoteToDelete(null); }}>
-          <div className="km-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="km-delete-title" aria-describedby="km-delete-description" onKeyDown={(event) => { if (event.key === 'Escape') setNoteToDelete(null); }}>
-            <span className="km-confirm-icon"><AlertTriangle size={24} aria-hidden="true" /></span>
-            <h2 id="km-delete-title">{t('বাজারদরের নোট মুছবেন?', 'Delete this market note?')}</h2>
-            <p id="km-delete-description">{t('“' + noteToDelete.market + '” এর তথ্য এই ব্রাউজার থেকে মুছে যাবে। এটি ফিরিয়ে আনা যাবে না।', 'The note for “' + noteToDelete.market + '” will be removed from this browser and cannot be recovered.')}</p>
-            <div className="km-confirm-actions"><button type="button" className="km-cancel" autoFocus onClick={() => setNoteToDelete(null)}>{t('বাতিল', 'Cancel')}</button><button type="button" className="km-delete-confirm" onClick={() => { removeNote(noteToDelete.id); setNoteToDelete(null); }}><Trash2 size={16} aria-hidden="true" /> {t('নোট মুছুন', 'Delete note')}</button></div>
-          </div>
-        </div>
-      )}
 
       {showForm && (
         <div className="km-modal-backdrop" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setShowForm(false); }}>

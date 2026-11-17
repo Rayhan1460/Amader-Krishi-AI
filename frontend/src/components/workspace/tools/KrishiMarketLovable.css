@@ -38,25 +38,26 @@
 .km-panel-heading > svg { color:var(--km-gold); opacity:.95; }
 .km-panel-heading h2 { color:#f6f8ed; font-size:clamp(18px,1.6vw,21px); font-weight:750; margin:4px 0 0; line-height:1.3; }
 .km-kicker { color:#82b49f; letter-spacing:.18em; font:700 10px 'Plus Jakarta Sans',system-ui,sans-serif; }
-.km-help { color:#b3cbbb; font-size:13px; line-height:1.6; margin:0 0 14px; }
-.km-map-frame { position:relative; overflow:hidden; isolation:isolate; border:1px solid rgba(113,176,139,.15); border-radius:17px; min-height:436px; background:radial-gradient(ellipse at 47% 34%,#0a4030 0%,#062b20 52%,#042219 95%); }
-.km-map-frame::before { content:""; position:absolute; z-index:-1; inset:0; background:radial-gradient(circle at 78% 19%,rgba(240,190,85,.075),transparent 32%); }
-.km-map-topline { position:absolute; z-index:4; top:14px; left:14px; padding:5px 9px; border-radius:20px; background:rgba(4,30,23,.83); border:1px solid rgba(120,179,135,.2); display:flex; align-items:center; gap:6px; color:#b9d6bc; font-size:11px; }
-.km-map-live-dot { width:7px; height:7px; border-radius:50%; background:#eeb856; display:inline-block; }
-.km-map-stage { position:absolute; width:100%; aspect-ratio:520/412; top:50%; transform:translateY(-50%); left:0; }
+.km-help { color:#6d8777; font-size:13px; line-height:1.6; margin:0 0 14px; }
+.km-map-frame { position:relative; overflow:hidden; isolation:isolate; border:1px solid #dce9dc; border-radius:24px; min-height:436px; background:linear-gradient(180deg,#f7fbf5 0%,#edf5ee 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
+.km-map-frame::before { content:""; position:absolute; inset:0; background:radial-gradient(circle at 78% 20%,rgba(62,149,101,.10),transparent 28%), linear-gradient(180deg,rgba(255,255,255,.72),rgba(244,249,244,.2)); pointer-events:none; }
+.km-map-topline { position:absolute; z-index:4; top:18px; left:18px; padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.92); border:1px solid #d8e6d9; box-shadow:0 8px 18px rgba(19,71,48,.08); display:flex; align-items:center; gap:8px; color:#245743; font-size:12px; font-weight:700; }
+.km-map-live-dot { width:10px; height:10px; border-radius:50%; background:#1d8a56; display:inline-block; box-shadow:0 0 0 4px rgba(29,138,86,.12); }
+.km-map-stage { position:absolute; width:100%; aspect-ratio:520/412; top:50%; transform:translateY(-50%); left:0; padding:20px 16px 10px; }
 .km-country { position:absolute; z-index:1; inset:0; width:100%; height:100%; }
 .km-marker-layer { position:absolute; z-index:2; inset:0; pointer-events:none; }
-.km-map-marker { position:absolute; transform:translate(-50%,-50%); display:flex; align-items:center; flex-direction:column; gap:0; pointer-events:auto; padding:1px; border:0; background:transparent; color:#d3e4d4; text-align:center; min-width:55px; max-width:95px; transition:filter .18s ease; }
-.km-map-marker:hover, .km-map-marker.selected { z-index:5; filter:drop-shadow(0 4px 8px rgba(241,187,63,.4)); }
-.km-marker-symbol { background:#073328; border-radius:50%; width:29px; height:29px; display:flex; align-items:center; justify-content:center; border:1px solid #83ad98; color:#b9ccbf; box-shadow:0 0 0 3px rgba(0,0,0,.11); }
-.km-map-marker.has-price .km-marker-symbol, .km-map-marker.selected .km-marker-symbol { background:#efb94e; color:#173328; border-color:#ffd277; box-shadow:0 0 0 4px rgba(238,185,78,.16); }
-.km-marker-label { display:block; border-radius:5px; background:rgba(5,35,25,.85); color:#f0f7e9; padding:1px 5px; font-size:11px; font-weight:700; line-height:1.15; white-space:nowrap; margin-top:2px; }
-.km-marker-count { padding:1px 4px; background:#edbc67; color:#1f331e; border-radius:4px; font-size:10px; font-weight:800; white-space:nowrap; }
-.km-map-legend { display:flex; flex-wrap:wrap; gap:15px; margin:13px 0 8px; color:#b6d0be; font-size:12px; }
+.km-map-marker { position:absolute; transform:translate(-50%,-50%); display:flex; align-items:center; flex-direction:column; gap:4px; pointer-events:auto; padding:2px; border:0; background:transparent; color:#275341; text-align:center; min-width:60px; max-width:104px; transition:transform .18s ease, filter .18s ease; }
+.km-map-marker:hover, .km-map-marker.selected { z-index:5; transform:translate(-50%,-52%); filter:drop-shadow(0 10px 18px rgba(23,82,56,.18)); }
+.km-marker-symbol { background:linear-gradient(180deg,#ff5b98,#ef3f85); border-radius:999px 999px 999px 999px / 999px 999px 780px 780px; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:3px solid #fff; box-shadow:0 10px 18px rgba(239,63,133,.18); transform:rotate(45deg); }
+.km-marker-dot { width:8px; height:8px; border-radius:50%; background:#fff; transform:rotate(-45deg); display:block; }
+.km-map-marker.has-price .km-marker-symbol, .km-map-marker.selected .km-marker-symbol { background:linear-gradient(180deg,#ff5b98,#ef3f85); border-color:#fff; box-shadow:0 12px 20px rgba(239,63,133,.22); }
+.km-marker-label { display:block; border-radius:999px; background:rgba(255,255,255,.95); color:#134933; padding:3px 8px; font-size:11px; font-weight:800; line-height:1.15; white-space:nowrap; margin-top:0; border:1px solid #dceadc; box-shadow:0 6px 12px rgba(12,58,38,.08); }
+.km-marker-count { padding:2px 6px; background:#17563d; color:#f6fff7; border-radius:999px; font-size:10px; font-weight:800; white-space:nowrap; }
+.km-map-legend { display:flex; flex-wrap:wrap; gap:15px; margin:13px 0 8px; color:#5e7f6d; font-size:12px; }
 .km-map-legend > span { display:inline-flex; align-items:center; gap:6px; }
 .km-legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
-.km-legend-dot.gold { background:#eeb856; }.km-legend-dot.pale { border:1px solid #9eafa0; background:#1c513d; }
-.km-map-disclaimer { color:#9ab7a6; font-size:11px; line-height:1.7; margin:0; }
+.km-legend-dot.gold { background:#1d8a56; }.km-legend-dot.pale { border:1px solid #cedcce; background:#fff; }
+.km-map-disclaimer { color:#799381; font-size:11px; line-height:1.7; margin:0; }
 .km-comparison-panel { display:flex; flex-direction:column; }
 .km-comparison-filter { display:flex; gap:8px; margin:11px 0; }
 .km-comparison-filter label { display:flex; align-items:center; border:1px solid var(--km-line); background:#052c21; border-radius:11px; color:#c4d5c9; min-width:0; }
@@ -125,7 +126,7 @@
   .km-root { padding-bottom:22px; }.km-heading { gap:13px; }.km-heading h1 { font-size:29px; }
   .km-add-btn { width:100%; padding:12px; }.km-action-line { align-items:flex-start; }.km-commodity-switch { width:100%; }
   .km-commodity-switch button { flex:1; min-width:0; }.km-main-grid { gap:13px; }.km-panel { padding:14px; border-radius:18px; }
-  .km-map-frame { min-height:355px; }.km-marker-label { font-size:9px; padding:1px 3px; }.km-marker-symbol { width:24px; height:24px; }.km-marker-symbol svg { width:15px; height:15px; }
+  .km-map-frame { min-height:355px; }.km-marker-label { font-size:9px; padding:2px 5px; }.km-marker-symbol { width:22px; height:22px; }
   .km-marker-count { font-size:9px; }.km-map-marker { min-width:46px; max-width:70px; }
   .km-map-topline { font-size:10px; top:11px; left:9px; }.km-comparison-filter { flex-wrap:wrap; }.km-region-select-wrap { flex:1 1 110px; }
   .km-batch-row { flex-wrap:wrap; }.km-batch-row input { width:120px; }.km-lower-bar { flex-wrap:wrap; padding:15px; }.km-research-btn { width:100%; }
@@ -133,233 +134,3 @@
   .km-amount { font-size:19px; }.km-price-row h3 { font-size:15px; }
 }
 @media (prefers-reduced-motion: reduce) { .km-root *, .km-root *::before, .km-root *::after { transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
-
-/* AMADER KRISHI • PREMIUM MARKET 2026
-   Light, farmer-first redesign, scoped exclusively to the Krishi Market overview.
-   The existing notes, map selection, price calculations and research tool remain intact. */
-.km-root {
-  --km-gold:#e9b64f;
-  --km-gold-light:#fff2cb;
-  --km-ink:#173c30;
-  --km-panel:#fff;
-  --km-panel-dark:#f7faf7;
-  --km-line:#dde8de;
-  --km-muted:#648074;
-  --km-white:#173c30;
-  width:100%;max-width:1550px;
-  color:var(--km-ink);
-  padding:clamp(14px,2.2vw,28px);
-  margin:0 auto 12px;
-  border:1px solid #e1ebe0;
-  border-radius:clamp(18px,2vw,30px);
-  background:#edf4eb;
-  box-shadow:0 18px 48px rgba(7,37,22,.11);
-  position:relative;
-}
-.km-root button:focus-visible,.km-root input:focus-visible,.km-root select:focus-visible {outline:3px solid #bf8931;outline-offset:3px}
-.km-root button {touch-action:manipulation}
-/* Editorial banner + dashboard snapshot */
-.km-root .km-heading.km-hero {
-  min-height:310px;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,285px);
-  align-items:center;gap:clamp(20px,3vw,40px);
-  position:relative;overflow:hidden;
-  background:linear-gradient(100deg,rgba(7,45,32,.98) 0%,rgba(10,55,37,.94) 41%,rgba(17,68,44,.73) 100%),url('/bogra-fields.jpg') center 56%/cover no-repeat;
-  border:1px solid rgba(179,222,180,.22);
-  border-radius:25px;
-  padding:clamp(24px,3.3vw,46px);
-  margin:0 0 18px;
-  box-shadow:0 18px 32px rgba(6,42,29,.12);
-}
-.km-root .km-heading.km-hero::before {content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 90% 15%,rgba(227,196,113,.18),transparent 29%);opacity:.75}
-.km-hero-copy,.km-hero-overview {position:relative;z-index:1}
-.km-hero-copy {min-width:0;animation:km-enter .6s both}
-.km-root .km-hero .km-eyebrow {display:inline-flex;gap:8px;color:#f4d38f;font-size:11px;letter-spacing:.065em;font-family:inherit;text-transform:none;margin-bottom:14px}
-.km-root .km-hero h1 {max-width:750px;white-space:pre-line;color:#fffdf4;font-size:clamp(28px,3.1vw,48px);line-height:1.24;letter-spacing:-.018em;margin:0;font-weight:800;text-wrap:balance}
-.km-root .km-hero .km-subtitle {max-width:570px;font-size:clamp(13px,1.1vw,16px);line-height:1.85;color:#d9e8dc;margin:12px 0 14px}
-.km-hero-trust {display:flex;gap:8px 17px;flex-wrap:wrap;margin-bottom:21px}
-.km-hero-trust span {display:inline-flex;align-items:center;gap:6px;color:#d9eacb;font-size:12px;line-height:1.4}
-.km-hero-trust svg {color:#d6e9a1}
-.km-root .km-add-btn {padding:12px 18px;border-radius:12px;border:1px solid #e8ce88;background:#f1c969;color:#20382d;font-size:14px;box-shadow:0 7px 20px rgba(0,0,0,.12);min-height:46px;transition:transform .22s,box-shadow .22s,background .22s}
-.km-root .km-add-btn:hover {background:#ffe09b;transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.2)}
-.km-root .km-add-btn:hover svg:last-child {transform:translateX(3px)}
-.km-root .km-add-btn svg:last-child {transition:transform .22s}
-.km-hero-overview {background:rgba(255,255,251,.96);border:1px solid rgba(255,255,255,.8);border-radius:20px;padding:20px;box-shadow:0 20px 40px rgba(3,20,15,.24);animation:km-enter .65s .12s both;align-self:center}
-.km-overview-heading {display:flex;align-items:center;gap:10px;color:#315b44;font-size:13px;font-weight:750}
-.km-overview-icon {display:grid;place-items:center;width:39px;height:39px;border-radius:12px;color:#1f714a;background:#e9f3e7}
-.km-overview-lead {display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:17px 0 14px;border-bottom:1px solid #e2ebdf}
-.km-overview-lead strong {color:#164d39;font-size:clamp(32px,3vw,44px);font-weight:800;line-height:1}
-.km-overview-lead span {color:#667e6d;font-size:12px}
-.km-overview-metrics {display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 0 8px}
-.km-overview-metrics > div {border:1px solid #e4ece1;border-radius:12px;background:#f5f9f4;padding:10px}
-.km-overview-metrics strong {display:block;font-size:21px;font-weight:800;color:#1a5740}
-.km-overview-metrics span {display:block;font-size:11px;color:#748578;line-height:1.5}
-.km-hero-overview p {display:flex;align-items:center;gap:6px;margin:10px 0 0;font-size:11px;color:#687d70;line-height:1.6}
-.km-hero-overview p svg {flex:none}
-/* Crop switch as a human-readable command bar */
-.km-root .km-action-line {background:#fff;padding:14px 17px;margin:0 0 18px;border-radius:17px;border:1px solid #e1eade;box-shadow:0 8px 20px rgba(7,40,22,.04);align-items:center}
-.km-switch-group {display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.km-switch-caption {font-size:13px;color:#375a47;font-weight:750}
-.km-root .km-commodity-switch {background:#eff5ee;border:1px solid #e0ebdd;border-radius:12px;box-shadow:none;padding:4px}
-.km-root .km-commodity-switch button {min-height:41px;border-radius:9px;color:#5e7969;font-size:13px;transition:all .18s ease;padding:9px 15px}
-.km-root .km-commodity-switch button:hover {color:#1d533d;background:#e3eee1}
-.km-root .km-commodity-switch button.active {border-color:#b3d4ba;background:#fff;color:#18513a;box-shadow:0 3px 9px rgba(15,57,29,.09)}
-.km-root .km-historical-note {font-size:12px;color:#4e775b;background:#eff8ef;padding:9px 12px;border-radius:25px;gap:7px}
-.km-root .km-historical-note svg {color:#2b8059}
-/* Two balanced, readable white panels */
-.km-root .km-main-grid {grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:18px;align-items:stretch}
-.km-root .km-panel {border:1px solid #dde9df;background:#fff;box-shadow:0 8px 28px rgba(14,54,30,.045);border-radius:21px;padding:clamp(17px,2vw,27px);transition:box-shadow .25s,border-color .25s,transform .25s;animation:km-enter .6s .1s both}
-.km-root .km-panel:hover {box-shadow:0 15px 38px rgba(14,54,30,.09);border-color:#bcd8c5}
-.km-root .km-panel-heading {margin-bottom:9px}
-.km-heading-title {display:flex;align-items:center;gap:11px;min-width:0}
-.km-panel-icon {width:45px;height:45px;min-width:45px;display:grid;place-items:center;background:#eaf4e8;border:1px solid #dcebd8;color:#23764c;border-radius:13px}
-.km-root .km-kicker {font-size:10px;letter-spacing:.10em;color:#6a9574;font-family:inherit;font-weight:800}
-.km-root .km-panel-heading h2 {color:#173d30;font-size:clamp(18px,1.45vw,22px);margin:4px 0 0;font-weight:800}
-.km-panel-tag {border:1px solid #e3e9d9;border-radius:20px;padding:6px 9px;white-space:nowrap;background:#f7f9f3;color:#668173;font-size:11px;font-weight:650}
-.km-root .km-help {color:#647e6e;margin:5px 0 13px;font-size:12px;line-height:1.7}
-/* Keep original schematic/map interaction, shift to approachable atlas palette */
-.km-root .km-map-frame {min-height:430px;border:1px solid #cfdfd1;border-radius:17px;background:radial-gradient(ellipse at 42% 30%,#f1f7ee 0%,#e6f1e7 52%,#dbeadd 100%)}
-.km-root .km-map-frame::before {background:radial-gradient(circle at 75% 20%,rgba(212,184,94,.13),transparent 44%);z-index:0}
-.km-root .km-country > path {fill:#b4dfc3;stroke:#4b9973;stroke-width:2.5}
-.km-root .km-country > g path {stroke:#579d86}
-.km-root .km-country > text {fill:#37765b;opacity:.52}
-.km-root .km-map-topline {top:14px;left:13px;color:#28553e;background:rgba(255,255,250,.92);border:1px solid #d4e5d4;padding:7px 11px;font-size:11px;box-shadow:0 4px 12px rgba(15,62,38,.06)}
-.km-root .km-map-live-dot {background:#55a97a;box-shadow:0 0 0 3px rgba(85,169,122,.12)}
-.km-root .km-marker-symbol {background:#fff;border:1px solid #80b59a;color:#3e8260;width:29px;height:29px;box-shadow:0 3px 10px rgba(32,81,49,.12);transition:all .2s}
-.km-root .km-map-marker:hover .km-marker-symbol {transform:translateY(-3px) scale(1.12);box-shadow:0 6px 18px rgba(41,100,52,.2)}
-.km-root .km-map-marker.has-price .km-marker-symbol,.km-root .km-map-marker.selected .km-marker-symbol {background:#1b6849;border-color:#1b6849;color:#fff;box-shadow:0 0 0 5px rgba(63,160,96,.18)}
-.km-root .km-marker-label {background:rgba(255,255,251,.94);color:#1d573e;border:1px solid #d3e9d6;padding:3px 5px;font-size:11px;border-radius:7px;box-shadow:0 2px 9px rgba(20,66,38,.08)}
-.km-root .km-map-marker.selected .km-marker-label {background:#21593e;color:#fff;border-color:#21593e}
-.km-root .km-marker-count {border-radius:6px;background:#f7d786;color:#395037;padding:2px 5px}
-.km-root .km-map-legend {color:#627e6e;margin:14px 0 7px;font-size:12px}
-.km-root .km-legend-dot.gold {background:#1b6849}.km-root .km-legend-dot.pale {background:#fff;border:1px solid #7aa988}
-.km-root .km-map-disclaimer {color:#788e80;font-size:11px;line-height:1.65}
-/* On narrow screens the same division filter is offered as easy-to-tap chips. */
-.km-mobile-divisions {display:none}
-/* Search, quantity, empty state and readable market cards */
-.km-root .km-comparison-filter {gap:10px;margin:15px 0 12px}
-.km-root .km-comparison-filter label {border:1px solid #d7e4d9;background:#f8fbf7;color:#567464;border-radius:11px;min-height:47px;transition:border-color .18s,box-shadow .18s}
-.km-root .km-comparison-filter label:focus-within {border-color:#6fa886;box-shadow:0 0 0 3px #d9ebdc}
-.km-root .km-region-select-wrap {flex-basis:43%}
-.km-root .km-region-select-wrap select {color:#23513d;font-size:13px;min-height:45px;padding:10px 34px 10px 12px}
-.km-root .km-region-select-wrap > svg {color:#517d61}
-.km-root .km-comparison-filter select option,.km-root .km-entry-form select option,.km-root .km-entry-form select optgroup {background:#fff;color:#1d3d2d}
-.km-root .km-search-wrap {padding:0 11px}
-.km-root .km-search-wrap svg {color:#6f9780}
-.km-root .km-search-wrap input {font-size:13px;color:#214836;min-height:45px}
-.km-root .km-search-wrap input::placeholder {color:#8aa391}
-.km-root .km-batch-row {background:#edf6ee;border:1px solid #d9e9d9;border-radius:12px;padding:11px 12px;margin-bottom:10px;gap:12px}
-.km-root .km-batch-row label {display:flex;align-items:center;gap:7px;color:#28563f;font-size:13px}
-.km-root .km-batch-row label svg {color:#398660}
-.km-root .km-batch-row input {background:#fff;border:1px solid #cadfcf;color:#1e4735;border-radius:8px;min-height:36px;width:95px}
-.km-root .km-batch-row span {color:#537d60}
-.km-results-toolbar {display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;margin:4px 0 9px;font-size:11px;color:#718979}
-.km-results-toolbar > span {display:inline-flex;align-items:center;gap:5px}
-.km-results-toolbar strong {color:#22694b;background:#e4f3e7;border-radius:7px;padding:2px 7px;font-size:12px}
-.km-results-toolbar button {display:inline-flex;align-items:center;gap:4px;border:1px solid #d4e6d5;border-radius:9px;background:#f3f8f2;color:#326d4d;font-size:11px;padding:5px 8px}
-.km-results-toolbar button:hover {background:#e3f1e4}
-.km-root .km-comparison-list {min-height:265px;max-height:475px;gap:11px;padding:2px 5px 3px 0}
-.km-root .km-no-data {border:1px dashed #bed7c3;background:linear-gradient(160deg,#f9fcf8,#f0f7f0);padding:clamp(20px,4vw,35px);border-radius:17px}
-.km-root .km-no-data-icon {background:#e8f4e7;border:1px solid #d0e7d1;color:#36805b;border-radius:17px;padding:15px;margin-bottom:12px}
-.km-root .km-no-data h3 {color:#214937;font-size:17px}
-.km-root .km-no-data p {color:#637e6e;font-size:13px;margin:9px 0 16px;line-height:1.7}
-.km-root .km-empty-add {background:#195d41;color:#fff;border:1px solid #195d41;box-shadow:0 7px 16px rgba(14,62,36,.11);border-radius:10px;padding:10px 15px;transition:transform .2s,background .2s}
-.km-root .km-empty-add:hover {background:#277d56;transform:translateY(-2px)}
-.km-root .km-price-card {background:#fbfdfa;border:1px solid #dae8d9;border-radius:14px;padding:14px 15px;transition:border-color .2s,box-shadow .2s,transform .2s}
-.km-root .km-price-card:hover {background:#fff;border-color:#9cc7ab;box-shadow:0 9px 24px rgba(16,64,36,.08);transform:translateY(-2px)}
-.km-root .km-highest-price {background:#f2faef;border-color:#a3cfae}
-.km-root .km-price-row h3 {color:#204e39;font-size:16px}
-.km-root .km-price-row p {color:#728c79}
-.km-root .km-amount {color:#21754c;font-family:inherit;font-size:24px}
-.km-root .km-amount small {color:#7b9481}
-.km-root .km-price-facts {color:#7a9080;margin:11px 0 10px;font-size:11px}
-.km-root .km-price-foot {border-color:#e0e9dd;color:#667a6d}
-.km-root .km-positive {color:#1c8451}.km-root .km-negative {color:#be564e}.km-root .km-not-ready {color:#778a7c}
-.km-root .km-highest-label {color:#25764b;font-weight:750;background:#e4f3e7;border-radius:7px;padding:4px 6px}
-.km-root .km-price-card-actions button {background:#f7f8f6;color:#849586;border:1px solid #e5ebe2;min-width:35px;min-height:33px}
-.km-root .km-price-card-actions button:hover {color:#ba3b39;background:#fff0ef;border-color:#f4c8c4}
-.km-root .km-comparison-bottom {background:#fff9ed;border:1px solid #f0e2c9;color:#84653f;border-radius:12px;padding:12px 13px;margin-top:12px}
-.km-root .km-comparison-bottom svg {color:#b17b30}
-/* Separate research disclosure, like other farm service sections */
-.km-root .km-lower-bar {margin-top:18px;background:#fff;border:1px solid #d9e7d9;border-radius:19px;padding:20px 21px;box-shadow:0 7px 21px rgba(10,57,29,.045)}
-.km-root .km-lower-bar > div {gap:13px}
-.km-root .km-round-icon {background:#e4f3e8;color:#28764e;border:1px solid #cfe7d4;border-radius:13px}
-.km-root .km-lower-bar h3 {font-size:17px;margin:4px 0;color:#224634}
-.km-root .km-lower-bar p {font-size:12px;color:#6b8472}
-.km-root .km-research-btn {background:#175b40;color:#fff;border:1px solid #175b40;border-radius:11px;min-height:43px;padding:10px 15px;transition:transform .2s,box-shadow .2s,background .2s}
-.km-root .km-research-btn:hover {background:#287c56;transform:translateY(-2px);box-shadow:0 10px 20px rgba(18,78,42,.14)}
-.km-root .km-storage-alert {color:#a34831}
-/* Accessible forms and discard confirmation */
-.km-root .km-modal-backdrop {background:rgba(4,29,19,.72);backdrop-filter:blur(8px);z-index:200}
-.km-root .km-modal {background:#fff;color:#234637;border:1px solid #dfebdf;border-radius:22px;box-shadow:0 24px 85px rgba(0,20,10,.35)}
-.km-root .km-modal-head h2 {color:#173d30;font-size:23px}
-.km-root .km-modal-head button {background:#f2f7f0;color:#30513e;border:1px solid #d4e4d5}
-.km-root .km-modal-help {background:#fbf6e8;color:#775d33;border:1px solid #f0e5c9;border-radius:11px}
-.km-root .km-entry-form label {color:#294d39}
-.km-root .km-entry-form label > span {color:#a76524}
-.km-root .km-entry-form label > small {color:#799184}
-.km-root .km-entry-form select,.km-root .km-entry-form input {background:#f9fbf8;color:#204432;border:1px solid #d0e0d4;min-height:44px}
-.km-root .km-entry-form input::placeholder {color:#96ab9c}
-.km-root .km-cancel {background:#f2f6f1;color:#406b4e;border:1px solid #dce7dd}
-.km-root .km-form-error {background:#fff0ed;color:#aa4339;border:1px solid #efd0cb}
-.km-root .km-submit {background:#1f714c;color:#fff;border:1px solid #1f714c}
-.km-root .km-submit:hover {background:#29895c}
-.km-confirm-dialog {width:min(100%,440px);background:#fff;color:#234637;border-radius:21px;padding:25px;border:1px solid #f2e5da;box-shadow:0 25px 70px rgba(0,0,0,.24)}
-.km-confirm-icon {display:grid;place-items:center;width:49px;height:49px;background:#fff1dc;color:#bb6a25;border-radius:14px;margin-bottom:14px}
-.km-confirm-dialog h2 {font-size:22px;color:#1e3d2d;margin:0 0 8px;font-weight:800}
-.km-confirm-dialog p {font-size:14px;line-height:1.75;color:#647f6c;margin:0 0 23px}
-.km-confirm-actions {display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}
-.km-confirm-actions button {display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:41px;border-radius:10px;font-size:13px;font-weight:750;padding:9px 15px}
-.km-delete-confirm {background:#b83e36;border:1px solid #b83e36;color:#fff}
-.km-delete-confirm:hover {background:#982a27}
-/* Motion is supportive, never required to understand the data */
-@keyframes km-enter {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@media (max-width:1180px){
-  .km-root .km-main-grid {grid-template-columns:1fr}
-  .km-root .km-map-frame {min-height:470px}
-  .km-root .km-comparison-list {max-height:none}
-}
-@media (max-width:880px){
-  .km-root .km-heading.km-hero {grid-template-columns:1fr;min-height:0}
-  .km-hero-overview {max-width:100%;display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-  .km-overview-heading {grid-column:1/-1}
-  .km-overview-lead {align-content:center;border-bottom:0}
-  .km-overview-metrics {gap:7px}
-  .km-hero-overview p {grid-column:1/-1;margin-top:8px}
-  .km-root .km-action-line {align-items:flex-start}
-}
-@media (max-width:640px){
-  .km-root {padding:11px;border-radius:19px}
-  .km-root .km-heading.km-hero {padding:23px 19px;border-radius:18px;gap:17px}
-  .km-root .km-hero h1 {font-size:clamp(26px,7vw,35px)}
-  .km-hero-trust {gap:7px}
-  .km-root .km-add-btn {width:100%;min-width:0;padding:13px}
-  .km-hero-overview {display:block;padding:16px}
-  .km-overview-lead {border-bottom:1px solid #e1ebdf}
-  .km-root .km-action-line {padding:13px}
-  .km-switch-group {display:block;width:100%}
-  .km-switch-caption {display:block;margin-bottom:8px}
-  .km-root .km-commodity-switch {width:100%}
-  .km-root .km-commodity-switch button {flex:1}
-  .km-root .km-panel {padding:15px;border-radius:17px}
-  .km-root .km-panel-heading {gap:7px}
-  .km-panel-icon {width:39px;height:39px;min-width:39px}
-  .km-panel-tag {font-size:10px}
-  .km-root .km-map-frame {min-height:345px}
-  .km-mobile-divisions {display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 3px}
-  .km-mobile-divisions button {display:inline-flex;align-items:center;gap:5px;border:1px solid #d5e4d7;background:#f5f9f3;color:#496c53;padding:7px 9px;border-radius:9px;font-size:11px;min-height:36px}
-  .km-mobile-divisions button[aria-pressed="true"] {background:#1f714c;color:#fff;border-color:#1f714c}
-  .km-mobile-divisions small {background:#dceee2;color:#276344;border-radius:9px;padding:0 5px;font-size:10px}
-  .km-root .km-marker-label {font-size:9px;padding:2px 3px}
-  .km-root .km-map-marker {max-width:70px}
-  .km-root .km-comparison-filter {flex-wrap:wrap}
-  .km-root .km-region-select-wrap {flex:1 0 120px}
-  .km-root .km-search-wrap {flex:1 1 165px}
-  .km-root .km-lower-bar {padding:17px}
-  .km-root .km-lower-bar > div {align-items:flex-start}
-  .km-root .km-research-btn {width:100%}
-  .km-root .km-modal {padding:19px}
-}
-@media (prefers-reduced-motion: reduce){
-  .km-root *,.km-root *::before,.km-root *::after {animation:none !important;transition:none !important;scroll-behavior:auto !important}
-}
