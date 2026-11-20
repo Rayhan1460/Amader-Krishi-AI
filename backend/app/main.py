@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import ALLOWED_ORIGINS
 from .db import init_db, SessionLocal
-from .api import farmhub, hub_social
+from .api import farmhub, hub_social, project_docs
 from .api import health, model_status, predictions, auth, chat, history, calendar, weather, soil, cultivation, harvest
 
 
@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
     init_db()
     with SessionLocal() as db:
         hub_social.seed_demos(db)
+        project_docs.seed_publication(db)
     yield
     # Shutdown logic if needed
 
@@ -77,3 +78,4 @@ from .api import farmhub as budget_farmhub
 app.include_router(budget_farmhub.budget_api_router)
 
 app.include_router(produce_market.router)
+app.include_router(project_docs.router)

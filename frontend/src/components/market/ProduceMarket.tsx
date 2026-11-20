@@ -1,3 +1,4 @@
+import { staffSessionKey as adminKey } from '../../services/marketAdminSession.ts';
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -13,7 +14,6 @@ type AdminQueue = { username: string; counts: Partial<Record<State, number>>; it
 type Feed<T> = { scope?: string; loading: boolean; data?: T; error?: string; code?: number; live?: boolean };
 const root = '/produce-market';
 const staffClient = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
-const adminKey = 'agrisphere_market_admin_session';
 const bn = new Intl.NumberFormat('bn-BD', {maximumFractionDigits:2});
 const money = (value: number) => '৳' + bn.format(value);
 const status = { pending: 'যাচাইয়ের অপেক্ষায়', approved: 'বাজারে প্রকাশিত', rejected: 'প্রত্যাখ্যাত', needs_revision: 'সংশোধন প্রয়োজন' };
@@ -582,6 +582,7 @@ export function AdminMarketPage() {
         <div><span><ShieldCheck size={19}/>কৃষি বাজার</span><h1>আবেদন পর্যালোচনা</h1></div>
         <div className="pm-admin-account">
           {queue.data?.username && <bdi>{queue.data.username}</bdi>}
+          <Link to="/docs/admin">ডকুমেন্টেশন</Link>
           <button type="button" disabled={busy} onClick={signOut}><LogOut size={17}/>লগআউট</button>
         </div>
       </header>

@@ -265,6 +265,7 @@ export function LandingHome() {
         <a href="#ak-faq">সহায়তা</a>
         <a href="#ak-ai-guide" onClick={() => document.getElementById('ak-ai-guide')?.setAttribute('open', '')}>AI ব্যবহারের নির্দেশনা</a>
         <Link to="/admin">অ্যাডমিন লগইন</Link>
+        <Link to="/docs">ডকুমেন্টেশন</Link>
       </nav>
     </footer>
 

@@ -62,10 +62,7 @@ export default defineConfig({
         target: BACKEND_TARGET,
         changeOrigin: true,
       },
-      '/docs': {
-        target: BACKEND_TARGET,
-        changeOrigin: true,
-      },
+      '/project-docs': { target: BACKEND_TARGET, changeOrigin: true },
     },
   },
 })
