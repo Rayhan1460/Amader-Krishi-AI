@@ -576,6 +576,13 @@ export function AdminMarketPage() {
         <Field label="অ্যাডমিন ব্যবহারকারীর নাম"><input name="username" required autoComplete="username" maxLength={64}/></Field>
         <Field label="পাসওয়ার্ড"><input name="password" type="password" required autoComplete="current-password" maxLength={256}/></Field>
         <button type="submit" className="pm-primary" disabled={busy}>লগইন করুন <ArrowRight size={17}/></button>
+        <aside className="pm-row" aria-label="Judge access" lang="en">
+          <div>
+            <strong>For judges</strong>
+            <p>Pitch deck and technical documentation.</p>
+          </div>
+          <Link to="/docs" className="pm-primary">Open Judge Preview <ArrowRight size={17} aria-hidden="true"/></Link>
+        </aside>
       </form>
     </div> : <>
       <header className="pm-admin-banner pm-admin-banner--workspace">
