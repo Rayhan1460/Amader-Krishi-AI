@@ -6,7 +6,7 @@ import uuid
 import secrets
 from datetime import timedelta
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -23,7 +23,11 @@ from ..core.security import (
     decode_access_token,
 )
 
-router = APIRouter()
+def private_auth_response(response: Response) -> None:
+    response.headers["Cache-Control"] = "private, no-store"
+
+
+router = APIRouter(dependencies=[Depends(private_auth_response)])
 security_bearer = HTTPBearer(auto_error=False)
 
 
@@ -223,11 +227,11 @@ def auth_google(payload: GoogleAuthRequest, db: Session = Depends(get_db)):
 
     try:
         idinfo = verify_google_id_token(payload.credential, client_id)
-    except Exception as e:
+    except Exception as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Google token validation failed: {str(e)}",
-        )
+            detail="Google token validation failed",
+        ) from error
 
     # Validate issuer
     if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:

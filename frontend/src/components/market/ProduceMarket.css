@@ -325,3 +325,11 @@
   :is(.pm-farmer .pm-strip, .pm-farmer > :first-child:has(> nav)) > nav > button:hover { transform: none; }
 }
 
+
+.pm-judge-access { display: grid; gap: 9px; padding: 14px; border: 1px solid var(--pm-line); border-radius: 12px; background: #f5f9f2; }
+.pm-judge-access dl { display: grid; gap: 7px; margin: 0; }
+.pm-judge-access dd { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 0; }
+.pm-judge-access dt { font-size: .85rem; font-weight: 750; }
+.pm-judge-access code { color: var(--pm-ink); user-select: all; overflow-wrap: anywhere; }
+.pm-judge-access button { padding-inline: 10px; }
+.pm-judge-access > a { justify-self: start; }

@@ -75,7 +75,7 @@ export const api = axios.create({
 // Attach Authorization header if session token exists
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem(TOKEN_KEY);
-  if (token) {
+  if (token && !config.headers.has('Authorization')) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -135,7 +135,7 @@ export function getErrorMessage(error: unknown): string {
       !axiosError.response ||
       axiosError.message === 'Network Error'
     ) {
-      return 'Cannot connect to server. Please verify the backend service is running and accessible on port 8000.';
+      return 'Cannot reach the service right now. Check your connection and try again.';
     }
 
     if (axiosError.message) {
@@ -145,32 +145,35 @@ export function getErrorMessage(error: unknown): string {
 
   if (error instanceof Error) {
     if (error.message === 'Network Error') {
-      return 'Cannot connect to server. Please verify the backend service is running and accessible on port 8000.';
+      return 'Cannot reach the service right now. Check your connection and try again.';
     }
     return error.message;
   }
   return 'An unexpected error occurred. Please try again.';
 }
 
+// Allow extra time for the first request to a sleeping backend.
+const authTimeout = 40_000;
+
 // Authentication API methods
 export const authApi = {
   async register(payload: { username: string; password: string; email?: string }): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/register', payload);
+    const response = await api.post<AuthResponse>('/auth/register', payload, { timeout: authTimeout });
     return response.data;
   },
 
   async login(payload: { username: string; password: string }): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/login', payload);
+    const response = await api.post<AuthResponse>('/auth/login', payload, { timeout: authTimeout });
     return response.data;
   },
 
   async loginWithGoogle(credential: string): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/google', { credential });
+    const response = await api.post<AuthResponse>('/auth/google', { credential }, { timeout: authTimeout });
     return response.data;
   },
 
   async loginAsDemo(): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/demo');
+    const response = await api.post<AuthResponse>('/auth/demo', undefined, { timeout: authTimeout });
     return response.data;
   },
 
@@ -179,8 +182,9 @@ export const authApi = {
     return response.data;
   },
 
-  async getMe(): Promise<User> {
-    const response = await api.get<User>('/auth/me');
+  async getMe(token?: string): Promise<User> {
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+    const response = await api.get<User>('/auth/me', { headers, timeout: authTimeout });
     return response.data;
   },
 };

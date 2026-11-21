@@ -11,6 +11,7 @@ import { WorkspacePage } from './pages/WorkspacePage.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 
 const ProjectDocsPage = lazy(() => import('./pages/ProjectDocsPage.tsx'));
+const JudgePreviewPage = lazy(() => import('./pages/JudgePreviewPage.tsx'));
 const ProjectDocsAdminPage = lazy(() => import('./pages/ProjectDocsAdminPage.tsx'));
 
 export function App() {
@@ -35,6 +36,7 @@ export function App() {
             <Route path="/app" element={<Navigate to="/workspace" replace />} />
 
             <Route path="/docs" element={<Suspense fallback={<p role="status">Loading documentation…</p>}><ProjectDocsPage /></Suspense>} />
+            <Route path="/judge-preview" element={<Suspense fallback={<p role="status">Loading judge preview…</p>}><JudgePreviewPage /></Suspense>} />
             <Route path="/docs/admin" element={<Suspense fallback={<p role="status">Loading documentation settings…</p>}><ProjectDocsAdminPage /></Suspense>} />
 
             {/* 404 Catch-All */}

@@ -87,9 +87,10 @@ export default function ProjectDocsPage() {
       {state === 'closed' ? <LockKeyhole size={25} aria-hidden/> : <Leaf size={25} aria-hidden/>}
       <p>আমাদের কৃষি AI</p>
       <h1>{state === 'closed' ? 'Documentation not available' : state === 'loading' ? 'Loading documentation' : 'Could not load documentation'}</h1>
-      <p>{state === 'closed' ? 'This page opens during the scheduled showcase window.' : state === 'error' ? 'Refresh the connection and try again.' : 'Checking publication access…'}</p>
+      <p>{state === 'closed' ? 'Live documentation is currently closed. The judge preview is available.' : state === 'error' ? 'Refresh the connection and try again.' : 'Checking publication access…'}</p>
       <div className="akdocs-actions">
-        <Link className="akdocs-button akdocs-primary" to="/">Back to home</Link>
+        <Link className="akdocs-button akdocs-primary" to="/judge-preview">Open Judge Preview</Link>
+        <Link className="akdocs-button" to="/">Back to home</Link>
         <Link className="akdocs-button" to="/docs/admin">Admin editor</Link>
         {state === 'error' && <button type="button" className="akdocs-button" onClick={() => { setState('loading'); setAttempt(value => value + 1); }}>Try again</button>}
       </div>

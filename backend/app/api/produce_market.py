@@ -16,7 +16,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer, LargeBinary, String, Text, case, func, select, update
 
-from .auth import get_current_user, security_bearer
+from .auth import get_current_user, private_auth_response, security_bearer
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from starlette.concurrency import run_in_threadpool
@@ -201,7 +201,7 @@ async def market_updates(
 
 
 
-@router.post("/admin/login")
+@router.post("/admin/login", dependencies=[Depends(private_auth_response)])
 def login(payload: Login, request: Request, db: DB):
     ip = request.client.host if request.client else "unknown"
     login_limit(ip)

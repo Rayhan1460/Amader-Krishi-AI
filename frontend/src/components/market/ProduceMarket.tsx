@@ -459,10 +459,23 @@ const decisionMessage: Record<Exclude<State, 'pending'>, string> = {
   needs_revision: 'আবেদনটি সংশোধনের জন্য কৃষকের কাছে ফেরত পাঠানো হয়েছে।',
   rejected: 'আবেদন প্রত্যাখ্যান করা হয়েছে।',
 };
+const judgeCredentials = { username: 'mindforge-judge-demo', password: 'KrishiPreview2026' } as const;
+const judgeSamples: Listing[] = [
+  { id: 101, crop: 'আমন ধান', district: 'বগুড়া', grade: 'প্রথম গ্রেড', quantity: 240, available: 240,
+    price: 36, notes: 'শুকানো ধান, সংগ্রহের জন্য প্রস্তুত।', status: 'pending', seller: 'নমুনা কৃষক ১' },
+  { id: 102, crop: 'লাল আলু', district: 'রংপুর', grade: 'প্রথম গ্রেড', quantity: 160, available: 160,
+    price: 28, notes: 'বস্তায় প্যাক করা হয়েছে।', status: 'pending', seller: 'নমুনা কৃষক ২' },
+  { id: 103, crop: 'শীতকালীন টমেটো', district: 'রাজশাহী', grade: 'দ্বিতীয় গ্রেড', quantity: 90, available: 90,
+    price: 44, notes: '', status: 'approved', seller: 'নমুনা কৃষক ৩' },
+];
+
 const reviewDate = new Intl.DateTimeFormat('bn-BD', { dateStyle: 'medium', timeZone: 'Asia/Dhaka' });
 
 export function AdminMarketPage() {
   const [token, setToken] = useState(() => sessionStorage.getItem(adminKey) ?? '');
+  const [judgeDemo, setJudgeDemo] = useState(false);
+  const [samples, setSamples] = useState(judgeSamples);
+  const [copied, setCopied] = useState('');
   const [tab, setTab] = useState<State | 'all'>('pending');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<number>();
@@ -472,7 +485,16 @@ export function AdminMarketPage() {
   const [notice, setNotice] = useState('');
   const working = useRef(false);
   const detail = useRef<HTMLElement>(null);
-  const queue = useFeed<AdminQueue>(token ? `/admin/listings?status=${tab}` : null, token || undefined, revision);
+  const liveQueue = useFeed<AdminQueue>(token && !judgeDemo ? `/admin/listings?status=${tab}` : null, token || undefined, revision);
+  const queue: Feed<AdminQueue> = judgeDemo ? {
+    loading: false,
+    data: {
+      username: judgeCredentials.username,
+      counts: Object.fromEntries(reviewTabs.map(({ key }) =>
+        [key, samples.filter(row => row.status === key).length])),
+      items: samples.filter(row => tab === 'all' || row.status === tab),
+    },
+  } : liveQueue;
   const items = (queue.data?.items ?? []).filter(item =>
     `${item.crop} ${item.district} ${item.seller ?? ''} ${item.id} ${bn.format(item.id)}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
@@ -510,10 +532,28 @@ export function AdminMarketPage() {
 
   function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const values = Object.fromEntries(new FormData(event.currentTarget));
+    const values = new FormData(event.currentTarget);
+    const username = String(values.get('username') ?? '').trim();
+    const password = String(values.get('password') ?? '');
+    if (username.toLowerCase() === judgeCredentials.username) {
+      setError('');
+      setNotice('');
+      if (password !== judgeCredentials.password) {
+        setError('Use the demo password shown below.');
+        return;
+      }
+      setTab('pending');
+      setQuery('');
+      setSelected(undefined);
+      setSamples(judgeSamples);
+      setJudgeDemo(true);
+      return;
+    }
     void run(async () => {
-      const response = await staffClient.post<{ token: string }>(root + '/admin/login', values);
-      if (typeof response.data.token !== 'string') throw new Error('Missing admin token.');
+      const response = await staffClient.post<{ token: string }>(
+        root + '/admin/login', { username, password }, { timeout: 35_000 },
+      );
+      if (typeof response.data.token !== 'string' || !response.data.token) throw new Error('Missing admin token.');
       setTab('pending');
       setQuery('');
       setSelected(undefined);
@@ -522,7 +562,23 @@ export function AdminMarketPage() {
     });
   }
 
+  async function copyDemoCredential(field: keyof typeof judgeCredentials) {
+    try {
+      await navigator.clipboard.writeText(judgeCredentials[field]);
+      setCopied(field === 'username' ? 'Username copied.' : 'Password copied.');
+    } catch {
+      setCopied('Select the value above and copy it.');
+    }
+  }
+
   function signOut() {
+    if (judgeDemo) {
+      setJudgeDemo(false);
+      setCopied('');
+      setError('');
+      setNotice('');
+      return;
+    }
     void run(async () => {
       try { await staffClient.post(root + '/admin/logout', null, auth); }
       catch (failure) { if (!axios.isAxiosError(failure) || failure.response?.status !== 401) throw failure; }
@@ -550,6 +606,16 @@ export function AdminMarketPage() {
       noteField.setCustomValidity('');
       return;
     }
+    if (judgeDemo) {
+      setSamples(rows => rows.map(row => row.id === current.id ? {
+        ...row, status: action, review_note: note, reviewer: judgeCredentials.username,
+        reviewed_at: Math.floor(Date.now() / 1000),
+      } : row));
+      setError('');
+      setNotice('নমুনা আবেদনের সিদ্ধান্ত আপডেট হয়েছে।');
+      setSelected(undefined);
+      return;
+    }
     void run(async () => {
       try {
         await staffClient.put(root + `/admin/listings/${current.id}`, {
@@ -565,7 +631,7 @@ export function AdminMarketPage() {
   }
 
   return <Portal name="অ্যাডমিন প্যানেল">
-    {!token ? <div className="pm-admin-signin">
+    {!token && !judgeDemo ? <div className="pm-admin-signin">
       <section className="pm-admin-banner">
         <span><ShieldCheck size={22}/>কৃষি বাজার</span><h1>আবেদন যাচাই ও প্রকাশ</h1>
         <p>কৃষকের ফসলের তথ্য যাচাই করে ক্রেতার বাজারে প্রকাশ করুন।</p>
@@ -576,12 +642,15 @@ export function AdminMarketPage() {
         <Field label="অ্যাডমিন ব্যবহারকারীর নাম"><input name="username" required autoComplete="username" maxLength={64}/></Field>
         <Field label="পাসওয়ার্ড"><input name="password" type="password" required autoComplete="current-password" maxLength={256}/></Field>
         <button type="submit" className="pm-primary" disabled={busy}>লগইন করুন <ArrowRight size={17}/></button>
-        <aside className="pm-row" aria-label="Judge access" lang="en">
-          <div>
-            <strong>For judges</strong>
-            <p>Pitch deck and technical documentation.</p>
-          </div>
-          <Link to="/docs" className="pm-primary">Open Judge Preview <ArrowRight size={17} aria-hidden="true"/></Link>
+        <aside className="pm-judge-access" aria-label="Judge access" lang="en">
+          <h3>For judges</h3>
+          <p>Use these demo credentials to try the marketplace review workflow with sample listings.</p>
+          <dl>
+            <div><dt>Username</dt><dd><code>{judgeCredentials.username}</code><button type="button" aria-label="Copy username" onClick={() => void copyDemoCredential('username')}>Copy</button></dd></div>
+            <div><dt>Password</dt><dd><code>{judgeCredentials.password}</code><button type="button" aria-label="Copy password" onClick={() => void copyDemoCredential('password')}>Copy</button></dd></div>
+          </dl>
+          {copied && <p role="status">{copied}</p>}
+          <Link to="/judge-preview" className="pm-primary">Open Judge Preview <ArrowRight size={17} aria-hidden="true"/></Link>
         </aside>
       </form>
     </div> : <>
@@ -589,10 +658,11 @@ export function AdminMarketPage() {
         <div><span><ShieldCheck size={19}/>কৃষি বাজার</span><h1>আবেদন পর্যালোচনা</h1></div>
         <div className="pm-admin-account">
           {queue.data?.username && <bdi>{queue.data.username}</bdi>}
-          <Link to="/docs/admin">ডকুমেন্টেশন</Link>
+          {judgeDemo ? <Link to="/judge-preview">Judge Preview</Link> : <Link to="/docs/admin">ডকুমেন্টেশন</Link>}
           <button type="button" disabled={busy} onClick={signOut}><LogOut size={17}/>লগআউট</button>
         </div>
       </header>
+      {judgeDemo && <p className="pm-feedback">Judge demo · নমুনা আবেদন · পরিবর্তন শুধু এই সেশনে থাকবে।</p>}
       <nav className="pm-admin-stats" aria-label="আবেদনের অবস্থা">
         {reviewTabs.map(({ key, label, Icon }) => <button type="button" key={key} data-state={key}
           aria-pressed={tab === key} onClick={() => chooseTab(key)}>
@@ -613,7 +683,7 @@ export function AdminMarketPage() {
             </label>
             <button type="button" aria-pressed={tab === 'all'} onClick={() => chooseTab('all')}>সব আবেদন</button>
           </div>
-          <LiveStatus feed={queue}/>
+          {!judgeDemo && <LiveStatus feed={queue}/>}
           <FeedState feed={queue} reload={reload}/>
           {queue.data && !items.length && <div className="pm-admin-empty">
             <PackageCheck size={23}/><p>{query.trim() ? 'এই খোঁজে কোনো আবেদন পাওয়া যায়নি।' : 'এই তালিকায় কোনো আবেদন নেই।'}</p>

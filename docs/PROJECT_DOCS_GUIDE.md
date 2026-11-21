@@ -2,6 +2,12 @@
 
 The frontend serves the Amader Krishi AI pitch and technical documentation at `/docs`. The existing FastAPI Swagger UI still lives at `/docs` on the API host. Frontend data requests use `/project-docs`.
 
+## Competition preview
+
+The always-available `/judge-preview` page distributes the public competition snapshot with the frontend build. The copy in `frontend/src/components/docs/judgeShowcase.json` is the material included in the competition preview. It contains no production account data or dynamic metrics. Use `/docs` to publish newer live releases through the editor.
+
+The `/admin` sign-in form displays `mindforge-judge-demo` and `KrishiPreview2026` for the sample marketplace review workflow. Demo decisions exist in that page session and are reset on sign-out or reload. This demo does not obtain a backend staff token. Real staff must sign in with their own backend account.
+
 ## Publish a showcase
 
 1. Sign in at the existing `/admin` portal, then open **ডকুমেন্টেশন** or go to `/docs/admin`.

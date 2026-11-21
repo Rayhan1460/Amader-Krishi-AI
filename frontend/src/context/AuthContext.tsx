@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { User } from '../types/index.ts';
-import { authApi, tokenStorage, getErrorMessage } from '../services/api.ts';
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
+import axios from 'axios';
+import type { AuthResponse, User } from '../types/index.ts';
+import { authApi, tokenStorage } from '../services/api.ts';
 
 interface AuthContextType {
   user: User | null;
@@ -20,113 +21,73 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(tokenStorage.get());
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Load user profile on startup if token exists
+  const authOperation = useRef(0);
+
   useEffect(() => {
-    let isMounted = true;
+    const operation = ++authOperation.current;
+    const savedToken = tokenStorage.get();
 
-    async function initializeAuth() {
-      const savedToken = tokenStorage.get();
-      if (!savedToken) {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-        return;
-      }
-
+    async function restoreSession() {
       try {
-        const userData = await authApi.getMe();
-        if (isMounted) {
-          setUser(userData);
-          setToken(savedToken);
-        }
+        if (!savedToken) return;
+        const profile = await authApi.getMe(savedToken);
+        if (operation !== authOperation.current) return;
+        setUser(profile);
+        setToken(savedToken);
       } catch (error) {
-        console.warn('Session expired or invalid token:', getErrorMessage(error));
-        tokenStorage.clear();
-        if (isMounted) {
-          setUser(null);
-          setToken(null);
-        }
+        if (operation !== authOperation.current) return;
+        if (axios.isAxiosError(error) && error.response?.status === 401) tokenStorage.clear();
+        setUser(null);
+        setToken(null);
       } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (operation === authOperation.current) setIsLoading(false);
       }
     }
 
-    initializeAuth();
-
-    return () => {
-      isMounted = false;
-    };
+    void restoreSession();
+    return () => { ++authOperation.current; };
   }, []);
 
-  const login = async (username: string, password: string) => {
+  async function signIn(request: () => Promise<AuthResponse>) {
+    const operation = ++authOperation.current;
     setIsLoading(true);
     try {
-      const authRes = await authApi.login({ username, password });
-      tokenStorage.set(authRes.access_token);
-      setToken(authRes.access_token);
-      const userData = await authApi.getMe();
-      setUser(userData);
+      const result = await request();
+      const profile = await authApi.getMe(result.access_token);
+      if (operation !== authOperation.current) return;
+      tokenStorage.set(result.access_token);
+      setToken(result.access_token);
+      setUser(profile);
     } finally {
-      setIsLoading(false);
+      if (operation === authOperation.current) setIsLoading(false);
     }
-  };
+  }
 
-  const loginWithGoogle = async (credential: string) => {
-    setIsLoading(true);
-    try {
-      const authRes = await authApi.loginWithGoogle(credential);
-      tokenStorage.set(authRes.access_token);
-      setToken(authRes.access_token);
-      const userData = await authApi.getMe();
-      setUser(userData);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loginAsDemo = async () => {
-    setIsLoading(true);
-    try {
-      const authRes = await authApi.loginAsDemo();
-      tokenStorage.set(authRes.access_token);
-      setToken(authRes.access_token);
-      const userData = await authApi.getMe();
-      setUser(userData);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const register = async (username: string, password: string, email?: string) => {
-    setIsLoading(true);
-    try {
-      const authRes = await authApi.register({ username, password, email });
-      tokenStorage.set(authRes.access_token);
-      setToken(authRes.access_token);
-      const userData = await authApi.getMe();
-      setUser(userData);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const login = (username: string, password: string) => signIn(() => authApi.login({ username, password }));
+  const loginWithGoogle = (credential: string) => signIn(() => authApi.loginWithGoogle(credential));
+  const loginAsDemo = () => signIn(() => authApi.loginAsDemo());
+  const register = (username: string, password: string, email?: string) =>
+    signIn(() => authApi.register({ username, password, email }));
 
   const logout = () => {
+    ++authOperation.current;
     tokenStorage.clear();
     setToken(null);
     setUser(null);
+    setIsLoading(false);
   };
 
   const refreshUser = async () => {
+    if (!token) return;
+    const operation = authOperation.current;
     try {
-      const userData = await authApi.getMe();
-      setUser(userData);
-    } catch {
-      logout();
+      const profile = await authApi.getMe(token);
+      if (operation === authOperation.current) setUser(profile);
+    } catch (error) {
+      if (operation === authOperation.current && axios.isAxiosError(error) && error.response?.status === 401) logout();
     }
   };
 

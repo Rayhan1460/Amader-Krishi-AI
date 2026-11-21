@@ -41,7 +41,7 @@ function Team({ document }: { document: DocsDocument }) {
   </>;
 }
 
-function Supplement({ section, document, live }: { section: Section; document: DocsDocument; live: Live }) {
+function Supplement({ section, document, live }: { section: Section; document: DocsDocument; live?: Live }) {
   switch (section.id) {
     case 'team': return <Team document={document} />;
     case 'contributors': return <a href="#team">View the team directory</a>;
@@ -50,14 +50,14 @@ function Supplement({ section, document, live }: { section: Section; document: D
     case 'product-demo': return <div className="akdocs-actions"><Link className="akdocs-button akdocs-primary" to="/workspace?tab=dashboard">Open the workspace <ArrowUpRight size={16}/></Link><Link className="akdocs-button" to="/buyer">Buyer marketplace <ArrowUpRight size={16}/></Link></div>;
     case 'features': return <div className="akdocs-table"><table>
       <thead><tr><th>Capability</th><th>Status</th></tr></thead>
-      <tbody>{[...live.features, ...document.roadmap].map((feature, i) => <tr key={i}><td>{feature.name}</td><td><span data-status={feature.status}>{feature.status}</span></td></tr>)}</tbody>
+      <tbody>{[...(live?.features ?? []), ...document.roadmap].map((feature, i) => <tr key={i}><td>{feature.name}</td><td><span data-status={feature.status}>{feature.status}</span></td></tr>)}</tbody>
     </table></div>;
-    case 'api': return <div className="akdocs-table"><table>
+    case 'api': return live && <div className="akdocs-table"><table>
       <thead><tr><th>Method and route</th><th>Purpose</th><th>Access</th></tr></thead>
       <tbody>{live.endpoints.map(endpoint => <tr key={endpoint.path}><td><small>{endpoint.methods.join(' · ')}</small><code>{endpoint.path}</code></td><td>{endpoint.description}</td><td>{endpoint.auth}</td></tr>)}</tbody>
     </table></div>;
-    case 'analytics': return live.metrics && <div className="akdocs-metrics">{Object.entries(live.metrics).map(([key, value]) => <div key={key}><strong>{number.format(value)}</strong><span>{labels[key as keyof typeof labels]}</span></div>)}</div>;
-    case 'changelog': return <>
+    case 'analytics': return live?.metrics && <div className="akdocs-metrics">{Object.entries(live.metrics).map(([key, value]) => <div key={key}><strong>{number.format(value)}</strong><span>{labels[key as keyof typeof labels]}</span></div>)}</div>;
+    case 'changelog': return live && <>
       <p>API v{live.version}</p>
       {!!live.changelog?.length && <ul className="akdocs-releases">{live.changelog.map(entry => <li key={entry.revision}><strong>Revision {entry.revision}</strong><span>{dhakaDate.format(entry.published_at * 1000)} · {entry.title}</span></li>)}</ul>}
     </>;
@@ -65,7 +65,7 @@ function Supplement({ section, document, live }: { section: Section; document: D
   }
 }
 
-function markdown(document: DocsDocument, live: Live) {
+function markdown(document: DocsDocument, live?: Live) {
   const safe = (value: string) => value.replace(/[\\<>&#*_\x60\[\]{}|!]/g, char => char === '<' ? '&lt;' : char === '>' ? '&gt;' : char === '&' ? '&amp;' : '\\' + char);
   const supplement: Record<string, string[]> = {
     team: [safe(document.team_name), ...document.team.map(member =>
@@ -73,10 +73,10 @@ function markdown(document: DocsDocument, live: Live) {
     contributors: ['[View the team directory](#team)'],
     architecture: [document.architecture.map(safe).join(' → ')],
     'data-flow': [document.data_flow.map(safe).join(' → ')],
-    features: [...live.features, ...document.roadmap].map(feature => `- ${safe(feature.name)} — ${feature.status}`),
-    api: live.endpoints.map(endpoint => `- ${endpoint.methods.join(', ')} ${safe(endpoint.path)} — ${safe(endpoint.description)} (${safe(endpoint.auth)})`),
-    analytics: live.metrics ? Object.entries(live.metrics).map(([key, value]) => `- ${labels[key as keyof typeof labels]} — ${value}`) : [],
-    changelog: [`API v${live.version}`, ...(live.changelog ?? []).map(entry => `- Revision ${entry.revision} · ${dhakaDate.format(entry.published_at * 1000)} · ${safe(entry.title)}`)],
+    features: [...(live?.features ?? []), ...document.roadmap].map(feature => `- ${safe(feature.name)} — ${feature.status}`),
+    api: live?.endpoints.map(endpoint => `- ${endpoint.methods.join(', ')} ${safe(endpoint.path)} — ${safe(endpoint.description)} (${safe(endpoint.auth)})`) ?? [],
+    analytics: live?.metrics ? Object.entries(live.metrics).map(([key, value]) => `- ${labels[key as keyof typeof labels]} — ${value}`) : [],
+    changelog: live ? [`API v${live.version}`, ...(live.changelog ?? []).map(entry => `- Revision ${entry.revision} · ${dhakaDate.format(entry.published_at * 1000)} · ${safe(entry.title)}`)] : [],
   };
   return [
     `# ${safe(document.title)}`, safe(document.tagline),
@@ -88,7 +88,7 @@ function markdown(document: DocsDocument, live: Live) {
   ].join('\n\n');
 }
 
-type Props = { document: DocsDocument; live: Live; revision: number; preview?: boolean };
+type Props = { document: DocsDocument; live?: Live; revision?: number; preview?: boolean };
 export function DocsContent({ document, live, revision, preview = false }: Props) {
   const [query, setQuery] = useState('');
   const [note, setNote] = useState('');
@@ -96,12 +96,12 @@ export function DocsContent({ document, live, revision, preview = false }: Props
     const words = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
     return document.sections.filter(section => {
       const extra = section.id === 'team' ? document.team.map(member => `${member.name} ${member.role}`).join(' ')
-        : section.id === 'features' ? [...live.features, ...document.roadmap].map(feature => `${feature.name} ${feature.status}`).join(' ')
-        : section.id === 'api' ? live.endpoints.map(endpoint => `${endpoint.path} ${endpoint.description} ${endpoint.auth}`).join(' ') : '';
+        : section.id === 'features' ? [...(live?.features ?? []), ...document.roadmap].map(feature => `${feature.name} ${feature.status}`).join(' ')
+        : section.id === 'api' && live ? live.endpoints.map(endpoint => `${endpoint.path} ${endpoint.description} ${endpoint.auth}`).join(' ') : '';
       const text = [section.title, section.group, extra, ...section.blocks.map(block => block.text)].join(' ').toLocaleLowerCase();
       return words.every(word => text.includes(word));
     });
-  }, [document, live.endpoints, live.features, query]);
+  }, [document, live, query]);
 
   const matchedIds = new Set(sections.map(section => section.id));
 
@@ -128,10 +128,10 @@ export function DocsContent({ document, live, revision, preview = false }: Props
     </header>
     {!!note && <p role="status" className="akdocs-note">{note}</p>}
     <section className="akdocs-hero">
-      <div><p>Product documentation · {preview ? 'Draft' : `Revision ${revision}`}</p>
+      <div><p>{!live ? 'AI Builders Congress 2026 · Judge Preview' : preview ? 'Product documentation · Draft' : `Product documentation · Revision ${revision}`}</p>
         <h1>{document.title}</h1><p>{document.tagline}</p>
       </div>
-      <span className="akdocs-model-count"><strong>{live.registered_models}</strong> registered models</span>
+      {live ? <span className="akdocs-model-count"><strong>{live.registered_models}</strong> registered models</span> : <Link className="akdocs-button" to="/admin">Try the admin demo <ArrowUpRight size={16}/></Link>}
     </section>
     <div className="akdocs-layout">
       <aside className="akdocs-sidebar">
@@ -144,7 +144,7 @@ export function DocsContent({ document, live, revision, preview = false }: Props
         </nav>
       </aside>
       <div className="akdocs-sections">
-        <div className="akdocs-live"><span>Live application snapshot</span><time dateTime={new Date(live.as_of * 1000).toISOString()}>{dhakaDate.format(live.as_of * 1000)} Dhaka</time></div>
+        {live && <div className="akdocs-live"><span>Live application snapshot</span><time dateTime={new Date(live.as_of * 1000).toISOString()}>{dhakaDate.format(live.as_of * 1000)} Dhaka</time></div>}
         {document.sections.map(section => <section className="akdocs-section" hidden={!matchedIds.has(section.id)} id={section.id} key={section.id} aria-labelledby={`heading-${section.id}`}>
           <div className="akdocs-section-title"><h2 id={`heading-${section.id}`}>{section.title}</h2><a href={`#${section.id}`} aria-label={`Link to ${section.title}`}><Link2 size={17}/></a></div>
           {section.blocks.map((block, i) => block.kind === 'heading' ? <h3 key={i}>{block.text}</h3>

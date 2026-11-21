@@ -1,0 +1,318 @@
+{
+  "title": "আমাদের কৃষি AI",
+  "tagline": "A Bangla-first workspace for the decisions that shape a growing season.",
+  "team_name": "Team Mind Forge",
+  "sections": [
+    {
+      "id": "problem",
+      "group": "pitch",
+      "title": "Problem",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A farmer has to piece together guidance on crop health, weather, farm costs, and selling. Information is often separated from the decision it needs to support."
+        }
+      ]
+    },
+    {
+      "id": "solution",
+      "group": "pitch",
+      "title": "Solution",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Amader Krishi AI puts those decisions into a Bangla-first workspace, from soil and crop planning through care, harvest, and an approved produce listing."
+        }
+      ]
+    },
+    {
+      "id": "why-now",
+      "group": "pitch",
+      "title": "Why now",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A browser-based workflow can bring weather, a photo, and farm records together at the point a farmer needs to decide. Our first goal is to learn where that combination saves practical effort."
+        }
+      ]
+    },
+    {
+      "id": "product-demo",
+      "group": "pitch",
+      "title": "Product demo",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Choose a crop using soil and climate inputs. Try rice or tomato leaf analysis. Then follow the listing review and buying request workflow in Krishi Market."
+        }
+      ]
+    },
+    {
+      "id": "market",
+      "group": "pitch",
+      "title": "Market opportunity",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Our initial audience is smallholder growers and local produce buyers in Bangladesh. Extension workers and cooperatives are potential distribution partners. We plan to validate the size of the reachable market through local pilots."
+        }
+      ]
+    },
+    {
+      "id": "business-model",
+      "group": "pitch",
+      "title": "Business model",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Pilot hypothesis. Keep core farmer tools accessible and test paid workflows with cooperatives or organisations that coordinate farm services and produce sourcing."
+        }
+      ]
+    },
+    {
+      "id": "traction",
+      "group": "pitch",
+      "title": "Traction",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Team Mind Forge built a working research prototype and spoke with farmers before designing its workflows. Live product activity is shown when the team publishes aggregate metrics. Accounts and product events do not represent paid customers or field outcomes."
+        }
+      ]
+    },
+    {
+      "id": "competition",
+      "group": "pitch",
+      "title": "Competition",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Farmers already use extension advice, weather services, and local trading channels. We compare our approach with these alternatives during pilots, especially for ease of use and quality of decisions."
+        }
+      ]
+    },
+    {
+      "id": "advantage",
+      "group": "pitch",
+      "title": "Unique advantage",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "One workflow connects Bangla guidance and specialist model outputs to farm records and a reviewed marketplace. Prediction history makes individual model runs reviewable."
+        }
+      ]
+    },
+    {
+      "id": "go-to-market",
+      "group": "pitch",
+      "title": "Go-to-market",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Start with a small facilitated pilot. Take participants through crop planning, plant health and a listing review, then measure repeat use and where the workflow breaks down."
+        }
+      ]
+    },
+    {
+      "id": "team",
+      "group": "pitch",
+      "title": "Team",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Team Mind Forge"
+        }
+      ]
+    },
+    {
+      "id": "vision",
+      "group": "pitch",
+      "title": "Vision",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Give growers a practical record of their season and better information at each step, while validating recommendations on real farms."
+        }
+      ]
+    },
+    {
+      "id": "overview",
+      "group": "technical",
+      "title": "Product overview",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "A farmer can record a plot and its soil tests, compare crops, plan work around weather, review crop health, and track the harvest. Buyers can browse approved produce listings. Admins review listings and control this documentation."
+        }
+      ]
+    },
+    {
+      "id": "features",
+      "group": "technical",
+      "title": "Feature matrix",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "The prototype includes farm profiles, soil and crop tools, prediction history, Bangla AI advice, weather, a farm calendar, budget estimates, and a produce marketplace. The entries below describe planned work."
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "group": "technical",
+      "title": "System architecture",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "The React workspace calls a FastAPI service. Domain services run inference and manage records through SQLAlchemy. Vercel serves the frontend and Render hosts the backend."
+        }
+      ]
+    },
+    {
+      "id": "data-flow",
+      "group": "technical",
+      "title": "Data flow",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Farm inputs or a leaf image are validated before processing. The result is returned to the user and prediction runs can be reviewed in history. User feedback and recorded outcomes inform future evaluation."
+        }
+      ]
+    },
+    {
+      "id": "stack",
+      "group": "technical",
+      "title": "Technology stack",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "React, TypeScript and Vite on the frontend. FastAPI, Pydantic and SQLAlchemy on the backend, with SQLite for local use and PostgreSQL supported for persistent deployments. Models run with scikit-learn or Keras."
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "group": "technical",
+      "title": "API reference",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "The FastAPI service provides a public model catalog and approved produce listings. Farm records and buyer requests use account tokens and ownership checks. Staff review and editorial writes use a separate admin session."
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "group": "technical",
+      "title": "Data sources and privacy",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Data comes from user-entered farm records, registered research artifacts and weather-provider APIs. Forecasts use Open-Meteo with the app's configured fallback where available. Product activity here is aggregated. Private farm coordinates, chat messages, buyer contact information and raw predictions are excluded from the public snapshot."
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "group": "technical",
+      "title": "AI, retrieval and personalization",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "The model registry contains task-specific models for crop suitability, regional rice yield, leaf analysis, flooding susceptibility and prices. The advisor can route to specialist tools and a configured chat provider. Prediction history and benchmark notes distinguish research outputs from field outcomes. GraphRAG and personalised model retraining are future options, subject to evaluation."
+        }
+      ]
+    },
+    {
+      "id": "roadmap",
+      "group": "technical",
+      "title": "Roadmap",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Near term. Field-test the existing workflows and improve local data coverage. Mid term. Validate the IoT-assisted soil workflow and strengthen evaluation. Long term. Test farmer-approved feedback and broader market integrations."
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "group": "technical",
+      "title": "Performance and scalability",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "The docs bundle loads only when its route opens. The public content is a published snapshot and the live panel uses aggregate queries. Existing inference loads model artifacts on demand. Establish load and latency baselines in a pilot before committing to an SLA."
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "group": "technical",
+      "title": "Security and publishing",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Farmer records use authenticated ownership checks. Marketplace reviews and documentation publishing use the staff session. The judge demo starts with sample listings and applies changes inside the browser."
+        }
+      ]
+    },
+    {
+      "id": "analytics",
+      "group": "technical",
+      "title": "Analytics",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Proposed pilot measures include task completion, repeat use, and approved produce listings."
+        }
+      ]
+    },
+    {
+      "id": "contributors",
+      "group": "technical",
+      "title": "Team and contributors",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Roles and team contact details are maintained in the team directory above."
+        }
+      ]
+    },
+    {
+      "id": "changelog",
+      "group": "technical",
+      "title": "Changelog",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "This showcase describes the prototype submitted by Team Mind Forge for AI Builders Congress 2026."
+        }
+      ]
+    }
+  ],
+  "team": [],
+  "architecture": [
+    "React workspace",
+    "FastAPI",
+    "Domain services",
+    "SQLAlchemy database"
+  ],
+  "data_flow": [
+    "Farm or image input",
+    "Validation",
+    "AI inference",
+    "Result",
+    "Feedback"
+  ],
+  "roadmap": [
+    {
+      "name": "IoT-assisted soil testing",
+      "status": "upcoming"
+    },
+    {
+      "name": "Field evaluation and farmer feedback",
+      "status": "planned"
+    }
+  ],
+  "show_metrics": false
+}
